@@ -1,11 +1,11 @@
 import React from 'react';
-import useFetch from "../../../hooks/useFetch.ts";
-import {type MealResponse} from "../../../types/meal.types.ts";
-import RouterLink from "../../../components/RouterLink.tsx";
-import {parseIngredients} from "../../../utils/parseIngredients.ts";
-import {API_ENDPOINTS} from "../../../api/endpoints.ts";
-import {parseInstructions} from "../../../utils/parseInstructions.ts";
-import FavoriteButton from "../../../components/FavoriteButton.tsx";
+import useFetch from "@/hooks/useFetch.ts";
+import {type MealResponse} from "@/types/meal.types.ts";
+import RouterLink from "@/components/RouterLink.tsx";
+import {parseIngredients} from "@/utils/parseIngredients.ts";
+import {API_ENDPOINTS} from "@/api/endpoints.ts";
+import {parseInstructions} from "@/utils/parseInstructions.ts";
+import FavoriteButton from "@/components/FavoriteButton.tsx";
 
 interface MealDetailProps {
     params: Record<string, string>;
@@ -81,7 +81,7 @@ const MealDetails: React.FC<MealDetailProps> = ({params}) => {
                                 className="bg-gray-50 px-3 py-2.5 rounded-xl border border-gray-100 text-sm text-gray-700 font-medium"
                             >
                                 <span className="text-gray-900">{ingredient.name}</span>
-                                <span className="text-gray-400 block text-xs mt-0.5">{ingredient.measure}</span>
+                                <span className="text-gray-500 block text-xs mt-0.5">{ingredient.measure}</span>
                             </li>
                         ))}
                     </ul>

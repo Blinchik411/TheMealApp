@@ -1,12 +1,12 @@
 import React, {useState, useReducer} from 'react';
 import useFetch from "../../hooks/useFetch.ts";
-import { type MealResponse } from "../../types/meal.types.ts";
+import { type MealResponse } from "@/types/meal.types.ts";
 import MealList from "./components/MealList.tsx";
-import {getRandomLetter} from "../../utils/getRandomLetter.ts";
-import {API_ENDPOINTS} from "../../api/endpoints.ts";
+import {getRandomLetter} from "@/utils/getRandomLetter.ts";
+import {API_ENDPOINTS} from "@/api/endpoints.ts";
 import MealSearch from "./components/MealSearch.tsx";
 import MealAreaFilter from "./components/MealAreaFilter.tsx";
-import MealCategoryFilter from "../../components/MealCategoryFilter.tsx";
+import MealCategoryFilter from "@/components/MealCategoryFilter.tsx";
 
 interface FilterState {
     activeSearch: string;
@@ -100,7 +100,7 @@ const Home: React.FC = () => {
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pt-2 border-t border-gray-50">
                     <div className="flex-1 space-y-4">
                         <MealAreaFilter
-                            value={selectedArea}
+                            value={selectedArea || 'all'}
                             onSelectedArea={(area) => dispatch({ type: 'SET_AREA', area })}
                         />
                         <MealCategoryFilter

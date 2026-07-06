@@ -1,5 +1,5 @@
 import React from "react";
-import { type Meal } from "../../../types/meal.types.ts";
+import { type Meal } from "@/types/meal.types";
 import MealCard from "./MealCard.tsx";
 
 interface MealListProps {
@@ -28,4 +28,4 @@ const MealList: React.FC<MealListProps> = ({meals}) => {
 
 }
 
-export default MealList
+export default React.memo(MealList)

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useFavorites } from "../../components/FavoritesContext.tsx";
-import MealCard from "../Home/components/MealCard";
-import MealSearch from "../Home/components/MealSearch.tsx";
-import MealCategoryFilter from "../../components/MealCategoryFilter.tsx";
+import { useFavorites } from "@/components/FavoritesContext";
+import MealCard from "@/pages/Home/components/MealCard";
+import MealSearch from "@/pages/Home/components/MealSearch";
+import MealCategoryFilter from "@/components/MealCategoryFilter";
 
 const FavoritesPage: React.FC = () => {
     const { favorites } = useFavorites();

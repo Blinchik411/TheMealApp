@@ -1,42 +1,56 @@
 import React from "react";
-import useFetch from "../../../hooks/useFetch.ts";
-import type {AreaResponse} from "../../../types/meal.types.ts";
-import {API_ENDPOINTS} from "../../../api/endpoints.ts";
+import useFetch from "@/hooks/useFetch";
+import type { AreaResponse } from "@/types/meal.types";
+import { API_ENDPOINTS } from "@/api/endpoints";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '../../../../@/components/ui/select.tsx';
 
 interface MealAreaFilterProps {
     value: string;
     onSelectedArea: (area: string) => void;
 }
 
-const MealAreaFilter: React.FC<MealAreaFilterProps> = ({ value,onSelectedArea}) => {
+const MealAreaFilter: React.FC<MealAreaFilterProps> = ({ value, onSelectedArea }) => {
+    const { data, isLoading, error } = useFetch<AreaResponse>(API_ENDPOINTS.getAreaList());
 
-    const {data, isLoading, error} = useFetch<AreaResponse>(API_ENDPOINTS.getAreaList())
-
-    if (isLoading) return <p>Loading countries...</p>;
-    if (error) return <p>Failed to load countries</p>;
+    if (isLoading) return <p className="text-sm text-muted-foreground">Loading countries...</p>;
+    if (error) return <p className="text-sm text-destructive">Failed to load countries</p>;
 
     const areas = data?.meals || [];
 
-    return (
-        <select
-            value={value}
-            onChange={(e) => onSelectedArea(e.target.value)}
-        >
-            <option
-                value={''}
-            >
-                {'All countries'}
-            </option>
-            {areas.map((area)=> (
-                <option
-                    key={area.strCountry}
-                    value={area.strCountry}
-                >
-                    {area.strArea}
-                </option>
-            ))}
-        </select>
-    )
-}
 
-export default MealAreaFilter
+    const handleValueChange = (newValue: string | null) => {
+        onSelectedArea(newValue ?? "");
+    };
+
+    return (
+        <Select value={value} onValueChange={handleValueChange}>
+            <SelectTrigger className="w-full max-w-48">
+                <SelectValue placeholder="All countries" />
+            </SelectTrigger>
+
+            <SelectContent>
+                <SelectGroup>
+                    <SelectItem value="All countries">All countries</SelectItem>
+
+                    {areas.map((area) => (
+                        <SelectItem
+                            key={area.strCountry}
+                            value={area.strCountry}
+                        >
+                            {area.strCountry}
+                        </SelectItem>
+                    ))}
+                </SelectGroup>
+            </SelectContent>
+        </Select>
+    );
+};
+
+export default React.memo(MealAreaFilter);

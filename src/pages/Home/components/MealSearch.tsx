@@ -54,4 +54,4 @@ const MealSearch: React.FC<MealSearchProps> = ({ value, onSearch }) => {
     );
 };
 
-export default MealSearch;
+export default React.memo(MealSearch);
