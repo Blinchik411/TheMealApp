@@ -37,7 +37,7 @@ const MealAreaFilter: React.FC<MealAreaFilterProps> = ({ value, onSelectedArea }
 
             <SelectContent>
                 <SelectGroup>
-                    <SelectItem value="All countries">All countries</SelectItem>
+                    <SelectItem value="">All countries</SelectItem>
 
                     {areas.map((area) => (
                         <SelectItem

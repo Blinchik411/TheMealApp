@@ -22,7 +22,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({meal, showText = false, 
     return (
     <button
         onClick={handleClick}
-        className="inline-flex items-center gap-2 text-lg font-semibold group"
+        className="text-lg font-semibold group"
     >
         {liked ? '❤️' : '🤍'}
         {showText && (liked ? ' In Favorites' : ' To Favorites')}

@@ -1,4 +1,4 @@
-import React, {useState, useReducer} from 'react';
+import React, {useState, useReducer, useMemo} from 'react';
 import useFetch from "../../hooks/useFetch.ts";
 import { type MealResponse } from "@/types/meal.types.ts";
 import MealList from "./components/MealList.tsx";
@@ -66,13 +66,15 @@ const Home: React.FC = () => {
         error: mealsError
     } = useFetch<MealResponse>(apiUrl);
 
+    const memoizedMeals = useMemo(() => {
+        return data?.meals || [];
+    }, [data?.meals]); // Массив пересоздастся ТОЛЬКО если реально изменились данные от useFetch
 
     if (isCatsLoading || isMealsLoading) return <p>Loading...</p>;
 
 
     if (catsError || mealsError) return <p>Error: {catsError || mealsError}</p>;
 
-    const meals = data?.meals;
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
@@ -125,7 +127,7 @@ const Home: React.FC = () => {
 
             {/* Сетка со списком блюд */}
             <div>
-                <MealList meals={meals || []} />
+                <MealList meals={memoizedMeals || []} />
             </div>
         </div>
     );
