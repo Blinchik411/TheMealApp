@@ -102,7 +102,7 @@ const Home: React.FC = () => {
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pt-2 border-t border-gray-50">
                     <div className="flex-1 space-y-4">
                         <MealAreaFilter
-                            value={selectedArea || 'all'}
+                            value={selectedArea || 'All countries'}
                             onSelectedArea={(area) => dispatch({ type: 'SET_AREA', area })}
                         />
                         <MealCategoryFilter

@@ -31,18 +31,24 @@ const MealAreaFilter: React.FC<MealAreaFilterProps> = ({ value, onSelectedArea }
 
     return (
         <Select value={value} onValueChange={handleValueChange}>
-            <SelectTrigger className="w-full max-w-48">
+            <SelectTrigger className="w-full max-w-60 !h-10 text-sm ">
                 <SelectValue placeholder="All countries" />
             </SelectTrigger>
 
             <SelectContent>
                 <SelectGroup>
-                    <SelectItem value="">All countries</SelectItem>
+                    <SelectItem
+                        value=""
+                        className="text-sm"
+                    >
+                        All countries
+                    </SelectItem>
 
                     {areas.map((area) => (
                         <SelectItem
                             key={area.strCountry}
                             value={area.strCountry}
+                            className="text-sm"
                         >
                             {area.strCountry}
                         </SelectItem>

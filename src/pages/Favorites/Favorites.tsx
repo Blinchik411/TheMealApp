@@ -40,7 +40,7 @@ const FavoritesPage: React.FC = () => {
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
             <div className="text-center md:text-center mb-8">
-                <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
+                <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight ">
                     Favorite recipes - {favorites.length}
                 </h1>
                 <p className="mt-2 text-sm md:text-base text-gray-500">
