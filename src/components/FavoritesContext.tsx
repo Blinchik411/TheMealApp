@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
-import { type Meal } from "../types/meal.types";
+import { type Meal } from "@/types/meal.types";
 
 interface FavoritesContextType {
     favorites: Meal[];

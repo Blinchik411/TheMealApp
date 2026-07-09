@@ -68,7 +68,7 @@ const Home: React.FC = () => {
 
     const memoizedMeals = useMemo(() => {
         return data?.meals || [];
-    }, [data?.meals]); // Массив пересоздастся ТОЛЬКО если реально изменились данные от useFetch
+    }, [data?.meals]);
 
     if (isCatsLoading || isMealsLoading) return <p>Loading...</p>;
 

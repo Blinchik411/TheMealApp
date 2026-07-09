@@ -12,13 +12,13 @@ const MealCard: React.FC<MealCardProps> = ({ meal, from }) => {
     const linkTo = from ? `/meal/${meal.idMeal}?from=${from}` : `/meal/${meal.idMeal}`;
 
     return (
-        <div className="flex flex-col h-full bg-card rounded-xl overflow-hidden border shadow-sm">
+        <div className="flex flex-col h-full bg-card rounded-xl overflow-hidden border shadow-sm transition-transform duration-300 hover:scale-104">
             {/* 🛠️ ФИКС CLS: Обертка для картинки с фиксированным соотношением сторон */}
             <div className="relative w-full  aspect-square bg-muted/50 overflow-hidden">
                 <img
                     src={meal.strMealThumb}
                     alt={meal.strMeal}
-                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-104"
+                    className="w-full aspect-square object-cover"
                     loading="lazy" // Оптимизация загрузки изображений вне экрана
                 />
             </div>

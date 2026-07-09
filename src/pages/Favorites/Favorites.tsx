@@ -38,18 +38,28 @@ const FavoritesPage: React.FC = () => {
         )
 
     return (
-        <div>
-            <h2>Favorite recipes {favorites.length}</h2>
-            <MealSearch
-                value={searchQuery}
-                onSearch={(query) => setSearchQuery(query)}
-            />
-            <MealCategoryFilter
-                categories={allFavoritesCategory}
-                activeCategory={activeCategory}
-                onSelectCategory={(category) => setActiveCategory(category)}
-            />
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="max-w-6xl mx-auto px-4 py-8">
+            <div className="text-center md:text-center mb-8">
+                <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
+                    Favorite recipes - {favorites.length}
+                </h1>
+                <p className="mt-2 text-sm md:text-base text-gray-500">
+                    Your personal collection of the best recipes from around the world!
+                </p>
+            </div>
+            <div
+                className="max-w-6xl mx-auto px-4 py-8 bg-white p-5 md:p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6 mb-10">
+                <MealSearch
+                    value={searchQuery}
+                    onSearch={(query) => setSearchQuery(query)}
+                />
+                <MealCategoryFilter
+                    categories={allFavoritesCategory}
+                    activeCategory={activeCategory}
+                    onSelectCategory={(category) => setActiveCategory(category)}
+                />
+            </div>
+            <div className="max-w-6xl mx-auto  grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {favoritesContent}
             </div>
         </div>

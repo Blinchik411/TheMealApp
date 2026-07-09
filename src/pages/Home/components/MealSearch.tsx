@@ -26,11 +26,16 @@ const MealSearch: React.FC<MealSearchProps> = ({ value, onSearch }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
+        <form
+            className='flex gap-3'
+            onSubmit={handleSubmit}
+        >
+            <div
+                className='flex items-center'
+            >
                 <input
                     type="text"
-                    className="form-control"
+                    className=""
                     autoComplete="off"
                     placeholder="Pancakes"
                     value={inputValue}
