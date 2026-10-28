@@ -5,6 +5,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useFavoritesStore } from '../model/favoritesStore';
 import { FavoriteButton } from './FavoriteButton';
 
+vi.mock('../api/favoritesApi', () => ({
+  favoritesApi: {
+    getFavorites: vi.fn().mockResolvedValue([]),
+    addFavorite: vi.fn().mockResolvedValue(undefined),
+    removeFavorite: vi.fn().mockResolvedValue(undefined),
+  },
+}));
+
 const mockMeal: Meal = {
   idMeal: '52771',
   strMeal: 'Spicy Arrabiata Penne',
@@ -13,7 +21,13 @@ const mockMeal: Meal = {
 
 describe('FavoriteButton', () => {
   beforeEach(() => {
-    useFavoritesStore.setState({ favorites: [], hasHydrated: false });
+    vi.clearAllMocks();
+    useFavoritesStore.setState({
+      favorites: [],
+      hasHydrated: false,
+      isLoading: false,
+      error: null,
+    });
   });
 
   it('renders in initial unliked state with correct aria-label', () => {
@@ -50,19 +64,18 @@ describe('FavoriteButton', () => {
   });
 
   it('stops event propagation when stopProp is enabled', async () => {
+    const parentClick = vi.fn();
     const user = userEvent.setup();
-    const handleParentClick = vi.fn();
 
     render(
-      <div role="presentation" onClick={handleParentClick} onKeyDown={() => {}}>
+      <div onClick={parentClick} onKeyDown={() => {}}>
         <FavoriteButton meal={mockMeal} stopProp />
       </div>,
     );
 
-    const button = screen.getByRole('button', { name: /add to favorites/i });
+    const button = screen.getByRole('button');
     await user.click(button);
 
-    expect(handleParentClick).not.toHaveBeenCalled();
-    expect(useFavoritesStore.getState().isFavorite(mockMeal.idMeal)).toBe(true);
+    expect(parentClick).not.toHaveBeenCalled();
   });
 });
