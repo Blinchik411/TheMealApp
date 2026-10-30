@@ -7,10 +7,9 @@ interface MealCardProps {
   meal: Meal;
   from?: string;
   actionSlot?: ReactNode;
-  priority?: boolean;
 }
 
-export const MealCard = ({ meal, from, actionSlot, priority = false }: MealCardProps) => {
+export const MealCard = ({ meal, from, actionSlot }: MealCardProps) => {
   const linkTo = from ? `/meal/${meal.idMeal}?from=${from}` : `/meal/${meal.idMeal}`;
 
   return (
@@ -21,7 +20,6 @@ export const MealCard = ({ meal, from, actionSlot, priority = false }: MealCardP
           src={meal.strMealThumb}
           alt={meal.strMeal}
           fill
-          priority={priority}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
