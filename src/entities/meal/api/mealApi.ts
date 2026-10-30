@@ -1,5 +1,6 @@
 import { API_ENDPOINTS } from '@/shared/api/endpoints';
-import type { AreaResponse, CategoryResponse, Meal, MealResponse } from '../model/types';
+import { areaResponseSchema, categoryResponseSchema, mealResponseSchema } from '../model/schema';
+import type { Meal } from '../model/types';
 
 export const mealApi = {
   async getMealById(id: string): Promise<Meal | null> {
@@ -7,36 +8,41 @@ export const mealApi = {
       next: { revalidate: 3600 },
     });
     if (!res.ok) throw new Error('Failed to load recipe');
-    const data: MealResponse = await res.json();
-    return data.meals?.[0] ?? null;
+    const raw: unknown = await res.json();
+    const parsed = mealResponseSchema.parse(raw);
+    return parsed.meals?.[0] ?? null;
   },
 
   async searchByName(name: string): Promise<Meal[]> {
     const res = await fetch(API_ENDPOINTS.searchByName(name));
     if (!res.ok) throw new Error('Failed to search recipes');
-    const data: MealResponse = await res.json();
-    return data.meals ?? [];
+    const raw: unknown = await res.json();
+    const parsed = mealResponseSchema.parse(raw);
+    return parsed.meals ?? [];
   },
 
   async searchByLetter(letter: string): Promise<Meal[]> {
     const res = await fetch(API_ENDPOINTS.searchByFirstLetter(letter));
     if (!res.ok) throw new Error('Failed to load recipes');
-    const data: MealResponse = await res.json();
-    return data.meals ?? [];
+    const raw: unknown = await res.json();
+    const parsed = mealResponseSchema.parse(raw);
+    return parsed.meals ?? [];
   },
 
   async filterByCategory(category: string): Promise<Meal[]> {
     const res = await fetch(API_ENDPOINTS.searchByCategory(category));
     if (!res.ok) throw new Error('Failed to filter by category');
-    const data: MealResponse = await res.json();
-    return data.meals ?? [];
+    const raw: unknown = await res.json();
+    const parsed = mealResponseSchema.parse(raw);
+    return parsed.meals ?? [];
   },
 
   async filterByArea(area: string): Promise<Meal[]> {
     const res = await fetch(API_ENDPOINTS.searchByArea(area));
     if (!res.ok) throw new Error('Failed to filter by cuisine');
-    const data: MealResponse = await res.json();
-    return data.meals ?? [];
+    const raw: unknown = await res.json();
+    const parsed = mealResponseSchema.parse(raw);
+    return parsed.meals ?? [];
   },
 
   async getCategories(): Promise<string[]> {
@@ -44,8 +50,9 @@ export const mealApi = {
       next: { revalidate: 86400 },
     });
     if (!res.ok) throw new Error('Failed to load categories');
-    const data: CategoryResponse = await res.json();
-    const categories = data.meals?.map((item) => item.strCategory).filter(Boolean) ?? [];
+    const raw: unknown = await res.json();
+    const parsed = categoryResponseSchema.parse(raw);
+    const categories = parsed.meals?.map((item) => item.strCategory).filter(Boolean) ?? [];
     return Array.from(new Set(categories)).sort();
   },
 
@@ -54,8 +61,9 @@ export const mealApi = {
       next: { revalidate: 86400 },
     });
     if (!res.ok) throw new Error('Failed to load cuisines');
-    const data: AreaResponse = await res.json();
-    const areas = data.meals?.map((item) => item.strArea).filter(Boolean) ?? [];
+    const raw: unknown = await res.json();
+    const parsed = areaResponseSchema.parse(raw);
+    const areas = parsed.meals?.map((item) => item.strArea).filter(Boolean) ?? [];
     return Array.from(new Set(areas)).sort();
   },
 };

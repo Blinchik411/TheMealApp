@@ -1,15 +1,15 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import type React from 'react';
+import type { ReactNode } from 'react';
 import type { Meal } from '../model/types';
 
 interface MealCardProps {
   meal: Meal;
   from?: string;
-  actionSlot?: React.ReactNode;
+  actionSlot?: ReactNode;
 }
 
-export const MealCard: React.FC<MealCardProps> = ({ meal, from, actionSlot }) => {
+export const MealCard = ({ meal, from, actionSlot }: MealCardProps) => {
   const linkTo = from ? `/meal/${meal.idMeal}?from=${from}` : `/meal/${meal.idMeal}`;
 
   return (

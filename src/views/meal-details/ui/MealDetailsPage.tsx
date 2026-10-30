@@ -7,14 +7,13 @@ import { ArrowLeft, Check, CheckCircle2, Globe, Tag, Video } from 'lucide-react'
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import type React from 'react';
 import { useState } from 'react';
 
 interface MealDetailsPageProps {
   meal: Meal;
 }
 
-export const MealDetailsPage: React.FC<MealDetailsPageProps> = ({ meal }) => {
+export const MealDetailsPage = ({ meal }: MealDetailsPageProps) => {
   const searchParams = useSearchParams();
   const backTo = searchParams.get('from') === 'favorites' ? '/favorites' : '/';
   const backLabel =

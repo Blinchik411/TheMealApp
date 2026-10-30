@@ -1,22 +1,21 @@
 'use client';
 
 import { Search, X } from 'lucide-react';
-import type React from 'react';
-import { useEffect, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 
 interface MealSearchProps {
   value: string;
   onSearch: (query: string) => void;
 }
 
-export const MealSearch: React.FC<MealSearchProps> = ({ value, onSearch }) => {
+export const MealSearch = ({ value, onSearch }: MealSearchProps) => {
   const [inputValue, setInputValue] = useState(value);
 
   useEffect(() => {
     setInputValue(value);
   }, [value]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     onSearch(inputValue.trim());
   };

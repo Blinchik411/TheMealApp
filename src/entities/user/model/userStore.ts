@@ -12,6 +12,8 @@ interface UserState {
   signOut: () => Promise<void>;
 }
 
+let authSubscription: { unsubscribe: () => void } | null = null;
+
 export const useUserStore = create<UserState>((set) => ({
   user: null,
   isLoading: true,
@@ -24,16 +26,19 @@ export const useUserStore = create<UserState>((set) => ({
       set({ user: null, isLoading: false });
     }
 
-    supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        set({
-          user: { id: session.user.id, email: session.user.email ?? '' },
-          isLoading: false,
-        });
-      } else {
-        set({ user: null, isLoading: false });
-      }
-    });
+    if (!authSubscription) {
+      const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (session?.user) {
+          set({
+            user: { id: session.user.id, email: session.user.email ?? '' },
+            isLoading: false,
+          });
+        } else {
+          set({ user: null, isLoading: false });
+        }
+      });
+      authSubscription = data.subscription;
+    }
   },
 
   signOut: async () => {

@@ -3,15 +3,14 @@
 import { authApi } from '@/entities/user';
 import { useFavoritesStore } from '@/features/favorite-meal';
 import { Lock, Mail, X } from 'lucide-react';
-import type React from 'react';
-import { useState } from 'react';
+import { type FormEvent, useState } from 'react';
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
+export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,7 +21,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
     setIsSubmitting(true);

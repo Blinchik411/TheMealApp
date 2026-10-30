@@ -1,7 +1,6 @@
 'use client';
 
 import { Globe } from 'lucide-react';
-import type React from 'react';
 import { useMemo } from 'react';
 
 interface MealAreaFilterProps {
@@ -11,12 +10,12 @@ interface MealAreaFilterProps {
   isLoading?: boolean;
 }
 
-export const MealAreaFilter: React.FC<MealAreaFilterProps> = ({
+export const MealAreaFilter = ({
   areas,
   selectedArea,
   onSelectArea,
   isLoading = false,
-}) => {
+}: MealAreaFilterProps) => {
   const uniqueAreas = useMemo(() => Array.from(new Set(areas)), [areas]);
 
   return (

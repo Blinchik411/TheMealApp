@@ -7,12 +7,11 @@ import { getPaginatedData } from '@/shared/lib/paginationList';
 import { MealGrid } from '@/widgets/meal-grid';
 import { RotateCcw, Sparkles } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const ITEMS_PER_PAGE = 8;
 
-export const HomePage: React.FC = () => {
+export const HomePage = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();

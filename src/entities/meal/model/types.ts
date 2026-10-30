@@ -1,34 +1,19 @@
-export interface Meal {
-  idMeal: string;
-  strMeal: string;
-  strMealThumb: string;
-  strInstructions?: string;
-  strCategory?: string;
-  strArea?: string;
-  strTags?: string | null;
-  strYoutube?: string | null;
-  [key: string]: string | null | undefined;
-}
+import type { z } from 'zod';
+import type {
+  areaItemSchema,
+  areaResponseSchema,
+  categoryItemSchema,
+  categoryResponseSchema,
+  mealResponseSchema,
+  mealSchema,
+} from './schema';
 
-export interface MealResponse {
-  meals: Meal[] | null;
-}
-
-export interface AreaItem {
-  strArea: string;
-}
-
-export interface AreaResponse {
-  meals: AreaItem[] | null;
-}
-
-export interface CategoryItem {
-  strCategory: string;
-}
-
-export interface CategoryResponse {
-  meals: CategoryItem[] | null;
-}
+export type Meal = z.infer<typeof mealSchema>;
+export type MealResponse = z.infer<typeof mealResponseSchema>;
+export type AreaItem = z.infer<typeof areaItemSchema>;
+export type AreaResponse = z.infer<typeof areaResponseSchema>;
+export type CategoryItem = z.infer<typeof categoryItemSchema>;
+export type CategoryResponse = z.infer<typeof categoryResponseSchema>;
 
 export interface IngredientItem {
   id: string;

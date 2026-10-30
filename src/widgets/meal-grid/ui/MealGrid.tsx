@@ -3,7 +3,6 @@
 import { type Meal, MealCard } from '@/entities/meal';
 import { FavoriteButton } from '@/features/favorite-meal';
 import { Utensils } from 'lucide-react';
-import type React from 'react';
 
 const SKELETON_KEYS = [
   'meal-skeleton-1',
@@ -23,12 +22,12 @@ interface MealGridProps {
   emptyMessage?: string;
 }
 
-export const MealGrid: React.FC<MealGridProps> = ({
+export const MealGrid = ({
   meals,
   isLoading = false,
   from,
   emptyMessage = 'No recipes found',
-}) => {
+}: MealGridProps) => {
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

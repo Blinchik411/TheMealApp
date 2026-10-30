@@ -5,10 +5,9 @@ import { AuthModal } from '@/features/auth';
 import { useFavoritesStore } from '@/features/favorite-meal';
 import { Heart, LogIn, LogOut, User as UserIcon } from 'lucide-react';
 import Link from 'next/link';
-import type React from 'react';
 import { useEffect, useState } from 'react';
 
-export const Header: React.FC = () => {
+export const Header = () => {
   const favoritesCount = useFavoritesStore((state) => state.favorites.length);
   const hasHydrated = useFavoritesStore((state) => state.hasHydrated);
   const loadFavorites = useFavoritesStore((state) => state.loadFavorites);

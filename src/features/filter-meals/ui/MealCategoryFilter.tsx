@@ -1,7 +1,6 @@
 'use client';
 
 import { cn } from '@/shared/lib/utils';
-import type React from 'react';
 import { useMemo } from 'react';
 
 interface MealCategoryFilterProps {
@@ -10,11 +9,11 @@ interface MealCategoryFilterProps {
   onSelectCategory: (category: string) => void;
 }
 
-export const MealCategoryFilter: React.FC<MealCategoryFilterProps> = ({
+export const MealCategoryFilter = ({
   categories,
   activeCategory,
   onSelectCategory,
-}) => {
+}: MealCategoryFilterProps) => {
   const uniqueCategories = useMemo(() => Array.from(new Set(categories)), [categories]);
 
   return (

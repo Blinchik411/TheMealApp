@@ -3,7 +3,7 @@
 import type { Meal } from '@/entities/meal';
 import { cn } from '@/shared/lib/utils';
 import { Heart } from 'lucide-react';
-import type React from 'react';
+import type { MouseEvent } from 'react';
 import { useFavoritesStore } from '../model/favoritesStore';
 
 interface FavoriteButtonProps {
@@ -13,16 +13,16 @@ interface FavoriteButtonProps {
   className?: string;
 }
 
-export const FavoriteButton: React.FC<FavoriteButtonProps> = ({
+export const FavoriteButton = ({
   meal,
   showText = false,
   stopProp = false,
   className,
-}) => {
+}: FavoriteButtonProps) => {
   const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
   const liked = useFavoritesStore((state) => state.isFavorite(meal.idMeal));
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     if (stopProp) {
       e.stopPropagation();
     }

@@ -5,10 +5,9 @@ import { MealCategoryFilter, MealSearch } from '@/features/filter-meals';
 import { MealGrid } from '@/widgets/meal-grid';
 import { Heart, Sparkles } from 'lucide-react';
 import Link from 'next/link';
-import type React from 'react';
 import { useMemo, useState } from 'react';
 
-export const FavoritesPage: React.FC = () => {
+export const FavoritesPage = () => {
   const favorites = useFavoritesStore((state) => state.favorites);
   const hasHydrated = useFavoritesStore((state) => state.hasHydrated);
 
