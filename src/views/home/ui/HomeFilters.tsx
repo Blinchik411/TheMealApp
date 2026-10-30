@@ -43,15 +43,15 @@ export const HomeFilters = ({
   );
 
   const handleSearch = (query: string) => {
-    updateParams({ search: query, category: '', area: '' });
+    updateParams({ search: query });
   };
 
   const handleSelectCategory = (category: string) => {
-    updateParams({ category, search: '', area: '' });
+    updateParams({ category: category === selectedCategory ? '' : category });
   };
 
   const handleSelectArea = (area: string) => {
-    updateParams({ area, search: '', category: '' });
+    updateParams({ area: area === selectedArea ? '' : area });
   };
 
   const handleResetFilters = () => {
