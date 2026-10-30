@@ -10,8 +10,30 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'TheMealApp — Recipe Book & Culinary Catalog',
+  metadataBase: new URL('https://the-meal-app-three.vercel.app'),
+  title: {
+    default: 'TheMealApp — Recipe Book & Culinary Catalog',
+    template: '%s | TheMealApp',
+  },
   description: 'Search recipes, filter by world cuisines and categories, save your favorite meals',
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'TheMealApp — Recipe Book & Culinary Catalog',
+    description:
+      'Search recipes, filter by world cuisines and categories, save your favorite meals',
+    url: 'https://the-meal-app-three.vercel.app',
+    siteName: 'TheMealApp',
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'TheMealApp — Recipe Book & Culinary Catalog',
+    description:
+      'Search recipes, filter by world cuisines and categories, save your favorite meals',
+  },
 };
 
 export default function RootLayout({
