@@ -14,7 +14,9 @@ export const mealApi = {
   },
 
   async searchByName(name: string): Promise<Meal[]> {
-    const res = await fetch(API_ENDPOINTS.searchByName(name));
+    const res = await fetch(API_ENDPOINTS.searchByName(name), {
+      next: { revalidate: 3600 },
+    });
     if (!res.ok) throw new Error('Failed to search recipes');
     const raw: unknown = await res.json();
     const parsed = mealResponseSchema.parse(raw);
@@ -22,7 +24,9 @@ export const mealApi = {
   },
 
   async searchByLetter(letter: string): Promise<Meal[]> {
-    const res = await fetch(API_ENDPOINTS.searchByFirstLetter(letter));
+    const res = await fetch(API_ENDPOINTS.searchByFirstLetter(letter), {
+      next: { revalidate: 3600 },
+    });
     if (!res.ok) throw new Error('Failed to load recipes');
     const raw: unknown = await res.json();
     const parsed = mealResponseSchema.parse(raw);
@@ -30,7 +34,9 @@ export const mealApi = {
   },
 
   async filterByCategory(category: string): Promise<Meal[]> {
-    const res = await fetch(API_ENDPOINTS.searchByCategory(category));
+    const res = await fetch(API_ENDPOINTS.searchByCategory(category), {
+      next: { revalidate: 3600 },
+    });
     if (!res.ok) throw new Error('Failed to filter by category');
     const raw: unknown = await res.json();
     const parsed = mealResponseSchema.parse(raw);
@@ -38,7 +44,9 @@ export const mealApi = {
   },
 
   async filterByArea(area: string): Promise<Meal[]> {
-    const res = await fetch(API_ENDPOINTS.searchByArea(area));
+    const res = await fetch(API_ENDPOINTS.searchByArea(area), {
+      next: { revalidate: 3600 },
+    });
     if (!res.ok) throw new Error('Failed to filter by cuisine');
     const raw: unknown = await res.json();
     const parsed = mealResponseSchema.parse(raw);
