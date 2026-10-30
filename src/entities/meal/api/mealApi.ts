@@ -52,7 +52,10 @@ export const mealApi = {
     if (!res.ok) throw new Error('Failed to load categories');
     const raw: unknown = await res.json();
     const parsed = categoryResponseSchema.parse(raw);
-    const categories = parsed.meals?.map((item) => item.strCategory).filter(Boolean) ?? [];
+    const categories =
+      parsed.meals
+        ?.map((item) => item.strCategory)
+        .filter((cat): cat is string => typeof cat === 'string' && cat.trim() !== '') ?? [];
     return Array.from(new Set(categories)).sort();
   },
 
@@ -63,7 +66,10 @@ export const mealApi = {
     if (!res.ok) throw new Error('Failed to load cuisines');
     const raw: unknown = await res.json();
     const parsed = areaResponseSchema.parse(raw);
-    const areas = parsed.meals?.map((item) => item.strArea).filter(Boolean) ?? [];
+    const areas =
+      parsed.meals
+        ?.map((item) => item.strArea)
+        .filter((area): area is string => typeof area === 'string' && area.trim() !== '') ?? [];
     return Array.from(new Set(areas)).sort();
   },
 };

@@ -28,6 +28,23 @@ describe('mealSchema validation', () => {
     expect(() => mealSchema.parse(invalidMeal)).toThrow();
   });
 
+  it('should allow nullable fields like strArea, strCategory, strInstructions', () => {
+    const rawMeal = {
+      idMeal: '999',
+      strMeal: 'Recipe with null fields',
+      strArea: null,
+      strCategory: null,
+      strInstructions: null,
+      strMealThumb: null,
+    };
+
+    const parsed = mealSchema.parse(rawMeal);
+    expect(parsed.idMeal).toBe('999');
+    expect(parsed.strArea).toBeNull();
+    expect(parsed.strCategory).toBeNull();
+    expect(parsed.strMealThumb).toBe('');
+  });
+
   it('should validate API response wrapper correctly', () => {
     const validResponse = {
       meals: [

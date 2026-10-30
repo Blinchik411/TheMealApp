@@ -4,10 +4,14 @@ export const mealSchema = z
   .object({
     idMeal: z.string({ error: 'ID блюда обязателен' }),
     strMeal: z.string({ error: 'Название блюда обязательно' }),
-    strMealThumb: z.string().default(''),
-    strInstructions: z.string().optional(),
-    strCategory: z.string().optional(),
-    strArea: z.string().optional(),
+    strMealThumb: z
+      .string()
+      .nullable()
+      .optional()
+      .transform((val) => val ?? ''),
+    strInstructions: z.string().nullable().optional(),
+    strCategory: z.string().nullable().optional(),
+    strArea: z.string().nullable().optional(),
     strTags: z.string().nullable().optional(),
     strYoutube: z.string().nullable().optional(),
   })
@@ -18,7 +22,7 @@ export const mealResponseSchema = z.object({
 });
 
 export const areaItemSchema = z.object({
-  strArea: z.string(),
+  strArea: z.string().nullable().optional(),
 });
 
 export const areaResponseSchema = z.object({
@@ -26,7 +30,7 @@ export const areaResponseSchema = z.object({
 });
 
 export const categoryItemSchema = z.object({
-  strCategory: z.string(),
+  strCategory: z.string().nullable().optional(),
 });
 
 export const categoryResponseSchema = z.object({

@@ -3,7 +3,7 @@ const onlyNumbersRegex = /^\d+$/;
 const skipKeywords = ['preparation', 'cooking', 'serving'];
 const leadingNumberRegex = /^[\d\s)..-]+/;
 
-export const parseInstructions = (rawInstructions: string | undefined): string[] => {
+export const parseInstructions = (rawInstructions: string | null | undefined): string[] => {
   if (!rawInstructions) return [];
 
   return rawInstructions
