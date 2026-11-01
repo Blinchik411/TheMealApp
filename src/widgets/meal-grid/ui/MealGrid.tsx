@@ -55,10 +55,11 @@ export const MealGrid = ({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {meals.map((meal) => (
+      {meals.map((meal, index) => (
         <MealCard
           key={meal.id}
           meal={meal}
+          priority={index < 4}
           from={from}
           actionSlot={<FavoriteButton meal={meal} stopProp={true} />}
         />

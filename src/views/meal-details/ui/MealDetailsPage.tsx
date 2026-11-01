@@ -198,6 +198,7 @@ export const MealDetailsPage = ({ meal }: MealDetailsPageProps) => {
             <iframe
               src={youtubeEmbedUrl}
               title={`Cooking video for ${meal.title}`}
+              loading="lazy"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               className="absolute inset-0 size-full border-0"
