@@ -1,8 +1,7 @@
 'use client';
 
-import { type Meal, parseIngredients } from '@/entities/meal';
+import { type Meal, parseIngredients, parseInstructions } from '@/entities/meal';
 import { FavoriteButton } from '@/features/favorite-meal';
-import { parseInstructions } from '@/shared/lib/parseInstructions';
 import { ArrowLeft, Check, CheckCircle2, Globe, Tag, Video } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';

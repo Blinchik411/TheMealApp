@@ -1,4 +1,4 @@
-import { API_ENDPOINTS } from '@/shared/api/endpoints';
+import { API_ENDPOINTS } from '@/shared/api';
 import { areaResponseSchema, categoryResponseSchema, mealResponseSchema } from '../model/schema';
 import type { Meal } from '../model/types';
 

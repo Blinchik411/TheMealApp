@@ -1,5 +1,5 @@
 import type { Meal } from '@/entities/meal';
-import { supabase } from '@/shared/api/supabase';
+import { supabase } from '@/shared/api';
 
 export const favoritesApi = {
   async getFavorites(): Promise<Meal[]> {

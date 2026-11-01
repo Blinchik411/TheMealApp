@@ -6,3 +6,4 @@ export { getFilteredCatalog } from './api/catalogService';
 export type { CatalogResult } from './api/catalogService';
 export { MealCard } from './ui/MealCard';
 export { parseIngredients } from './lib/parseIngredients';
+export { parseInstructions } from './lib/parseInstructions';

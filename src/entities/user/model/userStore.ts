@@ -1,6 +1,6 @@
 'use client';
 
-import { supabase } from '@/shared/api/supabase';
+import { supabase } from '@/shared/api';
 import { create } from 'zustand';
 import { authApi } from '../api/authApi';
 import type { UserProfile } from './types';

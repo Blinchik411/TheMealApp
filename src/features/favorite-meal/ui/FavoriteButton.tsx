@@ -1,7 +1,7 @@
 'use client';
 
 import type { Meal } from '@/entities/meal';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@/shared/lib';
 import { Heart } from 'lucide-react';
 import type { MouseEvent } from 'react';
 import { useFavoritesStore } from '../model/favoritesStore';

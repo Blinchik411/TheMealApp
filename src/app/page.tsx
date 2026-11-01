@@ -1,5 +1,5 @@
 import { catalogFilterSchema, getFilteredCatalog } from '@/entities/meal';
-import { getPaginatedData } from '@/shared/lib/paginationList';
+import { getPaginatedData } from '@/shared/lib';
 import { HomePage } from '@/views/home';
 
 const ITEMS_PER_PAGE = 8;

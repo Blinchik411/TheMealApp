@@ -1,4 +1,4 @@
-import { supabase } from '@/shared/api/supabase';
+import { supabase } from '@/shared/api';
 import type { UserProfile } from '../model/types';
 
 export const authApi = {
