@@ -42,7 +42,7 @@ export const Header = () => {
               className="group flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
             >
               <span className="hidden sm:inline">Favorites</span>
-              <Heart className="size-4.5 text-red-500 fill-none group-hover:fill-red-500 group-hover:scale-110 transition-all duration-200" />
+              <Heart className="size-4.5 text-red-500 fill-none group-hover:fill-red-500 group-hover:scale-130 transition-all duration-200" />
             </Link>
 
             <div className="h-4 w-px bg-border mx-1" />
