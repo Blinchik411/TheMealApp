@@ -1,5 +1,10 @@
 import { API_ENDPOINTS } from '@/shared/api';
-import { areaResponseSchema, categoryResponseSchema, mealResponseSchema } from '../model/schema';
+import { mapTheMealDbToMeal } from '../lib/mealAdapter';
+import {
+  areaResponseSchema,
+  categoryResponseSchema,
+  theMealDbResponseSchema,
+} from '../model/schema';
 import type { Meal } from '../model/types';
 
 export const mealApi = {
@@ -9,8 +14,9 @@ export const mealApi = {
     });
     if (!res.ok) throw new Error('Failed to load recipe');
     const raw: unknown = await res.json();
-    const parsed = mealResponseSchema.parse(raw);
-    return parsed.meals?.[0] ?? null;
+    const parsed = theMealDbResponseSchema.parse(raw);
+    const firstMeal = parsed.meals?.[0];
+    return firstMeal ? mapTheMealDbToMeal(firstMeal) : null;
   },
 
   async searchByName(name: string): Promise<Meal[]> {
@@ -19,8 +25,8 @@ export const mealApi = {
     });
     if (!res.ok) throw new Error('Failed to search recipes');
     const raw: unknown = await res.json();
-    const parsed = mealResponseSchema.parse(raw);
-    return parsed.meals ?? [];
+    const parsed = theMealDbResponseSchema.parse(raw);
+    return (parsed.meals ?? []).map(mapTheMealDbToMeal);
   },
 
   async searchByLetter(letter: string): Promise<Meal[]> {
@@ -29,8 +35,8 @@ export const mealApi = {
     });
     if (!res.ok) throw new Error('Failed to load recipes');
     const raw: unknown = await res.json();
-    const parsed = mealResponseSchema.parse(raw);
-    return parsed.meals ?? [];
+    const parsed = theMealDbResponseSchema.parse(raw);
+    return (parsed.meals ?? []).map(mapTheMealDbToMeal);
   },
 
   async filterByCategory(category: string): Promise<Meal[]> {
@@ -39,8 +45,8 @@ export const mealApi = {
     });
     if (!res.ok) throw new Error('Failed to filter by category');
     const raw: unknown = await res.json();
-    const parsed = mealResponseSchema.parse(raw);
-    return parsed.meals ?? [];
+    const parsed = theMealDbResponseSchema.parse(raw);
+    return (parsed.meals ?? []).map(mapTheMealDbToMeal);
   },
 
   async filterByArea(area: string): Promise<Meal[]> {
@@ -49,8 +55,8 @@ export const mealApi = {
     });
     if (!res.ok) throw new Error('Failed to filter by cuisine');
     const raw: unknown = await res.json();
-    const parsed = mealResponseSchema.parse(raw);
-    return parsed.meals ?? [];
+    const parsed = theMealDbResponseSchema.parse(raw);
+    return (parsed.meals ?? []).map(mapTheMealDbToMeal);
   },
 
   async getCategories(): Promise<string[]> {

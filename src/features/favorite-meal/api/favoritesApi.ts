@@ -2,12 +2,12 @@ import type { Meal } from '@/entities/meal';
 import { supabase } from '@/shared/api';
 
 export const favoritesApi = {
-  async getFavorites(): Promise<Meal[]> {
+  async getFavorites(): Promise<Meal[] | null> {
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) return [];
+    if (!user) return null;
 
     const { data, error } = await supabase
       .from('favorites')
@@ -21,9 +21,13 @@ export const favoritesApi = {
     }
 
     return (data ?? []).map((row) => ({
-      idMeal: row.meal_id,
-      strMeal: row.meal_title,
-      strMealThumb: row.meal_thumb,
+      id: row.meal_id,
+      title: row.meal_title,
+      image: row.meal_thumb,
+      category: 'Favorite',
+      cuisine: 'International',
+      instructions: '',
+      ingredients: [],
     }));
   },
 
@@ -33,15 +37,16 @@ export const favoritesApi = {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      throw new Error('Please sign in to save favorite recipes');
+      // Guest mode: recipe is saved in localStorage by Zustand persist
+      return;
     }
 
     const { error } = await supabase.from('favorites').upsert(
       {
         user_id: user.id,
-        meal_id: meal.idMeal,
-        meal_title: meal.strMeal,
-        meal_thumb: meal.strMealThumb,
+        meal_id: meal.id,
+        meal_title: meal.title,
+        meal_thumb: meal.image,
       },
       { onConflict: 'user_id,meal_id' },
     );

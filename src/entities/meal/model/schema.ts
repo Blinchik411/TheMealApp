@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const mealSchema = z
+export const theMealDbRawMealSchema = z
   .object({
     idMeal: z.string({ error: 'ID блюда обязателен' }),
     strMeal: z.string({ error: 'Название блюда обязательно' }),
@@ -17,8 +17,10 @@ export const mealSchema = z
   })
   .passthrough();
 
-export const mealResponseSchema = z.object({
-  meals: z.array(mealSchema).nullable(),
+export type TheMealDbRawMeal = z.infer<typeof theMealDbRawMealSchema>;
+
+export const theMealDbResponseSchema = z.object({
+  meals: z.array(theMealDbRawMealSchema).nullable(),
 });
 
 export const areaItemSchema = z.object({
@@ -35,4 +37,26 @@ export const categoryItemSchema = z.object({
 
 export const categoryResponseSchema = z.object({
   meals: z.array(categoryItemSchema).nullable(),
+});
+
+export const ingredientItemSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  measure: z.string(),
+});
+
+export const mealSchema = z.object({
+  id: z.string({ error: 'ID блюда обязателен' }),
+  title: z.string({ error: 'Название блюда обязательно' }),
+  image: z
+    .string()
+    .nullable()
+    .optional()
+    .transform((val) => val ?? ''),
+  category: z.string().default('General'),
+  cuisine: z.string().default('International'),
+  instructions: z.string().default(''),
+  tags: z.array(z.string()).optional(),
+  youtubeUrl: z.string().optional(),
+  ingredients: z.array(ingredientItemSchema).default([]),
 });

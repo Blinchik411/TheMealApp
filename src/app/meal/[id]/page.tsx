@@ -14,9 +14,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const meal = await mealApi.getMealById(id);
     if (!meal) return { title: 'Recipe Not Found' };
 
-    const title = `${meal.strMeal} — Recipe`;
-    const description = meal.strInstructions?.slice(0, 160) ?? `How to prepare ${meal.strMeal}`;
-    const images = meal.strMealThumb ? [{ url: meal.strMealThumb, alt: meal.strMeal }] : [];
+    const title = `${meal.title} — Recipe`;
+    const description = meal.instructions?.slice(0, 160) ?? `How to prepare ${meal.title}`;
+    const images = meal.image ? [{ url: meal.image, alt: meal.title }] : [];
 
     return {
       title,
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         card: 'summary_large_image',
         title,
         description,
-        images: meal.strMealThumb ? [meal.strMealThumb] : [],
+        images: meal.image ? [meal.image] : [],
       },
     };
   } catch {

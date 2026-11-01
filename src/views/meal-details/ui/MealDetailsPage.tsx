@@ -1,6 +1,6 @@
 'use client';
 
-import { type Meal, parseIngredients, parseInstructions } from '@/entities/meal';
+import { type Meal, parseInstructions } from '@/entities/meal';
 import { FavoriteButton } from '@/features/favorite-meal';
 import { ArrowLeft, Check, CheckCircle2, Globe, Tag, Video } from 'lucide-react';
 import Image from 'next/image';
@@ -18,8 +18,8 @@ export const MealDetailsPage = ({ meal }: MealDetailsPageProps) => {
   const backLabel =
     searchParams.get('from') === 'favorites' ? 'Back to favorites' : 'Back to catalog';
 
-  const ingredients = parseIngredients(meal);
-  const instructions = parseInstructions(meal.strInstructions);
+  const ingredients = meal.ingredients ?? [];
+  const instructions = parseInstructions(meal.instructions);
 
   // Checkbox state for ingredients & steps
   const [checkedIngredients, setCheckedIngredients] = useState<Record<string, boolean>>({});
@@ -39,7 +39,7 @@ export const MealDetailsPage = ({ meal }: MealDetailsPageProps) => {
     }));
   };
 
-  const youtubeEmbedUrl = meal.strYoutube ? meal.strYoutube.replace('watch?v=', 'embed/') : null;
+  const youtubeEmbedUrl = meal.youtubeUrl ? meal.youtubeUrl.replace('watch?v=', 'embed/') : null;
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-16">
@@ -58,21 +58,21 @@ export const MealDetailsPage = ({ meal }: MealDetailsPageProps) => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border/60 pb-6">
         <div className="space-y-2">
           <div className="flex items-center gap-2 flex-wrap">
-            {meal.strCategory && (
+            {meal.category && (
               <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary">
                 <Tag className="size-3" />
-                {meal.strCategory}
+                {meal.category}
               </span>
             )}
-            {meal.strArea && (
+            {meal.cuisine && (
               <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-secondary text-secondary-foreground">
                 <Globe className="size-3" />
-                {meal.strArea}
+                {meal.cuisine}
               </span>
             )}
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
-            {meal.strMeal}
+            {meal.title}
           </h1>
         </div>
 
@@ -86,8 +86,8 @@ export const MealDetailsPage = ({ meal }: MealDetailsPageProps) => {
         {/* Картинка блюда с Next.js Image */}
         <div className="relative w-full aspect-square rounded-3xl overflow-hidden border border-border shadow-sm bg-muted">
           <Image
-            src={meal.strMealThumb}
-            alt={meal.strMeal}
+            src={meal.image}
+            alt={meal.title}
             fill
             priority
             sizes="(max-width: 768px) 100vw, 50vw"
@@ -199,7 +199,7 @@ export const MealDetailsPage = ({ meal }: MealDetailsPageProps) => {
           <div className="relative aspect-video w-full rounded-2xl overflow-hidden border border-border">
             <iframe
               src={youtubeEmbedUrl}
-              title={`Cooking video for ${meal.strMeal}`}
+              title={`Cooking video for ${meal.title}`}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               className="absolute inset-0 size-full border-0"

@@ -20,7 +20,7 @@ export const FavoriteButton = ({
   className,
 }: FavoriteButtonProps) => {
   const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
-  const liked = useFavoritesStore((state) => state.isFavorite(meal.idMeal));
+  const liked = useFavoritesStore((state) => state.isFavorite(meal.id));
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     if (stopProp) {

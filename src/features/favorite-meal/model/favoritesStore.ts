@@ -12,7 +12,7 @@ interface FavoritesState {
   error: string | null;
   loadFavorites: () => Promise<void>;
   toggleFavorite: (meal: Meal) => Promise<void>;
-  isFavorite: (idMeal: string) => boolean;
+  isFavorite: (id: string) => boolean;
   setHasHydrated: (state: boolean) => void;
 }
 
@@ -28,7 +28,29 @@ export const useFavoritesStore = create<FavoritesState>()(
         set({ isLoading: true, error: null });
         try {
           const dbFavorites = await favoritesApi.getFavorites();
-          set({ favorites: dbFavorites, isLoading: false, hasHydrated: true });
+          if (dbFavorites !== null) {
+            // User is signed in: merge any local guest favorites to database
+            const currentFavorites = get().favorites;
+            const unsyncedFavorites = currentFavorites.filter(
+              (local) => !dbFavorites.some((db) => db.id === local.id),
+            );
+
+            if (unsyncedFavorites.length > 0) {
+              await Promise.allSettled(
+                unsyncedFavorites.map((meal) => favoritesApi.addFavorite(meal)),
+              );
+              set({
+                favorites: [...unsyncedFavorites, ...dbFavorites],
+                isLoading: false,
+                hasHydrated: true,
+              });
+            } else {
+              set({ favorites: dbFavorites, isLoading: false, hasHydrated: true });
+            }
+          } else {
+            // Guest mode: keep local storage favorites
+            set({ isLoading: false, hasHydrated: true });
+          }
         } catch (err) {
           const message = err instanceof Error ? err.message : 'Failed to load favorites';
           set({ error: message, isLoading: false, hasHydrated: true });
@@ -37,11 +59,11 @@ export const useFavoritesStore = create<FavoritesState>()(
 
       toggleFavorite: async (meal: Meal) => {
         const previousFavorites = get().favorites;
-        const exists = previousFavorites.some((item) => item.idMeal === meal.idMeal);
+        const exists = previousFavorites.some((item) => item.id === meal.id);
 
         // Optimistic UI update: sync immediately in memory
         if (exists) {
-          set({ favorites: previousFavorites.filter((item) => item.idMeal !== meal.idMeal) });
+          set({ favorites: previousFavorites.filter((item) => item.id !== meal.id) });
         } else {
           set({ favorites: [meal, ...previousFavorites] });
         }
@@ -49,7 +71,7 @@ export const useFavoritesStore = create<FavoritesState>()(
         // Background sync with Supabase PostgreSQL
         try {
           if (exists) {
-            await favoritesApi.removeFavorite(meal.idMeal);
+            await favoritesApi.removeFavorite(meal.id);
           } else {
             await favoritesApi.addFavorite(meal);
           }
@@ -63,8 +85,8 @@ export const useFavoritesStore = create<FavoritesState>()(
         }
       },
 
-      isFavorite: (idMeal: string) => {
-        return get().favorites.some((item) => item.idMeal === idMeal);
+      isFavorite: (id: string) => {
+        return get().favorites.some((item) => item.id === id);
       },
 
       setHasHydrated: (state: boolean) => {

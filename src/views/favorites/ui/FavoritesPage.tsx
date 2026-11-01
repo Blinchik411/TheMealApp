@@ -17,15 +17,15 @@ export const FavoritesPage = () => {
   const categories = useMemo(() => {
     const set = new Set<string>();
     for (const meal of favorites) {
-      if (meal.strCategory) set.add(meal.strCategory);
+      if (meal.category) set.add(meal.category);
     }
     return Array.from(set);
   }, [favorites]);
 
   const filteredFavorites = useMemo(() => {
     return favorites.filter((meal) => {
-      const matchesSearch = meal.strMeal.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = !activeCategory || meal.strCategory === activeCategory;
+      const matchesSearch = meal.title.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = !activeCategory || meal.category === activeCategory;
       return matchesSearch && matchesCategory;
     });
   }, [favorites, searchQuery, activeCategory]);

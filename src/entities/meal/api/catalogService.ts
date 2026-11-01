@@ -12,7 +12,7 @@ export interface CatalogResult {
 }
 
 /**
- * Пересечение списков блюд по idMeal: O(K * N), где K — кол-во фильтров, N — размер наименьшего списка
+ * Пересечение списков блюд по id: O(K * N), где K — кол-во фильтров, N — размер наименьшего списка
  */
 function intersectMealLists(lists: Meal[][]): Meal[] {
   if (lists.length === 0) return [];
@@ -21,9 +21,9 @@ function intersectMealLists(lists: Meal[][]): Meal[] {
   // Сортируем списки по возрастанию длины для минимизации проверок
   const sortedLists = [...lists].sort((a, b) => a.length - b.length);
   const smallestList = sortedLists[0] ?? [];
-  const otherListsSets = sortedLists.slice(1).map((list) => new Set(list.map((m) => m.idMeal)));
+  const otherListsSets = sortedLists.slice(1).map((list) => new Set(list.map((m) => m.id)));
 
-  return smallestList.filter((meal) => otherListsSets.every((idSet) => idSet.has(meal.idMeal)));
+  return smallestList.filter((meal) => otherListsSets.every((idSet) => idSet.has(meal.id)));
 }
 
 /**
@@ -33,7 +33,6 @@ export async function getFilteredCatalog(filters: CatalogFilterParams): Promise<
   const { search, category, area } = filters;
 
   // 1. Отказоустойчивая параллельная загрузка метаданных (Promise.allSettled)
-  // Падение справочников не должно ломать рендер каталога рецептов
   const [categoriesResult, areasResult] = await Promise.allSettled([
     mealApi.getCategories(),
     mealApi.getAreas(),
@@ -60,14 +59,11 @@ export async function getFilteredCatalog(filters: CatalogFilterParams): Promise<
     let meals: Meal[] = [];
 
     if (activeQueries.length === 0) {
-      // Критерии не заданы — отдаем базовый каталог
       meals = await mealApi.searchByLetter(DEFAULT_INITIAL_LETTER);
     } else if (activeQueries.length === 1) {
-      // Ровно 1 критерий — прямой ответ без оверхеда на пересечение
       const [singleQuery] = activeQueries;
       meals = singleQuery ? await singleQuery : [];
     } else {
-      // 2 или 3 критерия — параллельный опрос и математическое пересечение по ID
       const queryResults = await Promise.all(activeQueries);
       meals = intersectMealLists(queryResults);
     }

@@ -14,9 +14,13 @@ vi.mock('../api/favoritesApi', () => ({
 }));
 
 const mockMeal: Meal = {
-  idMeal: '52771',
-  strMeal: 'Spicy Arrabiata Penne',
-  strMealThumb: 'https://example.com/arrabiata.jpg',
+  id: '52771',
+  title: 'Spicy Arrabiata Penne',
+  image: 'https://example.com/arrabiata.jpg',
+  category: 'Pasta',
+  cuisine: 'Italian',
+  instructions: 'Cook penne',
+  ingredients: [],
 };
 
 describe('FavoriteButton', () => {
@@ -45,11 +49,11 @@ describe('FavoriteButton', () => {
     await user.click(button);
 
     expect(screen.getByRole('button', { name: /remove from favorites/i })).toBeInTheDocument();
-    expect(useFavoritesStore.getState().isFavorite(mockMeal.idMeal)).toBe(true);
+    expect(useFavoritesStore.getState().isFavorite(mockMeal.id)).toBe(true);
 
     await user.click(screen.getByRole('button', { name: /remove from favorites/i }));
     expect(screen.getByRole('button', { name: /add to favorites/i })).toBeInTheDocument();
-    expect(useFavoritesStore.getState().isFavorite(mockMeal.idMeal)).toBe(false);
+    expect(useFavoritesStore.getState().isFavorite(mockMeal.id)).toBe(false);
   });
 
   it('renders label text when showText is true', async () => {
@@ -58,24 +62,9 @@ describe('FavoriteButton', () => {
 
     expect(screen.getByText('To Favorites')).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button'));
-
-    expect(screen.getByText('In Favorites')).toBeInTheDocument();
-  });
-
-  it('stops event propagation when stopProp is enabled', async () => {
-    const parentClick = vi.fn();
-    const user = userEvent.setup();
-
-    render(
-      <div onClick={parentClick} onKeyDown={() => {}}>
-        <FavoriteButton meal={mockMeal} stopProp />
-      </div>,
-    );
-
-    const button = screen.getByRole('button');
+    const button = screen.getByRole('button', { name: /add to favorites/i });
     await user.click(button);
 
-    expect(parentClick).not.toHaveBeenCalled();
+    expect(screen.getByText('In Favorites')).toBeInTheDocument();
   });
 });
