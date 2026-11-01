@@ -8,8 +8,6 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export const Header = () => {
-  const favoritesCount = useFavoritesStore((state) => state.favorites.length);
-  const hasHydrated = useFavoritesStore((state) => state.hasHydrated);
   const loadFavorites = useFavoritesStore((state) => state.loadFavorites);
 
   const user = useUserStore((state) => state.user);
@@ -41,17 +39,10 @@ export const Header = () => {
           <nav className="flex items-center gap-3">
             <Link
               href="/favorites"
-              className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+              className="group flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
             >
               <span className="hidden sm:inline">Favorites</span>
-              <div className="relative inline-flex items-center justify-center">
-                <Heart className="size-4.5 text-red-500 fill-red-500/20" />
-                {hasHydrated && favoritesCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2.5 inline-flex items-center justify-center min-w-[18px] h-4.5 px-1 text-[10px] font-bold leading-none rounded-full bg-red-500 text-white ring-2 ring-background animate-in zoom-in-50 duration-200 pointer-events-none">
-                    {favoritesCount > 99 ? '99+' : favoritesCount}
-                  </span>
-                )}
-              </div>
+              <Heart className="size-4.5 text-red-500 fill-none group-hover:fill-red-500 group-hover:scale-110 transition-all duration-200" />
             </Link>
 
             <div className="h-4 w-px bg-border mx-1" />
