@@ -77,4 +77,13 @@ describe('FavoriteButton', () => {
 
     expect(screen.getByText('In Favorites')).toBeInTheDocument();
   });
+
+  it('renders medium variant with size="md"', () => {
+    render(<FavoriteButton meal={mockMeal} showText size="md" />);
+
+    const button = screen.getByRole('button', { name: /add to favorites/i });
+    expect(button).toBeInTheDocument();
+    expect(button.className).toContain('rounded-full');
+    expect(screen.getByText('To Favorites')).toBeInTheDocument();
+  });
 });

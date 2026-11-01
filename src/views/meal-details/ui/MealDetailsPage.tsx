@@ -88,7 +88,7 @@ export const MealDetailsPage = ({ meal, relatedMeals }: MealDetailsPageProps) =>
         </div>
 
         <div className="shrink-0">
-          <FavoriteButton meal={meal} showText={true} />
+          <FavoriteButton meal={meal} showText={true} size="md" />
         </div>
       </div>
 
