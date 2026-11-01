@@ -1,8 +1,15 @@
 'use client';
 
 import { authApi } from '@/entities/user';
+import { cn } from '@/shared/lib';
 import { Lock, Mail, X } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
+import { z } from 'zod';
+
+const authSchema = z.object({
+  email: z.string().trim().min(1, 'Email is required').email('Please enter a valid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters long'),
+});
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -15,6 +22,7 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
@@ -22,13 +30,25 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
+    setFieldErrors({});
+
+    const validationResult = authSchema.safeParse({ email, password });
+    if (!validationResult.success) {
+      const issues = validationResult.error.format();
+      setFieldErrors({
+        email: issues.email?._errors[0],
+        password: issues.password?._errors[0],
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       if (isSignUp) {
-        await authApi.signUp(email, password);
+        await authApi.signUp(email.trim(), password);
       } else {
-        await authApi.signIn(email, password);
+        await authApi.signIn(email.trim(), password);
       }
       onSuccess?.();
       onClose();
@@ -66,7 +86,7 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} noValidate className="space-y-4">
           <div>
             <label
               htmlFor="auth-email"
@@ -79,13 +99,25 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
               <input
                 id="auth-email"
                 type="email"
-                required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (fieldErrors.email) {
+                    setFieldErrors((prev) => ({ ...prev, email: undefined }));
+                  }
+                }}
                 placeholder="name@example.com"
-                className="w-full rounded-xl border border-border bg-muted/40 pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                className={cn(
+                  'w-full rounded-xl border bg-muted/40 pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all',
+                  fieldErrors.email
+                    ? 'border-red-500/60 focus:ring-red-500/20 focus:border-red-500'
+                    : 'border-border focus:ring-primary/20 focus:border-primary',
+                )}
               />
             </div>
+            {fieldErrors.email && (
+              <p className="text-xs text-red-500 mt-1.5">{fieldErrors.email}</p>
+            )}
           </div>
 
           <div>
@@ -100,14 +132,25 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
               <input
                 id="auth-password"
                 type="password"
-                required
-                minLength={6}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (fieldErrors.password) {
+                    setFieldErrors((prev) => ({ ...prev, password: undefined }));
+                  }
+                }}
                 placeholder="••••••••"
-                className="w-full rounded-xl border border-border bg-muted/40 pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                className={cn(
+                  'w-full rounded-xl border bg-muted/40 pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all',
+                  fieldErrors.password
+                    ? 'border-red-500/60 focus:ring-red-500/20 focus:border-red-500'
+                    : 'border-border focus:ring-primary/20 focus:border-primary',
+                )}
               />
             </div>
+            {fieldErrors.password && (
+              <p className="text-xs text-red-500 mt-1.5">{fieldErrors.password}</p>
+            )}
           </div>
 
           <button
@@ -126,6 +169,7 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
             onClick={() => {
               setIsSignUp(!isSignUp);
               setErrorMsg(null);
+              setFieldErrors({});
             }}
             className="text-primary font-semibold hover:underline cursor-pointer"
           >
