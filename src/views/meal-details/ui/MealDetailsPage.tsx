@@ -8,7 +8,10 @@ import {
   ArrowRight,
   Check,
   CheckCircle2,
+  ClipboardList,
   Globe,
+  Printer,
+  Share2,
   Tag,
   Utensils,
   Video,
@@ -36,6 +39,14 @@ export const MealDetailsPage = ({ meal, relatedMeals }: MealDetailsPageProps) =>
   const [checkedIngredients, setCheckedIngredients] = useState<Record<string, boolean>>({});
   const [checkedSteps, setCheckedSteps] = useState<Record<number, boolean>>({});
 
+  // Quick action feedback states
+  const [isIngredientsCopied, setIsIngredientsCopied] = useState(false);
+  const [isLinkCopied, setIsLinkCopied] = useState(false);
+
+  const checkedIngredientsCount = Object.values(checkedIngredients).filter(Boolean).length;
+  const ingredientsProgress =
+    ingredients.length > 0 ? Math.round((checkedIngredientsCount / ingredients.length) * 100) : 0;
+
   const toggleIngredient = (id: string) => {
     setCheckedIngredients((prev) => ({
       ...prev,
@@ -50,12 +61,60 @@ export const MealDetailsPage = ({ meal, relatedMeals }: MealDetailsPageProps) =>
     }));
   };
 
+  const handleCopyIngredients = async () => {
+    const lines = [
+      `🛒 Ingredients for "${meal.title}":`,
+      ...ingredients.map((item) => `• ${item.name}: ${item.measure?.trim() || 'To taste'}`),
+    ];
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(lines.join('\n'));
+        setIsIngredientsCopied(true);
+        setTimeout(() => setIsIngredientsCopied(false), 2000);
+      }
+    } catch (err) {
+      console.error('Failed to copy ingredients', err);
+    }
+  };
+
+  const handleShare = async () => {
+    const url = typeof window !== 'undefined' ? window.location.href : '';
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: meal.title,
+          text: `Check out this recipe for ${meal.title} on TheMealApp!`,
+          url,
+        });
+        return;
+      } catch (err) {
+        if ((err as Error)?.name === 'AbortError') return;
+      }
+    }
+
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+        setIsLinkCopied(true);
+        setTimeout(() => setIsLinkCopied(false), 2000);
+      }
+    } catch (err) {
+      console.error('Failed to copy link', err);
+    }
+  };
+
+  const handlePrint = () => {
+    if (typeof window !== 'undefined' && typeof window.print === 'function') {
+      window.print();
+    }
+  };
+
   const youtubeEmbedUrl = getYouTubeEmbedUrl(meal.youtubeUrl);
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-16">
       {/* Кнопка "Назад" */}
-      <div>
+      <div className="print:hidden">
         <Link
           href={backTo}
           className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors group"
@@ -87,23 +146,104 @@ export const MealDetailsPage = ({ meal, relatedMeals }: MealDetailsPageProps) =>
           </h1>
         </div>
 
-        <div className="shrink-0">
+        <div className="shrink-0 print:hidden">
           <FavoriteButton meal={meal} showText={true} size="md" />
         </div>
       </div>
 
-      {/* Основной блок: фото и ингредиенты */}
+      {/* Основной блок: фото, быстрые действия и ингредиенты */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-        {/* Картинка блюда с Next.js Image */}
-        <div className="relative w-full aspect-square rounded-3xl overflow-hidden border border-border shadow-sm bg-muted">
-          <Image
-            src={meal.image}
-            alt={meal.title}
-            fill
-            priority
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-cover"
-          />
+        {/* Левая колонка: Картинка и блок быстрых действий */}
+        <div className="space-y-4 md:sticky md:top-24">
+          <div className="relative w-full aspect-[4/3] md:aspect-square max-h-[300px] sm:max-h-[360px] md:max-h-none rounded-2xl sm:rounded-3xl overflow-hidden border border-border shadow-sm bg-muted">
+            <Image
+              src={meal.image}
+              alt={meal.title}
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+            />
+          </div>
+
+          {/* Quick Actions Card */}
+          <div className="bg-card border border-border rounded-3xl p-5 shadow-xs space-y-3.5 print:hidden">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Quick Actions
+              </span>
+              <span className="text-xs text-muted-foreground font-medium">
+                {ingredients.length} items
+              </span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={handleCopyIngredients}
+                className="flex flex-col sm:flex-row items-center justify-center gap-1.5 p-2.5 rounded-xl border border-border bg-background hover:bg-muted/60 text-xs font-medium text-foreground transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-[0.98]"
+                title="Copy shopping list to clipboard"
+              >
+                {isIngredientsCopied ? (
+                  <>
+                    <Check className="size-4 text-emerald-500 stroke-[2.5]" />
+                    <span className="text-emerald-600 font-semibold truncate">Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <ClipboardList className="size-4 text-primary shrink-0" />
+                    <span className="truncate">Copy list</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleShare}
+                className="flex flex-col sm:flex-row items-center justify-center gap-1.5 p-2.5 rounded-xl border border-border bg-background hover:bg-muted/60 text-xs font-medium text-foreground transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-[0.98]"
+                title="Share this recipe"
+              >
+                {isLinkCopied ? (
+                  <>
+                    <Check className="size-4 text-emerald-500 stroke-[2.5]" />
+                    <span className="text-emerald-600 font-semibold truncate">Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Share2 className="size-4 text-primary shrink-0" />
+                    <span className="truncate">Share</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={handlePrint}
+                className="flex flex-col sm:flex-row items-center justify-center gap-1.5 p-2.5 rounded-xl border border-border bg-background hover:bg-muted/60 text-xs font-medium text-foreground transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-[0.98]"
+                title="Print recipe"
+              >
+                <Printer className="size-4 text-primary shrink-0" />
+                <span className="truncate">Print</span>
+              </button>
+            </div>
+
+            {ingredients.length > 0 && (
+              <div className="space-y-1.5 pt-1 border-t border-border/50">
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>Prepared items</span>
+                  <span className="font-semibold text-foreground">
+                    {checkedIngredientsCount} of {ingredients.length} ({ingredientsProgress}%)
+                  </span>
+                </div>
+                <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-primary transition-all duration-300 rounded-full"
+                    style={{ width: `${ingredientsProgress}%` }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Список ингредиентов */}
@@ -200,7 +340,7 @@ export const MealDetailsPage = ({ meal, relatedMeals }: MealDetailsPageProps) =>
 
       {/* Видео рецепта с YouTube (если есть) */}
       {youtubeEmbedUrl && (
-        <div className="bg-card border border-border rounded-3xl p-6 sm:p-8 shadow-xs space-y-4">
+        <div className="bg-card border border-border rounded-3xl p-6 sm:p-8 shadow-xs space-y-4 print:hidden">
           <div className="flex items-center gap-2 text-xl font-bold tracking-tight text-foreground">
             <Video className="size-6 text-red-500" />
             <span>Cooking Video</span>
@@ -220,7 +360,7 @@ export const MealDetailsPage = ({ meal, relatedMeals }: MealDetailsPageProps) =>
 
       {/* Похожие рецепты (Related Recipes) */}
       {relatedMeals && relatedMeals.length > 0 && (
-        <section className="pt-8 border-t border-border/60 space-y-6">
+        <section className="pt-8 border-t border-border/60 space-y-6 print:hidden">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
             <div>
               <div className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary mb-1.5">

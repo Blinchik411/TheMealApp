@@ -62,14 +62,48 @@ describe('MealDetailsPage', () => {
     expect(screen.queryByText('More in Chicken')).not.toBeInTheDocument();
   });
 
-  it('allows checking off ingredients', async () => {
+  it('allows checking off ingredients and updates preparation progress', async () => {
     const user = userEvent.setup();
     render(<MealDetailsPage meal={mockMeal} />);
+
+    expect(screen.getByText('0 of 2 (0%)')).toBeInTheDocument();
 
     const ingredientBtn = screen.getByRole('button', { name: /soy sauce/i });
     expect(ingredientBtn).not.toHaveClass('line-through');
 
     await user.click(ingredientBtn);
     expect(ingredientBtn).toHaveClass('line-through');
+    expect(screen.getByText('1 of 2 (50%)')).toBeInTheDocument();
+  });
+
+  it('renders quick action buttons: copy list, share, and print', async () => {
+    const user = userEvent.setup();
+    const writeTextMock = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText: writeTextMock },
+      configurable: true,
+      writable: true,
+    });
+
+    const printMock = vi.fn();
+    window.print = printMock;
+
+    render(<MealDetailsPage meal={mockMeal} />);
+
+    const copyBtn = screen.getByRole('button', { name: /copy list/i });
+    const shareBtn = screen.getByRole('button', { name: /share/i });
+    const printBtn = screen.getByRole('button', { name: /print/i });
+
+    expect(copyBtn).toBeInTheDocument();
+    expect(shareBtn).toBeInTheDocument();
+    expect(printBtn).toBeInTheDocument();
+
+    await user.click(copyBtn);
+    expect(writeTextMock).toHaveBeenCalledWith(
+      expect.stringContaining('🛒 Ingredients for "Teriyaki Chicken Casserole":'),
+    );
+
+    await user.click(printBtn);
+    expect(printMock).toHaveBeenCalled();
   });
 });

@@ -27,7 +27,7 @@ export const Header = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-md transition-colors">
+      <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-md transition-colors print:hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link
             href="/"
