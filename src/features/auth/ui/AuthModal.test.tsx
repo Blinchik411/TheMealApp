@@ -59,4 +59,31 @@ describe('AuthModal', () => {
     expect(handleSuccess).toHaveBeenCalled();
     expect(handleClose).toHaveBeenCalled();
   });
+
+  it('closes on Escape key press', async () => {
+    const user = userEvent.setup();
+    const handleClose = vi.fn();
+    render(<AuthModal isOpen={true} onClose={handleClose} />);
+
+    await user.keyboard('{Escape}');
+    expect(handleClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('closes on backdrop click', async () => {
+    const user = userEvent.setup();
+    const handleClose = vi.fn();
+    render(<AuthModal isOpen={true} onClose={handleClose} />);
+
+    const backdrop = screen.getByTestId('auth-modal-backdrop');
+    await user.click(backdrop);
+    expect(handleClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('has accessible dialog role and aria attributes', () => {
+    render(<AuthModal isOpen={true} onClose={vi.fn()} />);
+
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toHaveAttribute('aria-modal', 'true');
+    expect(dialog).toHaveAttribute('aria-labelledby', 'auth-modal-title');
+  });
 });

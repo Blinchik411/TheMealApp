@@ -1,9 +1,9 @@
 'use client';
 
 import { authApi } from '@/entities/user';
-import { cn } from '@/shared/lib';
+import { cn, useFocusTrap } from '@/shared/lib';
 import { Lock, Mail, X } from 'lucide-react';
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useRef, useState } from 'react';
 import { z } from 'zod';
 
 const authSchema = z.object({
@@ -24,6 +24,13 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const modalRef = useFocusTrap<HTMLDialogElement>({
+    isActive: isOpen,
+    onClose,
+    initialFocusRef: emailInputRef,
+  });
 
   if (!isOpen) return null;
 
@@ -60,8 +67,22 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in-0 duration-200">
-      <div className="relative w-full max-w-md rounded-2xl border border-border bg-background p-6 shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in-0 duration-200">
+      <button
+        type="button"
+        tabIndex={-1}
+        data-testid="auth-modal-backdrop"
+        onClick={onClose}
+        aria-label="Close modal overlay"
+        className="fixed inset-0 bg-black/60 backdrop-blur-xs cursor-default border-none outline-none"
+      />
+      <dialog
+        open
+        ref={modalRef}
+        aria-modal="true"
+        aria-labelledby="auth-modal-title"
+        className="relative w-full max-w-md rounded-2xl border border-border bg-background p-6 shadow-xl z-10 m-0"
+      >
         <button
           type="button"
           onClick={onClose}
@@ -71,7 +92,7 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
           <X className="size-5" />
         </button>
 
-        <h2 className="text-xl font-bold tracking-tight text-foreground mb-1">
+        <h2 id="auth-modal-title" className="text-xl font-bold tracking-tight text-foreground mb-1">
           {isSignUp ? 'Create an account' : 'Welcome back'}
         </h2>
         <p className="text-sm text-muted-foreground mb-5">
@@ -97,6 +118,7 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
             <div className="relative">
               <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
               <input
+                ref={emailInputRef}
                 id="auth-email"
                 type="email"
                 value={email}
@@ -176,7 +198,7 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
             {isSignUp ? 'Sign In' : 'Sign Up'}
           </button>
         </div>
-      </div>
+      </dialog>
     </div>
   );
 };
