@@ -43,13 +43,15 @@ export const Header = () => {
               href="/favorites"
               className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
             >
-              <Heart className="size-4.5 text-red-500 fill-red-500/20" />
+              <div className="relative inline-flex items-center justify-center">
+                <Heart className="size-4.5 text-red-500 fill-red-500/20" />
+                {hasHydrated && favoritesCount > 0 && (
+                  <span className="absolute -top-1.5 -right-2.5 inline-flex items-center justify-center min-w-[18px] h-4.5 px-1 text-[10px] font-bold leading-none rounded-full bg-red-500 text-white ring-2 ring-background animate-in zoom-in-50 duration-200 pointer-events-none">
+                    {favoritesCount > 99 ? '99+' : favoritesCount}
+                  </span>
+                )}
+              </div>
               <span className="hidden sm:inline">Favorites</span>
-              {hasHydrated && favoritesCount > 0 && (
-                <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold rounded-full bg-red-500 text-white animate-in zoom-in-50 duration-200">
-                  {favoritesCount}
-                </span>
-              )}
             </Link>
 
             <div className="h-4 w-px bg-border mx-1" />
