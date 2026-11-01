@@ -67,21 +67,21 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in-0 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <button
         type="button"
         tabIndex={-1}
         data-testid="auth-modal-backdrop"
         onClick={onClose}
         aria-label="Close modal overlay"
-        className="fixed inset-0 bg-black/60 backdrop-blur-xs cursor-default border-none outline-none"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm cursor-default border-none outline-none"
       />
       <dialog
         open
         ref={modalRef}
         aria-modal="true"
         aria-labelledby="auth-modal-title"
-        className="relative w-full max-w-md rounded-2xl border border-border bg-background p-6 shadow-xl z-10 m-0"
+        className="relative w-full max-w-md rounded-2xl border border-border bg-background p-6 shadow-xl z-10 m-0 animate-in fade-in-0 zoom-in-95 duration-150"
       >
         <button
           type="button"
