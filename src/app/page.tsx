@@ -2,7 +2,7 @@ import { catalogFilterSchema, getFilteredCatalog } from '@/entities/meal';
 import { getPaginatedData } from '@/shared/lib';
 import { HomePage } from '@/views/home';
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 12;
 
 interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;

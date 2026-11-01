@@ -13,6 +13,10 @@ const SKELETON_KEYS = [
   'meal-skeleton-6',
   'meal-skeleton-7',
   'meal-skeleton-8',
+  'meal-skeleton-9',
+  'meal-skeleton-10',
+  'meal-skeleton-11',
+  'meal-skeleton-12',
 ] as const;
 
 interface MealGridProps {
