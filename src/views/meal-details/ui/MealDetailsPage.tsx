@@ -2,6 +2,7 @@
 
 import { type Meal, parseInstructions } from '@/entities/meal';
 import { FavoriteButton } from '@/features/favorite-meal';
+import { getYouTubeEmbedUrl } from '@/shared/lib';
 import { ArrowLeft, Check, CheckCircle2, Globe, Tag, Video } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -39,7 +40,7 @@ export const MealDetailsPage = ({ meal }: MealDetailsPageProps) => {
     }));
   };
 
-  const youtubeEmbedUrl = meal.youtubeUrl ? meal.youtubeUrl.replace('watch?v=', 'embed/') : null;
+  const youtubeEmbedUrl = getYouTubeEmbedUrl(meal.youtubeUrl);
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-16">
