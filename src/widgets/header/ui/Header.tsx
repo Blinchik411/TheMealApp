@@ -43,6 +43,7 @@ export const Header = () => {
               href="/favorites"
               className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
             >
+              <span className="hidden sm:inline">Favorites</span>
               <div className="relative inline-flex items-center justify-center">
                 <Heart className="size-4.5 text-red-500 fill-red-500/20" />
                 {hasHydrated && favoritesCount > 0 && (
@@ -51,7 +52,6 @@ export const Header = () => {
                   </span>
                 )}
               </div>
-              <span className="hidden sm:inline">Favorites</span>
             </Link>
 
             <div className="h-4 w-px bg-border mx-1" />
