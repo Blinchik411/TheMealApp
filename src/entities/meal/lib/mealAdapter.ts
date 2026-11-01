@@ -1,7 +1,12 @@
 import type { TheMealDbRawMeal } from '../model/schema';
 import type { IngredientItem, Meal } from '../model/types';
 
-export function mapTheMealDbToMeal(raw: TheMealDbRawMeal): Meal {
+export interface MealAdapterOptions {
+  fallbackCategory?: string;
+  fallbackCuisine?: string;
+}
+
+export function mapTheMealDbToMeal(raw: TheMealDbRawMeal, options?: MealAdapterOptions): Meal {
   const ingredients: IngredientItem[] = [];
   const rawRecord = raw as Record<string, unknown>;
 
@@ -22,8 +27,8 @@ export function mapTheMealDbToMeal(raw: TheMealDbRawMeal): Meal {
     id: raw.idMeal,
     title: raw.strMeal,
     image: raw.strMealThumb ?? '',
-    category: raw.strCategory ?? 'General',
-    cuisine: raw.strArea ?? 'International',
+    category: raw.strCategory?.trim() || options?.fallbackCategory || 'General',
+    cuisine: raw.strArea?.trim() || options?.fallbackCuisine || 'International',
     instructions: raw.strInstructions ?? '',
     tags: raw.strTags
       ? raw.strTags

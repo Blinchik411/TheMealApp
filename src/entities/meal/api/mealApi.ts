@@ -1,4 +1,5 @@
 import { API_ENDPOINTS } from '@/shared/api';
+import type { z } from 'zod';
 import { mapTheMealDbToMeal } from '../lib/mealAdapter';
 import {
   areaResponseSchema,
@@ -7,81 +8,131 @@ import {
 } from '../model/schema';
 import type { Meal } from '../model/types';
 
+const REQUEST_TIMEOUT_MS = 8000;
+const REVALIDATE_RECIPES = 3600;
+const REVALIDATE_META = 86400;
+
+async function fetchTheMealDb<T>(
+  url: string,
+  schema: z.ZodType<T>,
+  revalidate: number,
+  errorMessage: string,
+): Promise<T> {
+  const res = await fetch(url, {
+    next: { revalidate },
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+  });
+
+  if (!res.ok) {
+    throw new Error(`${errorMessage} (HTTP ${res.status})`);
+  }
+
+  let raw: unknown;
+  try {
+    raw = await res.json();
+  } catch {
+    throw new Error(`${errorMessage}: Invalid JSON response`);
+  }
+
+  const parsed = schema.safeParse(raw);
+  if (!parsed.success) {
+    console.error(`[MealApi Validation Error] at ${url}:`, parsed.error.format());
+    throw new Error(`${errorMessage}: API contract mismatch`);
+  }
+
+  return parsed.data;
+}
+
 export const mealApi = {
   async getMealById(id: string): Promise<Meal | null> {
-    const res = await fetch(API_ENDPOINTS.getMealById(id), {
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) throw new Error('Failed to load recipe');
-    const raw: unknown = await res.json();
-    const parsed = theMealDbResponseSchema.parse(raw);
-    const firstMeal = parsed.meals?.[0];
+    const trimmedId = id?.trim();
+    if (!trimmedId) return null;
+
+    const data = await fetchTheMealDb(
+      API_ENDPOINTS.getMealById(trimmedId),
+      theMealDbResponseSchema,
+      REVALIDATE_RECIPES,
+      'Failed to load recipe',
+    );
+    const firstMeal = data.meals?.[0];
     return firstMeal ? mapTheMealDbToMeal(firstMeal) : null;
   },
 
   async searchByName(name: string): Promise<Meal[]> {
-    const res = await fetch(API_ENDPOINTS.searchByName(name), {
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) throw new Error('Failed to search recipes');
-    const raw: unknown = await res.json();
-    const parsed = theMealDbResponseSchema.parse(raw);
-    return (parsed.meals ?? []).map(mapTheMealDbToMeal);
+    const trimmed = name?.trim();
+    if (!trimmed) return [];
+
+    const data = await fetchTheMealDb(
+      API_ENDPOINTS.searchByName(trimmed),
+      theMealDbResponseSchema,
+      REVALIDATE_RECIPES,
+      'Failed to search recipes',
+    );
+    return (data.meals ?? []).map((m) => mapTheMealDbToMeal(m));
   },
 
   async searchByLetter(letter: string): Promise<Meal[]> {
-    const res = await fetch(API_ENDPOINTS.searchByFirstLetter(letter), {
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) throw new Error('Failed to load recipes');
-    const raw: unknown = await res.json();
-    const parsed = theMealDbResponseSchema.parse(raw);
-    return (parsed.meals ?? []).map(mapTheMealDbToMeal);
+    const char = letter?.trim().charAt(0);
+    if (!char) return [];
+
+    const data = await fetchTheMealDb(
+      API_ENDPOINTS.searchByFirstLetter(char),
+      theMealDbResponseSchema,
+      REVALIDATE_RECIPES,
+      'Failed to load recipes by letter',
+    );
+    return (data.meals ?? []).map((m) => mapTheMealDbToMeal(m));
   },
 
   async filterByCategory(category: string): Promise<Meal[]> {
-    const res = await fetch(API_ENDPOINTS.searchByCategory(category), {
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) throw new Error('Failed to filter by category');
-    const raw: unknown = await res.json();
-    const parsed = theMealDbResponseSchema.parse(raw);
-    return (parsed.meals ?? []).map(mapTheMealDbToMeal);
+    const trimmed = category?.trim();
+    if (!trimmed) return [];
+
+    const data = await fetchTheMealDb(
+      API_ENDPOINTS.searchByCategory(trimmed),
+      theMealDbResponseSchema,
+      REVALIDATE_RECIPES,
+      'Failed to filter by category',
+    );
+    return (data.meals ?? []).map((m) => mapTheMealDbToMeal(m, { fallbackCategory: trimmed }));
   },
 
   async filterByArea(area: string): Promise<Meal[]> {
-    const res = await fetch(API_ENDPOINTS.searchByArea(area), {
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) throw new Error('Failed to filter by cuisine');
-    const raw: unknown = await res.json();
-    const parsed = theMealDbResponseSchema.parse(raw);
-    return (parsed.meals ?? []).map(mapTheMealDbToMeal);
+    const trimmed = area?.trim();
+    if (!trimmed) return [];
+
+    const data = await fetchTheMealDb(
+      API_ENDPOINTS.searchByArea(trimmed),
+      theMealDbResponseSchema,
+      REVALIDATE_RECIPES,
+      'Failed to filter by cuisine',
+    );
+    return (data.meals ?? []).map((m) => mapTheMealDbToMeal(m, { fallbackCuisine: trimmed }));
   },
 
   async getCategories(): Promise<string[]> {
-    const res = await fetch(API_ENDPOINTS.getCategoryList(), {
-      next: { revalidate: 86400 },
-    });
-    if (!res.ok) throw new Error('Failed to load categories');
-    const raw: unknown = await res.json();
-    const parsed = categoryResponseSchema.parse(raw);
+    const data = await fetchTheMealDb(
+      API_ENDPOINTS.getCategoryList(),
+      categoryResponseSchema,
+      REVALIDATE_META,
+      'Failed to load categories',
+    );
     const categories =
-      parsed.meals
+      data.meals
         ?.map((item) => item.strCategory)
         .filter((cat): cat is string => typeof cat === 'string' && cat.trim() !== '') ?? [];
     return Array.from(new Set(categories)).sort();
   },
 
   async getAreas(): Promise<string[]> {
-    const res = await fetch(API_ENDPOINTS.getAreaList(), {
-      next: { revalidate: 86400 },
-    });
-    if (!res.ok) throw new Error('Failed to load cuisines');
-    const raw: unknown = await res.json();
-    const parsed = areaResponseSchema.parse(raw);
+    const data = await fetchTheMealDb(
+      API_ENDPOINTS.getAreaList(),
+      areaResponseSchema,
+      REVALIDATE_META,
+      'Failed to load cuisines',
+    );
     const areas =
-      parsed.meals
+      data.meals
         ?.map((item) => item.strArea)
         .filter((area): area is string => typeof area === 'string' && area.trim() !== '') ?? [];
     return Array.from(new Set(areas)).sort();

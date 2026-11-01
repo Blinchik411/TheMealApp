@@ -126,11 +126,9 @@ export const MealDetailsPage = ({ meal }: MealDetailsPageProps) => {
                       />
                       <span className="text-sm font-medium text-foreground">{item.name}</span>
                     </div>
-                    {item.measure && (
-                      <span className="text-xs font-semibold text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
-                        {item.measure}
-                      </span>
-                    )}
+                    <span className="text-xs font-semibold text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
+                      {item.measure?.trim() || 'To taste'}
+                    </span>
                   </button>
                 </li>
               );
