@@ -4,24 +4,12 @@ import { type Meal, MealCard } from '@/entities/meal';
 import { FavoriteButton } from '@/features/favorite-meal';
 import { Utensils } from 'lucide-react';
 
-const SKELETON_KEYS = [
-  'meal-skeleton-1',
-  'meal-skeleton-2',
-  'meal-skeleton-3',
-  'meal-skeleton-4',
-  'meal-skeleton-5',
-  'meal-skeleton-6',
-  'meal-skeleton-7',
-  'meal-skeleton-8',
-  'meal-skeleton-9',
-  'meal-skeleton-10',
-  'meal-skeleton-11',
-  'meal-skeleton-12',
-] as const;
+const SKELETON_KEYS = Array.from({ length: 24 }, (_, i) => `meal-skeleton-${i + 1}`);
 
 interface MealGridProps {
   meals: Meal[];
   isLoading?: boolean;
+  skeletonCount?: number;
   from?: string;
   emptyMessage?: string;
 }
@@ -29,13 +17,14 @@ interface MealGridProps {
 export const MealGrid = ({
   meals,
   isLoading = false,
+  skeletonCount = 12,
   from,
   emptyMessage = 'No recipes found',
 }: MealGridProps) => {
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {SKELETON_KEYS.map((key) => (
+        {SKELETON_KEYS.slice(0, skeletonCount).map((key) => (
           <div
             key={key}
             className="flex flex-col h-full bg-card rounded-2xl overflow-hidden border border-border animate-pulse"
