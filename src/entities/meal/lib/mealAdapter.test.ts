@@ -54,15 +54,17 @@ describe('mapTheMealDbToMeal', () => {
     expect(meal.tags).toEqual([]);
   });
 
-  it('использует дефолтные General и International, если нет данных и fallback', () => {
+  it('использует дефолтные General и International, а также заглушку для фото, если нет данных и fallback', () => {
     const rawMinimal: TheMealDbRawMeal = {
       idMeal: '100',
       strMeal: 'Mystery Dish',
+      strMealThumb: '',
     };
 
     const meal = mapTheMealDbToMeal(rawMinimal);
 
     expect(meal.category).toBe('General');
     expect(meal.cuisine).toBe('International');
+    expect(meal.image).toBe('/placeholder-meal.svg');
   });
 });

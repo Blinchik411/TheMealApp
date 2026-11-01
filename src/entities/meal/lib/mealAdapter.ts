@@ -1,6 +1,8 @@
 import type { TheMealDbRawMeal } from '../model/schema';
 import type { IngredientItem, Meal } from '../model/types';
 
+export const DEFAULT_MEAL_IMAGE = '/placeholder-meal.svg';
+
 export interface MealAdapterOptions {
   fallbackCategory?: string;
   fallbackCuisine?: string;
@@ -26,7 +28,7 @@ export function mapTheMealDbToMeal(raw: TheMealDbRawMeal, options?: MealAdapterO
   return {
     id: raw.idMeal,
     title: raw.strMeal,
-    image: raw.strMealThumb ?? '',
+    image: raw.strMealThumb?.trim() ? raw.strMealThumb.trim() : DEFAULT_MEAL_IMAGE,
     category: raw.strCategory?.trim() || options?.fallbackCategory || 'General',
     cuisine: raw.strArea?.trim() || options?.fallbackCuisine || 'International',
     instructions: raw.strInstructions ?? '',

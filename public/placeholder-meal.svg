@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400" fill="none">
+  <rect width="400" height="400" rx="24" fill="#F1F5F9" />
+  <g opacity="0.4">
+    <!-- Plate circle -->
+    <circle cx="200" cy="200" r="100" stroke="#64748B" stroke-width="8" stroke-dasharray="8 8" />
+    <circle cx="200" cy="200" r="70" fill="#E2E8F0" />
+    <!-- Fork -->
+    <path d="M165 160V190C165 198 171 205 178 205V245M172 160V190M178 160V190M184 160V190C184 198 178 205 178 205" stroke="#64748B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+    <!-- Knife -->
+    <path d="M225 160V245M225 160C225 160 235 170 235 195C235 210 225 215 225 215" stroke="#64748B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+</svg>
