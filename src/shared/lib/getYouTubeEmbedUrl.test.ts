@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getYouTubeEmbedUrl } from './youtube';
+import { getYouTubeEmbedUrl } from './getYouTubeEmbedUrl';
 
 describe('getYouTubeEmbedUrl', () => {
   it('correctly parses standard watch?v= URL', () => {
