@@ -28,10 +28,20 @@ describe('FavoriteButton', () => {
     vi.clearAllMocks();
     useFavoritesStore.setState({
       favorites: [],
-      hasHydrated: false,
+      hasHydrated: true,
       isLoading: false,
       error: null,
     });
+  });
+
+  it('renders neutral unliked state during SSR/before hydration', () => {
+    useFavoritesStore.setState({
+      favorites: [mockMeal],
+      hasHydrated: false,
+    });
+    render(<FavoriteButton meal={mockMeal} />);
+
+    expect(screen.getByRole('button', { name: /add to favorites/i })).toBeInTheDocument();
   });
 
   it('renders in initial unliked state with correct aria-label', () => {
