@@ -1,4 +1,4 @@
-import { mealApi } from '@/entities/meal';
+import { type Meal, mealApi } from '@/entities/meal';
 import { MealDetailsPage } from '@/views/meal-details';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -47,13 +47,26 @@ export default async function Page({ params }: PageProps) {
     notFound();
   }
 
+  let relatedMeals: Meal[] = [];
+  try {
+    if (meal.category && meal.category !== 'General') {
+      const categoryMeals = await mealApi.filterByCategory(meal.category);
+      relatedMeals = categoryMeals.filter((m) => m.id !== meal.id).slice(0, 4);
+    } else if (meal.cuisine && meal.cuisine !== 'International') {
+      const areaMeals = await mealApi.filterByArea(meal.cuisine);
+      relatedMeals = areaMeals.filter((m) => m.id !== meal.id).slice(0, 4);
+    }
+  } catch (error) {
+    console.error('Failed to load related recipes:', error);
+  }
+
   return (
     <Suspense
       fallback={
         <div className="py-20 text-center text-sm text-muted-foreground">Loading recipe...</div>
       }
     >
-      <MealDetailsPage meal={meal} />
+      <MealDetailsPage meal={meal} relatedMeals={relatedMeals} />
     </Suspense>
   );
 }

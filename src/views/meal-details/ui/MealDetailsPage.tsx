@@ -1,9 +1,18 @@
 'use client';
 
-import { type Meal, parseInstructions } from '@/entities/meal';
+import { type Meal, MealCard, parseInstructions } from '@/entities/meal';
 import { FavoriteButton } from '@/features/favorite-meal';
 import { getYouTubeEmbedUrl } from '@/shared/lib';
-import { ArrowLeft, Check, CheckCircle2, Globe, Tag, Video } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  CheckCircle2,
+  Globe,
+  Tag,
+  Utensils,
+  Video,
+} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -11,9 +20,10 @@ import { useState } from 'react';
 
 interface MealDetailsPageProps {
   meal: Meal;
+  relatedMeals?: Meal[];
 }
 
-export const MealDetailsPage = ({ meal }: MealDetailsPageProps) => {
+export const MealDetailsPage = ({ meal, relatedMeals }: MealDetailsPageProps) => {
   const searchParams = useSearchParams();
   const backTo = searchParams.get('from') === 'favorites' ? '/favorites' : '/';
   const backLabel =
@@ -206,6 +216,47 @@ export const MealDetailsPage = ({ meal }: MealDetailsPageProps) => {
             />
           </div>
         </div>
+      )}
+
+      {/* Похожие рецепты (Related Recipes) */}
+      {relatedMeals && relatedMeals.length > 0 && (
+        <section className="pt-8 border-t border-border/60 space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+            <div>
+              <div className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary mb-1.5">
+                <Utensils className="size-3" />
+                <span>Related Recipes</span>
+              </div>
+              <h2 className="text-2xl font-bold tracking-tight text-foreground">
+                More in {meal.category}
+              </h2>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                You might also enjoy these popular dishes
+              </p>
+            </div>
+
+            {meal.category && meal.category !== 'General' && (
+              <Link
+                href={`/?category=${encodeURIComponent(meal.category)}`}
+                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-primary hover:underline group"
+              >
+                <span>View all {meal.category}</span>
+                <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
+              </Link>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {relatedMeals.map((relatedMeal) => (
+              <MealCard
+                key={relatedMeal.id}
+                meal={relatedMeal}
+                from="details"
+                actionSlot={<FavoriteButton meal={relatedMeal} />}
+              />
+            ))}
+          </div>
+        </section>
       )}
     </div>
   );
