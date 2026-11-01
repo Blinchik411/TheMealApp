@@ -1,23 +1,21 @@
 'use client';
 
 import { authApi } from '@/entities/user';
-import { useFavoritesStore } from '@/features/favorite-meal';
 import { Lock, Mail, X } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
+export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const loadFavorites = useFavoritesStore((state) => state.loadFavorites);
 
   if (!isOpen) return null;
 
@@ -32,7 +30,7 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       } else {
         await authApi.signIn(email, password);
       }
-      await loadFavorites();
+      onSuccess?.();
       onClose();
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : 'Authentication failed');

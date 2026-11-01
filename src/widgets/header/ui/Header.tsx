@@ -84,7 +84,11 @@ export const Header = () => {
         </div>
       </header>
 
-      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
+      <AuthModal
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        onSuccess={() => void loadFavorites()}
+      />
     </>
   );
 };
