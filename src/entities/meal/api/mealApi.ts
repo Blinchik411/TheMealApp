@@ -137,4 +137,15 @@ export const mealApi = {
         .filter((area): area is string => typeof area === 'string' && area.trim() !== '') ?? [];
     return Array.from(new Set(areas)).sort();
   },
+
+  async getRandomMeal(): Promise<Meal | null> {
+    const data = await fetchTheMealDb(
+      API_ENDPOINTS.getRandomMeal(),
+      theMealDbResponseSchema,
+      0,
+      'Failed to load random recipe',
+    );
+    const firstMeal = data.meals?.[0];
+    return firstMeal ? mapTheMealDbToMeal(firstMeal) : null;
+  },
 };

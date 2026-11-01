@@ -133,4 +133,33 @@ describe('mealApi', () => {
       'Failed to load recipe: Invalid JSON response',
     );
   });
+
+  it('getRandomMeal возвращает случайный рецепт', async () => {
+    const mockJson = {
+      meals: [
+        {
+          idMeal: '52999',
+          strMeal: 'Random Pasta',
+          strMealThumb: 'https://example.com/pasta.jpg',
+          strCategory: 'Pasta',
+          strArea: 'Italian',
+        },
+      ],
+    };
+
+    const fetchSpy = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => mockJson,
+    });
+    vi.stubGlobal('fetch', fetchSpy);
+
+    const result = await mealApi.getRandomMeal();
+    expect(result).not.toBeNull();
+    expect(result?.id).toBe('52999');
+    expect(result?.title).toBe('Random Pasta');
+    expect(fetchSpy).toHaveBeenCalledWith(
+      expect.stringContaining('/random.php'),
+      expect.objectContaining({ next: { revalidate: 0 } }),
+    );
+  });
 });

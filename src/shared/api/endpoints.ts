@@ -10,4 +10,5 @@ export const API_ENDPOINTS = {
   getCategoryList: () => `${BASE_URL}/list.php?c=list`,
   searchByCategory: (category: string) =>
     `${BASE_URL}/filter.php?c=${encodeURIComponent(category.trim())}`,
+  getRandomMeal: () => `${BASE_URL}/random.php`,
 };
