@@ -79,9 +79,6 @@ export const QuickActionsCard = ({ mealTitle, ingredients }: QuickActionsCardPro
         <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           Quick Actions
         </span>
-        <span className="text-xs text-muted-foreground font-medium">
-          {ingredients.length} items
-        </span>
       </div>
 
       <div className="grid grid-cols-3 gap-2">

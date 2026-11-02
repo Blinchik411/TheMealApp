@@ -14,13 +14,13 @@ describe('QuickActionsCard', () => {
     vi.restoreAllMocks();
   });
 
-  it('renders quick action buttons and items count', () => {
+  it('renders quick action buttons', () => {
     render(<QuickActionsCard mealTitle="Test Meal" ingredients={mockIngredients} />);
 
+    expect(screen.getByText('Quick Actions')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /copy list/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /share/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /print/i })).toBeInTheDocument();
-    expect(screen.getByText('2 items')).toBeInTheDocument();
   });
 
   it('copies ingredients to clipboard and shows feedback', async () => {
