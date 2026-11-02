@@ -1,16 +1,24 @@
 import type { IngredientItem } from '@/entities/meal';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, RotateCcw } from 'lucide-react';
 
 export interface MealIngredientsListProps {
   ingredients: IngredientItem[];
   checkedIngredients: Record<string, boolean>;
+  checkedIngredientsCount: number;
+  ingredientsProgress: number;
+  hasProgress: boolean;
   onToggleIngredient: (id: string) => void;
+  onReset: () => void;
 }
 
 export const MealIngredientsList = ({
   ingredients,
   checkedIngredients,
+  checkedIngredientsCount,
+  ingredientsProgress,
+  hasProgress,
   onToggleIngredient,
+  onReset,
 }: MealIngredientsListProps) => {
   return (
     <div className="bg-card border border-border rounded-3xl p-6 shadow-xs space-y-4">
@@ -18,7 +26,19 @@ export const MealIngredientsList = ({
         <h2 className="text-xl font-bold tracking-tight text-foreground">
           Ingredients ({ingredients.length})
         </h2>
-        <span className="text-xs text-muted-foreground">Click to check off</span>
+        {hasProgress ? (
+          <button
+            type="button"
+            onClick={onReset}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-destructive transition-colors cursor-pointer py-0.5 px-1.5 -mr-1.5 rounded-lg hover:bg-destructive/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive/30"
+            title="Reset ingredient checklist and steps"
+          >
+            <RotateCcw className="size-3.5" />
+            <span>Reset progress</span>
+          </button>
+        ) : (
+          <span className="text-xs text-muted-foreground">Click to check off</span>
+        )}
       </div>
 
       <ul className="space-y-2">
@@ -51,6 +71,23 @@ export const MealIngredientsList = ({
           );
         })}
       </ul>
+
+      {ingredients.length > 0 && (
+        <div className="space-y-1.5 pt-3 border-t border-border/50">
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <span>Prepared items</span>
+            <span className="font-semibold text-foreground">
+              {checkedIngredientsCount} of {ingredients.length} ({ingredientsProgress}%)
+            </span>
+          </div>
+          <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+            <div
+              className="h-full bg-primary transition-all duration-300 rounded-full"
+              style={{ width: `${ingredientsProgress}%` }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

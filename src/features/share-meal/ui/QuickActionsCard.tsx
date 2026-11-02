@@ -7,16 +7,9 @@ import { useEffect, useRef, useState } from 'react';
 export interface QuickActionsCardProps {
   mealTitle: string;
   ingredients: IngredientItem[];
-  checkedIngredientsCount: number;
-  ingredientsProgress: number;
 }
 
-export const QuickActionsCard = ({
-  mealTitle,
-  ingredients,
-  checkedIngredientsCount,
-  ingredientsProgress,
-}: QuickActionsCardProps) => {
+export const QuickActionsCard = ({ mealTitle, ingredients }: QuickActionsCardProps) => {
   const [isIngredientsCopied, setIsIngredientsCopied] = useState(false);
   const [isLinkCopied, setIsLinkCopied] = useState(false);
 
@@ -140,23 +133,6 @@ export const QuickActionsCard = ({
           <span className="truncate">Print</span>
         </button>
       </div>
-
-      {ingredients.length > 0 && (
-        <div className="space-y-1.5 pt-1 border-t border-border/50">
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>Prepared items</span>
-            <span className="font-semibold text-foreground">
-              {checkedIngredientsCount} of {ingredients.length} ({ingredientsProgress}%)
-            </span>
-          </div>
-          <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-            <div
-              className="h-full bg-primary transition-all duration-300 rounded-full"
-              style={{ width: `${ingredientsProgress}%` }}
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 };

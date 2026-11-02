@@ -62,10 +62,11 @@ describe('MealDetailsPage', () => {
     expect(screen.queryByText('More in Chicken')).not.toBeInTheDocument();
   });
 
-  it('allows checking off ingredients and updates preparation progress', async () => {
+  it('allows checking off ingredients, updates progress, and resets on click', async () => {
     const user = userEvent.setup();
     render(<MealDetailsPage meal={mockMeal} />);
 
+    expect(screen.getAllByText('Click to check off')).toHaveLength(2);
     expect(screen.getByText('0 of 2 (0%)')).toBeInTheDocument();
 
     const ingredientBtn = screen.getByRole('button', { name: /soy sauce/i });
@@ -74,6 +75,15 @@ describe('MealDetailsPage', () => {
     await user.click(ingredientBtn);
     expect(ingredientBtn).toHaveClass('line-through');
     expect(screen.getByText('1 of 2 (50%)')).toBeInTheDocument();
+    expect(screen.getAllByText('Click to check off')).toHaveLength(1);
+
+    const resetBtn = screen.getByRole('button', { name: /reset progress/i });
+    expect(resetBtn).toBeInTheDocument();
+
+    await user.click(resetBtn);
+    expect(ingredientBtn).not.toHaveClass('line-through');
+    expect(screen.getByText('0 of 2 (0%)')).toBeInTheDocument();
+    expect(screen.getAllByText('Click to check off')).toHaveLength(2);
   });
 
   it('renders quick action buttons: copy list, share, and print', async () => {

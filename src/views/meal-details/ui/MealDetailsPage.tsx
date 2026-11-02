@@ -28,8 +28,10 @@ export const MealDetailsPage = ({ meal, relatedMeals }: MealDetailsPageProps) =>
     checkedSteps,
     checkedIngredientsCount,
     ingredientsProgress,
+    hasProgress,
     toggleIngredient,
     toggleStep,
+    reset,
   } = useMealChecklist({
     mealId: meal.id,
     totalIngredients: ingredients.length,
@@ -81,18 +83,17 @@ export const MealDetailsPage = ({ meal, relatedMeals }: MealDetailsPageProps) =>
               />
             </div>
 
-            <QuickActionsCard
-              mealTitle={meal.title}
-              ingredients={ingredients}
-              checkedIngredientsCount={checkedIngredientsCount}
-              ingredientsProgress={ingredientsProgress}
-            />
+            <QuickActionsCard mealTitle={meal.title} ingredients={ingredients} />
           </div>
 
           <MealIngredientsList
             ingredients={ingredients}
             checkedIngredients={checkedIngredients}
+            checkedIngredientsCount={checkedIngredientsCount}
+            ingredientsProgress={ingredientsProgress}
+            hasProgress={hasProgress}
             onToggleIngredient={toggleIngredient}
+            onReset={reset}
           />
         </div>
 

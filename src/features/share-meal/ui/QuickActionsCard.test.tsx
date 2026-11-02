@@ -14,20 +14,13 @@ describe('QuickActionsCard', () => {
     vi.restoreAllMocks();
   });
 
-  it('renders quick action buttons and progress', () => {
-    render(
-      <QuickActionsCard
-        mealTitle="Test Meal"
-        ingredients={mockIngredients}
-        checkedIngredientsCount={1}
-        ingredientsProgress={50}
-      />,
-    );
+  it('renders quick action buttons and items count', () => {
+    render(<QuickActionsCard mealTitle="Test Meal" ingredients={mockIngredients} />);
 
     expect(screen.getByRole('button', { name: /copy list/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /share/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /print/i })).toBeInTheDocument();
-    expect(screen.getByText('1 of 2 (50%)')).toBeInTheDocument();
+    expect(screen.getByText('2 items')).toBeInTheDocument();
   });
 
   it('copies ingredients to clipboard and shows feedback', async () => {
@@ -39,14 +32,7 @@ describe('QuickActionsCard', () => {
       writable: true,
     });
 
-    render(
-      <QuickActionsCard
-        mealTitle="Test Meal"
-        ingredients={mockIngredients}
-        checkedIngredientsCount={0}
-        ingredientsProgress={0}
-      />,
-    );
+    render(<QuickActionsCard mealTitle="Test Meal" ingredients={mockIngredients} />);
 
     const copyBtn = screen.getByRole('button', { name: /copy list/i });
     await user.click(copyBtn);
@@ -62,14 +48,7 @@ describe('QuickActionsCard', () => {
     const printMock = vi.fn();
     window.print = printMock;
 
-    render(
-      <QuickActionsCard
-        mealTitle="Test Meal"
-        ingredients={mockIngredients}
-        checkedIngredientsCount={0}
-        ingredientsProgress={0}
-      />,
-    );
+    render(<QuickActionsCard mealTitle="Test Meal" ingredients={mockIngredients} />);
 
     const printBtn = screen.getByRole('button', { name: /print/i });
     await user.click(printBtn);
