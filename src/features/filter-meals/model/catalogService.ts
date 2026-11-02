@@ -1,6 +1,5 @@
-import type { CatalogFilterParams } from '../model/catalog.schema';
-import type { Meal } from '../model/types';
-import { mealApi } from './mealApi';
+import { type Meal, mealApi } from '@/entities/meal';
+import type { CatalogFilterParams } from './catalog.schema';
 
 const DEFAULT_INITIAL_LETTER = 'b';
 

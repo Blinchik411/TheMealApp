@@ -11,7 +11,7 @@ export const favoritesApi = {
 
     const { data, error } = await supabase
       .from('favorites')
-      .select('meal_id, meal_title, meal_thumb, created_at')
+      .select('meal_id, meal_title, meal_thumb, category, cuisine, created_at')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 
@@ -24,8 +24,8 @@ export const favoritesApi = {
       id: row.meal_id,
       title: row.meal_title,
       image: row.meal_thumb,
-      category: 'Favorite',
-      cuisine: 'International',
+      category: row.category ?? '',
+      cuisine: row.cuisine ?? '',
       instructions: '',
       ingredients: [],
     }));
@@ -47,6 +47,8 @@ export const favoritesApi = {
         meal_id: meal.id,
         meal_title: meal.title,
         meal_thumb: meal.image,
+        category: meal.category || '',
+        cuisine: meal.cuisine || '',
       },
       { onConflict: 'user_id,meal_id' },
     );

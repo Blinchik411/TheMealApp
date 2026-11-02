@@ -1,7 +1,6 @@
+import { type Meal, mealApi } from '@/entities/meal';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Meal } from '../model/types';
 import { getFilteredCatalog } from './catalogService';
-import { mealApi } from './mealApi';
 
 const mockMeal = (id: string, name: string): Meal => ({
   id,

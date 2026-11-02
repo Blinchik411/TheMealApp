@@ -1,4 +1,4 @@
-import { catalogFilterSchema, getFilteredCatalog } from '@/entities/meal';
+import { catalogFilterSchema, getFilteredCatalog } from '@/features/filter-meals';
 import { getPaginatedData } from '@/shared/lib';
 import { HomePage } from '@/views/home';
 
