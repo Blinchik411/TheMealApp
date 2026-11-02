@@ -6,7 +6,6 @@ import { type FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { formatTimerTime, useCookingTimerStore } from '../model/timerStore';
 
 export const CookingTimerWidget = () => {
-  const totalSeconds = useCookingTimerStore((state) => state.totalSeconds);
   const remainingSeconds = useCookingTimerStore((state) => state.remainingSeconds);
   const isRunning = useCookingTimerStore((state) => state.isRunning);
   const isAlarming = useCookingTimerStore((state) => state.isAlarming);
@@ -51,11 +50,6 @@ export const CookingTimerWidget = () => {
     isActive: isOpen,
     onClose: handleClose,
   });
-
-  const progressPercent =
-    totalSeconds > 0
-      ? Math.min(100, Math.round(((totalSeconds - remainingSeconds) / totalSeconds) * 100))
-      : 0;
 
   const handleStartEditing = () => {
     setIsEditingTime(true);
@@ -246,21 +240,6 @@ export const CookingTimerWidget = () => {
                     Click to set time
                   </span>
                 </button>
-
-                {totalSeconds > 0 && (
-                  <div className="mt-2 space-y-1">
-                    <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-primary transition-all duration-300 rounded-full"
-                        style={{ width: `${progressPercent}%` }}
-                      />
-                    </div>
-                    <div className="flex justify-between text-[11px] text-muted-foreground">
-                      <span>{progressPercent}% elapsed</span>
-                      <span>Total: {formatTimerTime(totalSeconds)}</span>
-                    </div>
-                  </div>
-                )}
               </div>
             )}
 
