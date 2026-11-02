@@ -30,7 +30,10 @@ export const MealDetailsPage = ({ meal, relatedMeals }: MealDetailsPageProps) =>
     ingredientsProgress,
     toggleIngredient,
     toggleStep,
-  } = useMealChecklist({ totalIngredients: ingredients.length });
+  } = useMealChecklist({
+    mealId: meal.id,
+    totalIngredients: ingredients.length,
+  });
 
   return (
     <>
