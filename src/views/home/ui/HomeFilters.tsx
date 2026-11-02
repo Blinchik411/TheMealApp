@@ -37,7 +37,8 @@ export const HomeFilters = ({
       if (!('page' in newParams)) {
         params.delete('page');
       }
-      router.push(`${pathname}?${params.toString()}`, { scroll: false });
+      const queryString = params.toString();
+      router.push(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false });
     },
     [router, pathname, searchParams],
   );
@@ -62,7 +63,15 @@ export const HomeFilters = ({
 
   return (
     <div className="bg-card border border-border rounded-2xl p-4 sm:p-6 shadow-xs space-y-5">
-      <MealSearch value={searchQuery} onSearch={handleSearch} />
+      <MealSearch
+        value={searchQuery}
+        onSearch={handleSearch}
+        action={pathname}
+        hiddenFields={{
+          category: selectedCategory || undefined,
+          area: selectedArea || undefined,
+        }}
+      />
 
       <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 pt-3 border-t border-border/60">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
