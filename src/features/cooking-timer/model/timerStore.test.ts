@@ -39,6 +39,26 @@ describe('timerStore', () => {
     expect(useCookingTimerStore.getState().isAlarming).toBe(true);
   });
 
+  it('sets custom time without starting immediately', () => {
+    const store = useCookingTimerStore.getState();
+    store.setTime(450, 'Custom Boil');
+
+    expect(useCookingTimerStore.getState().isRunning).toBe(false);
+    expect(useCookingTimerStore.getState().totalSeconds).toBe(450);
+    expect(useCookingTimerStore.getState().remainingSeconds).toBe(450);
+    expect(useCookingTimerStore.getState().label).toBe('Custom Boil');
+  });
+
+  it('has empty label initially and after reset', () => {
+    expect(useCookingTimerStore.getState().label).toBe('');
+
+    useCookingTimerStore.getState().startTimer(60, 'Custom');
+    expect(useCookingTimerStore.getState().label).toBe('Custom');
+
+    useCookingTimerStore.getState().resetTimer();
+    expect(useCookingTimerStore.getState().label).toBe('');
+  });
+
   it('pauses and resumes timer', () => {
     const store = useCookingTimerStore.getState();
     store.startTimer(10, 'Simmer');

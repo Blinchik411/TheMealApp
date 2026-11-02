@@ -23,6 +23,8 @@ export function useFocusTrap<T extends HTMLElement = HTMLElement>({
   initialFocusRef,
 }: UseFocusTrapOptions): RefObject<T | null> {
   const containerRef = useRef<T | null>(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   useEffect(() => {
     if (!isActive || typeof document === 'undefined') return;
@@ -38,22 +40,24 @@ export function useFocusTrap<T extends HTMLElement = HTMLElement>({
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
-    // Move initial focus
-    if (initialFocusRef?.current) {
-      initialFocusRef.current.focus();
-    } else {
-      const focusable = container.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS_SELECTOR);
-      if (focusable.length > 0) {
-        focusable[0]?.focus();
+    // Move initial focus only if focus is not already inside container
+    if (!container.contains(document.activeElement)) {
+      if (initialFocusRef?.current) {
+        initialFocusRef.current.focus();
       } else {
-        container.focus();
+        const focusable = container.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS_SELECTOR);
+        if (focusable.length > 0) {
+          focusable[0]?.focus();
+        } else {
+          container.focus();
+        }
       }
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.preventDefault();
-        onClose?.();
+        onCloseRef.current?.();
         return;
       }
 
@@ -104,7 +108,7 @@ export function useFocusTrap<T extends HTMLElement = HTMLElement>({
       document.body.style.overflow = originalOverflow;
       previousActiveElement?.focus?.();
     };
-  }, [isActive, onClose, initialFocusRef]);
+  }, [isActive, initialFocusRef]);
 
   return containerRef;
 }

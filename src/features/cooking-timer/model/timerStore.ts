@@ -12,6 +12,7 @@ export interface CookingTimerState {
   label: string;
 
   startTimer: (seconds: number, label?: string) => void;
+  setTime: (seconds: number, label?: string) => void;
   pauseTimer: () => void;
   resumeTimer: () => void;
   resetTimer: () => void;
@@ -51,7 +52,7 @@ export const useCookingTimerStore = create<CookingTimerState>()((set, get) => ({
   isRunning: false,
   isAlarming: false,
   isOpen: false,
-  label: 'Timer',
+  label: '',
 
   startTimer: (seconds: number, label?: string) => {
     if (seconds <= 0) return;
@@ -80,6 +81,19 @@ export const useCookingTimerStore = create<CookingTimerState>()((set, get) => ({
         set({ remainingSeconds: left });
       }
     }, 500);
+  },
+
+  setTime: (seconds: number, label?: string) => {
+    clearTimerInterval();
+    const safeSeconds = Math.max(0, Math.floor(seconds));
+
+    set({
+      totalSeconds: safeSeconds,
+      remainingSeconds: safeSeconds,
+      isRunning: false,
+      isAlarming: false,
+      label: label || '',
+    });
   },
 
   pauseTimer: () => {
@@ -115,7 +129,7 @@ export const useCookingTimerStore = create<CookingTimerState>()((set, get) => ({
       totalSeconds: 0,
       isRunning: false,
       isAlarming: false,
-      label: 'Timer',
+      label: '',
     });
   },
 

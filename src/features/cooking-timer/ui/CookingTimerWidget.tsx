@@ -2,6 +2,7 @@
 
 import { useFocusTrap } from '@/shared/lib';
 import { BellRing, Pause, Play, RotateCcw, Timer, X } from 'lucide-react';
+import { type FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { formatTimerTime, useCookingTimerStore } from '../model/timerStore';
 
 export const CookingTimerWidget = () => {
@@ -13,6 +14,7 @@ export const CookingTimerWidget = () => {
   const label = useCookingTimerStore((state) => state.label);
 
   const startTimer = useCookingTimerStore((state) => state.startTimer);
+  const setTime = useCookingTimerStore((state) => state.setTime);
   const pauseTimer = useCookingTimerStore((state) => state.pauseTimer);
   const resumeTimer = useCookingTimerStore((state) => state.resumeTimer);
   const resetTimer = useCookingTimerStore((state) => state.resetTimer);
@@ -21,15 +23,68 @@ export const CookingTimerWidget = () => {
   const setOpen = useCookingTimerStore((state) => state.setOpen);
   const toggleOpen = useCookingTimerStore((state) => state.toggleOpen);
 
+  const [isEditingTime, setIsEditingTime] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
+  const [minutesInput, setMinutesInput] = useState('00');
+  const [secondsInput, setSecondsInput] = useState('00');
+  const minutesInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isRunning) {
+      setHasStarted(true);
+    }
+  }, [isRunning]);
+
+  useEffect(() => {
+    if (isEditingTime) {
+      minutesInputRef.current?.focus();
+      minutesInputRef.current?.select();
+    }
+  }, [isEditingTime]);
+
+  const handleClose = useCallback(() => {
+    setIsEditingTime(false);
+    setOpen(false);
+  }, [setOpen]);
+
   const modalRef = useFocusTrap<HTMLDialogElement>({
     isActive: isOpen,
-    onClose: () => setOpen(false),
+    onClose: handleClose,
   });
 
   const progressPercent =
     totalSeconds > 0
       ? Math.min(100, Math.round(((totalSeconds - remainingSeconds) / totalSeconds) * 100))
       : 0;
+
+  const handleStartEditing = () => {
+    setIsEditingTime(true);
+    const m = Math.floor(remainingSeconds / 60);
+    const s = remainingSeconds % 60;
+    setMinutesInput(m.toString().padStart(2, '0'));
+    setSecondsInput(s.toString().padStart(2, '0'));
+  };
+
+  const handleApplyTime = (e?: FormEvent) => {
+    e?.preventDefault();
+    const mins = Math.max(0, Number.parseInt(minutesInput, 10) || 0);
+    const secs = Math.max(0, Math.min(59, Number.parseInt(secondsInput, 10) || 0));
+    const total = mins * 60 + secs;
+
+    if (total > 0) {
+      setTime(total);
+      setHasStarted(false);
+    } else {
+      resetTimer();
+      setHasStarted(false);
+    }
+    setIsEditingTime(false);
+  };
+
+  const handleReset = () => {
+    resetTimer();
+    setHasStarted(false);
+  };
 
   return (
     <>
@@ -39,7 +94,7 @@ export const CookingTimerWidget = () => {
           type="button"
           tabIndex={-1}
           data-testid="timer-modal-backdrop"
-          onClick={() => setOpen(false)}
+          onClick={handleClose}
           aria-label="Close timer overlay"
           className="fixed inset-0 bg-black/40 backdrop-blur-xs cursor-default border-none outline-none z-40"
         />
@@ -62,7 +117,7 @@ export const CookingTimerWidget = () => {
                 <h2 id="cooking-timer-title" className="font-bold text-sm text-foreground">
                   Kitchen Timer
                 </h2>
-                {label && (
+                {label && label.toLowerCase() !== 'timer' && (
                   <span className="text-xs text-muted-foreground truncate max-w-[120px]">
                     • {label}
                   </span>
@@ -70,7 +125,7 @@ export const CookingTimerWidget = () => {
               </div>
               <button
                 type="button"
-                onClick={() => setOpen(false)}
+                onClick={handleClose}
                 className="p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
                 aria-label="Close timer panel"
               >
@@ -99,27 +154,115 @@ export const CookingTimerWidget = () => {
               </div>
             )}
 
-            {/* Цифровой циферблат */}
-            <div className="text-center py-2">
-              <div className="text-4xl sm:text-5xl font-mono font-extrabold tracking-tight text-foreground select-none">
-                {formatTimerTime(remainingSeconds)}
-              </div>
-
-              {totalSeconds > 0 && (
-                <div className="mt-3 space-y-1">
-                  <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-primary transition-all duration-300 rounded-full"
-                      style={{ width: `${progressPercent}%` }}
+            {/* Цифровой циферблат и форма ручного ввода времени */}
+            {isEditingTime ? (
+              <form onSubmit={handleApplyTime} className="py-2 flex flex-col items-center">
+                <div className="flex items-center justify-center gap-1.5 font-mono text-4xl sm:text-5xl font-extrabold text-foreground">
+                  <div className="flex flex-col items-center">
+                    <input
+                      ref={minutesInputRef}
+                      onFocus={(e) => e.target.select()}
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={3}
+                      value={minutesInput}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '');
+                        setMinutesInput(val.slice(0, 3));
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Escape') {
+                          e.stopPropagation();
+                          setIsEditingTime(false);
+                        }
+                      }}
+                      aria-label="Minutes"
+                      className="w-20 text-center rounded-2xl bg-muted/80 border border-primary/50 text-foreground py-1 px-1 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                     />
+                    <span className="text-[11px] font-sans font-medium text-muted-foreground mt-0.5">
+                      min
+                    </span>
                   </div>
-                  <div className="flex justify-between text-[11px] text-muted-foreground">
-                    <span>{progressPercent}% elapsed</span>
-                    <span>Total: {formatTimerTime(totalSeconds)}</span>
+
+                  <span className="text-muted-foreground/60 pb-5">:</span>
+
+                  <div className="flex flex-col items-center">
+                    <input
+                      onFocus={(e) => e.target.select()}
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={2}
+                      value={secondsInput}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '');
+                        setSecondsInput(val.slice(0, 2));
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Escape') {
+                          e.stopPropagation();
+                          setIsEditingTime(false);
+                        }
+                      }}
+                      aria-label="Seconds"
+                      className="w-20 text-center rounded-2xl bg-muted/80 border border-primary/50 text-foreground py-1 px-1 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                    />
+                    <span className="text-[11px] font-sans font-medium text-muted-foreground mt-0.5">
+                      sec
+                    </span>
                   </div>
                 </div>
-              )}
-            </div>
+
+                <div className="flex items-center gap-2 mt-2">
+                  <button
+                    type="submit"
+                    className="px-3.5 py-1.5 bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-semibold rounded-xl transition-all cursor-pointer shadow-xs"
+                  >
+                    Set time
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingTime(false)}
+                    className="px-3.5 py-1.5 bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground text-xs font-semibold rounded-xl transition-all cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div className="text-center py-2">
+                <button
+                  type="button"
+                  onClick={handleStartEditing}
+                  title="Click to enter specific time"
+                  aria-label={`Current time: ${formatTimerTime(remainingSeconds)}. Click to edit time`}
+                  className="group relative inline-flex flex-col items-center px-4 py-1.5 rounded-2xl hover:bg-muted/60 border border-transparent hover:border-border/60 transition-all cursor-pointer"
+                >
+                  <div className="text-4xl sm:text-5xl font-mono font-extrabold tracking-tight text-foreground select-none group-hover:text-primary transition-colors">
+                    {formatTimerTime(remainingSeconds)}
+                  </div>
+                  <span className="text-[11px] text-muted-foreground group-hover:text-foreground transition-colors mt-0.5">
+                    Click to set time
+                  </span>
+                </button>
+
+                {totalSeconds > 0 && (
+                  <div className="mt-2 space-y-1">
+                    <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary transition-all duration-300 rounded-full"
+                        style={{ width: `${progressPercent}%` }}
+                      />
+                    </div>
+                    <div className="flex justify-between text-[11px] text-muted-foreground">
+                      <span>{progressPercent}% elapsed</span>
+                      <span>Total: {formatTimerTime(totalSeconds)}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Пресеты быстрого добавления времени */}
             <div className="grid grid-cols-4 gap-1.5">
@@ -164,7 +307,7 @@ export const CookingTimerWidget = () => {
                   className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs transition-all cursor-pointer active:scale-95 shadow-xs"
                 >
                   <Play className="size-4" />
-                  <span>Resume</span>
+                  <span>{hasStarted ? 'Resume' : 'Start'}</span>
                 </button>
               ) : (
                 <button
@@ -179,7 +322,7 @@ export const CookingTimerWidget = () => {
 
               <button
                 type="button"
-                onClick={resetTimer}
+                onClick={handleReset}
                 disabled={remainingSeconds === 0 && !isAlarming}
                 className="p-2.5 rounded-xl border border-border bg-background hover:bg-muted/80 text-muted-foreground hover:text-foreground font-medium text-xs transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                 title="Reset timer"
@@ -196,7 +339,7 @@ export const CookingTimerWidget = () => {
           type="button"
           onClick={toggleOpen}
           aria-label="Toggle cooking timer"
-          className={`group flex items-center gap-2 rounded-full shadow-lg transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95 ${
+          className={`group flex items-center justify-center gap-2 rounded-full shadow-lg transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95 ${
             isAlarming
               ? 'bg-destructive text-destructive-foreground px-4 py-3 animate-bounce ring-4 ring-destructive/30'
               : isRunning

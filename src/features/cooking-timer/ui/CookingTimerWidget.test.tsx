@@ -17,14 +17,46 @@ describe('CookingTimerWidget', () => {
 
     const triggerBtn = screen.getByRole('button', { name: /toggle cooking timer/i });
     expect(triggerBtn).toBeInTheDocument();
+    expect(triggerBtn).toHaveClass('justify-center');
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 
     await user.click(triggerBtn);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
 
+    // Does not render redundant "• Timer" text
+    expect(screen.queryByText(/• timer/i)).not.toBeInTheDocument();
+
     const closeBtn = screen.getByRole('button', { name: /close timer panel/i });
     await user.click(closeBtn);
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('allows clicking time to enter custom time and applies it', async () => {
+    const user = userEvent.setup();
+    render(<CookingTimerWidget />);
+
+    const triggerBtn = screen.getByRole('button', { name: /toggle cooking timer/i });
+    await user.click(triggerBtn);
+
+    const timeBtn = screen.getByRole('button', { name: /click to edit time/i });
+    expect(timeBtn).toBeInTheDocument();
+    await user.click(timeBtn);
+
+    const minutesInput = screen.getByLabelText(/minutes/i);
+    const secondsInput = screen.getByLabelText(/seconds/i);
+    expect(minutesInput).toBeInTheDocument();
+    expect(secondsInput).toBeInTheDocument();
+
+    await user.clear(minutesInput);
+    await user.type(minutesInput, '7');
+    await user.clear(secondsInput);
+    await user.type(secondsInput, '30');
+
+    const setTimeBtn = screen.getByRole('button', { name: /^set time$/i });
+    await user.click(setTimeBtn);
+
+    expect(useCookingTimerStore.getState().remainingSeconds).toBe(450);
+    expect(screen.getAllByText('07:30').length).toBeGreaterThanOrEqual(1);
   });
 
   it('closes modal on Escape key press', async () => {
