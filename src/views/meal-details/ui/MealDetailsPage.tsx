@@ -1,6 +1,7 @@
 'use client';
 
 import { type Meal, parseInstructions } from '@/entities/meal';
+import { CookingTimerWidget } from '@/features/cooking-timer';
 import { FavoriteButton } from '@/features/favorite-meal';
 import { useMealChecklist } from '@/features/meal-checklist';
 import { QuickActionsCard } from '@/features/share-meal';
@@ -110,6 +111,9 @@ export const MealDetailsPage = ({ meal, relatedMeals }: MealDetailsPageProps) =>
         {/* Похожие рецепты */}
         <RelatedMealsSection relatedMeals={relatedMeals} category={meal.category} />
       </div>
+
+      {/* Плавающий кухонный таймер */}
+      <CookingTimerWidget />
 
       {/* Печатная карточка (видна только при печати) */}
       <MealPrintCard meal={meal} ingredients={ingredients} instructions={instructions} />

@@ -1,3 +1,4 @@
+import { InteractiveStepText } from '@/features/cooking-timer';
 import { Check } from 'lucide-react';
 
 export interface MealInstructionsListProps {
@@ -27,15 +28,19 @@ export const MealInstructionsList = ({
           const isChecked = Boolean(checkedSteps[index]);
           return (
             <li key={`step-${index + 1}`}>
-              <button
-                type="button"
-                onClick={() => onToggleStep(index)}
-                className={`w-full flex items-start gap-4 p-3.5 rounded-2xl border transition-all cursor-pointer select-none text-left outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
+              <label
+                className={`w-full flex items-start gap-4 p-3.5 rounded-2xl border transition-all cursor-pointer select-none ${
                   isChecked
                     ? 'bg-muted/40 border-border/40'
                     : 'bg-card border-border/40 hover:bg-accent/60 hover:border-primary/30'
                 }`}
               >
+                <input
+                  type="checkbox"
+                  checked={isChecked}
+                  onChange={() => onToggleStep(index)}
+                  className="sr-only"
+                />
                 <span
                   className={`shrink-0 flex items-center justify-center size-8 rounded-full font-bold text-sm transition-all duration-200 ${
                     isChecked
@@ -52,9 +57,9 @@ export const MealInstructionsList = ({
                       : 'text-foreground/90'
                   }`}
                 >
-                  {step}
+                  <InteractiveStepText text={step} />
                 </p>
-              </button>
+              </label>
             </li>
           );
         })}

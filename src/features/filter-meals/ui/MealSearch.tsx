@@ -2,7 +2,7 @@
 
 import { cn } from '@/shared/lib';
 import { Search, X } from 'lucide-react';
-import { type FormEvent, useEffect, useState } from 'react';
+import { type SubmitEvent, useEffect, useState } from 'react';
 
 export interface MealSearchProps {
   value: string;
@@ -27,7 +27,7 @@ export const MealSearch = ({
     setInputValue(value);
   }, [value]);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
     if (onSearch) {
       e.preventDefault();
       onSearch(inputValue.trim());
