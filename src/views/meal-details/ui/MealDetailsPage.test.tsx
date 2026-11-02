@@ -106,4 +106,12 @@ describe('MealDetailsPage', () => {
     await user.click(printBtn);
     expect(printMock).toHaveBeenCalled();
   });
+
+  it('renders a dedicated print layout for physical printing', () => {
+    render(<MealDetailsPage meal={mockMeal} />);
+
+    const printLayout = screen.getByTestId('meal-print-layout');
+    expect(printLayout).toBeInTheDocument();
+    expect(printLayout).toHaveClass('hidden', 'print:block');
+  });
 });
