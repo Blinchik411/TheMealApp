@@ -17,14 +17,51 @@ describe('CookingTimerWidget', () => {
 
     const triggerBtn = screen.getByRole('button', { name: /toggle cooking timer/i });
     expect(triggerBtn).toBeInTheDocument();
-    expect(screen.queryByRole('region', { name: /kitchen timer/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 
     await user.click(triggerBtn);
-    expect(screen.getByRole('region', { name: /kitchen timer/i })).toBeInTheDocument();
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
 
     const closeBtn = screen.getByRole('button', { name: /close timer panel/i });
     await user.click(closeBtn);
-    expect(screen.queryByRole('region', { name: /kitchen timer/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('closes modal on Escape key press', async () => {
+    const user = userEvent.setup();
+    render(<CookingTimerWidget />);
+
+    const triggerBtn = screen.getByRole('button', { name: /toggle cooking timer/i });
+    await user.click(triggerBtn);
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('closes modal on backdrop click outside the dialog', async () => {
+    const user = userEvent.setup();
+    render(<CookingTimerWidget />);
+
+    const triggerBtn = screen.getByRole('button', { name: /toggle cooking timer/i });
+    await user.click(triggerBtn);
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+
+    const backdrop = screen.getByTestId('timer-modal-backdrop');
+    await user.click(backdrop);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('has accessible dialog role and aria attributes', async () => {
+    const user = userEvent.setup();
+    render(<CookingTimerWidget />);
+
+    const triggerBtn = screen.getByRole('button', { name: /toggle cooking timer/i });
+    await user.click(triggerBtn);
+
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toHaveAttribute('aria-modal', 'true');
+    expect(dialog).toHaveAttribute('aria-labelledby', 'cooking-timer-title');
   });
 
   it('allows starting timer from preset buttons', async () => {

@@ -2,13 +2,13 @@
 
 import { useUserStore } from '@/entities/user';
 import { AuthModal } from '@/features/auth';
-import { useFavoritesStore } from '@/features/favorite-meal';
+import { useFavoritesSync } from '@/features/favorite-meal';
 import { Heart, LogIn, LogOut, User as UserIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export const Header = () => {
-  const loadFavorites = useFavoritesStore((state) => state.loadFavorites);
+  const { syncWithCloud } = useFavoritesSync();
 
   const user = useUserStore((state) => state.user);
   const initAuth = useUserStore((state) => state.initAuth);
@@ -22,7 +22,6 @@ export const Header = () => {
 
   const handleSignOut = async () => {
     await signOut();
-    void loadFavorites();
   };
 
   return (
@@ -80,7 +79,7 @@ export const Header = () => {
       <AuthModal
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
-        onSuccess={() => void loadFavorites()}
+        onSuccess={() => void syncWithCloud()}
       />
     </>
   );

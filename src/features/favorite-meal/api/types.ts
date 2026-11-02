@@ -4,10 +4,14 @@ export interface FavoriteMealRow {
   meal_id: string;
   meal_title: string;
   meal_thumb: string;
+  category?: string;
+  cuisine?: string;
 }
 
 export interface FavoriteMealInsert {
   meal_id: string;
   meal_title: string;
   meal_thumb: string;
+  category?: string;
+  cuisine?: string;
 }

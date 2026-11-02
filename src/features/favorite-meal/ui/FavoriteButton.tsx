@@ -4,6 +4,7 @@ import type { Meal } from '@/entities/meal';
 import { cn } from '@/shared/lib';
 import { Heart } from 'lucide-react';
 import type { MouseEvent } from 'react';
+import { useFavoritesSync } from '../lib/useFavoritesSync';
 import { useFavoritesStore } from '../model/favoritesStore';
 
 interface FavoriteButtonProps {
@@ -21,7 +22,7 @@ export const FavoriteButton = ({
   className,
   size = 'default',
 }: FavoriteButtonProps) => {
-  const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
+  const { toggleWithSync } = useFavoritesSync();
   const hasHydrated = useFavoritesStore((state) => state.hasHydrated);
   const isFav = useFavoritesStore((state) => state.isFavorite(meal.id));
   const liked = hasHydrated ? isFav : false;
@@ -30,7 +31,7 @@ export const FavoriteButton = ({
     if (stopProp) {
       e.stopPropagation();
     }
-    toggleFavorite(meal);
+    void toggleWithSync(meal);
   };
 
   const isMd = size === 'md';
