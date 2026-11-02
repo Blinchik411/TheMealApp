@@ -5,6 +5,7 @@ export { mealApi } from './api/mealApi';
 export { getFilteredCatalog } from './api/catalogService';
 export type { CatalogResult } from './api/catalogService';
 export { MealCard } from './ui/MealCard';
+export type { MealCardProps } from './ui/MealCard';
 export { mapTheMealDbToMeal } from './lib/mealAdapter';
 export { parseIngredients } from './lib/parseIngredients';
 export { parseInstructions } from './lib/parseInstructions';

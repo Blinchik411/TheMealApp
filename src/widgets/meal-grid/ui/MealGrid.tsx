@@ -2,16 +2,18 @@
 
 import { type Meal, MealCard } from '@/entities/meal';
 import { FavoriteButton } from '@/features/favorite-meal';
+import { cn } from '@/shared/lib/utils';
 import { Utensils } from 'lucide-react';
 
 const SKELETON_KEYS = Array.from({ length: 24 }, (_, i) => `meal-skeleton-${i + 1}`);
 
-interface MealGridProps {
+export interface MealGridProps {
   meals: Meal[];
   isLoading?: boolean;
   skeletonCount?: number;
   from?: string;
   emptyMessage?: string;
+  imageAspectRatio?: string;
 }
 
 export const MealGrid = ({
@@ -20,20 +22,21 @@ export const MealGrid = ({
   skeletonCount = 12,
   from,
   emptyMessage = 'No recipes found',
+  imageAspectRatio = 'aspect-square',
 }: MealGridProps) => {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6">
         {SKELETON_KEYS.slice(0, skeletonCount).map((key) => (
           <div
             key={key}
             className="flex flex-col h-full bg-card rounded-2xl overflow-hidden border border-border animate-pulse"
           >
-            <div className="w-full aspect-square bg-muted" />
-            <div className="p-4 flex flex-col gap-3 flex-1">
-              <div className="h-4 bg-muted rounded-md w-3/4" />
+            <div className={cn('w-full bg-muted', imageAspectRatio)} />
+            <div className="p-3 sm:p-4 flex flex-col gap-2.5 sm:gap-3 flex-1">
+              <div className="h-3.5 sm:h-4 bg-muted rounded-md w-3/4" />
               <div className="h-3 bg-muted rounded-md w-1/2" />
-              <div className="mt-auto h-9 bg-muted rounded-xl w-full" />
+              <div className="mt-auto h-8 sm:h-9 bg-muted rounded-lg sm:rounded-xl w-full" />
             </div>
           </div>
         ))}
@@ -54,13 +57,14 @@ export const MealGrid = ({
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6">
       {meals.map((meal, index) => (
         <MealCard
           key={meal.id}
           meal={meal}
           priority={index < 4}
           from={from}
+          imageAspectRatio={imageAspectRatio}
           actionSlot={<FavoriteButton meal={meal} stopProp={true} />}
         />
       ))}

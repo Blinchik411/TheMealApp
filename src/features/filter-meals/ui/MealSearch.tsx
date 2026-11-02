@@ -18,7 +18,7 @@ export const MealSearch = ({
   onSearch,
   action = '/',
   hiddenFields,
-  placeholder = 'Search recipes (e.g., Pancakes, Chicken, Pie)...',
+  placeholder = 'Pancake',
   className,
 }: MealSearchProps) => {
   const [inputValue, setInputValue] = useState(value);
@@ -57,7 +57,7 @@ export const MealSearch = ({
         <input
           type="text"
           name="search"
-          aria-label={placeholder}
+          aria-label="Search recipes"
           className="w-full bg-transparent border-none outline-none text-sm text-foreground placeholder:text-muted-foreground"
           autoComplete="off"
           placeholder={placeholder}

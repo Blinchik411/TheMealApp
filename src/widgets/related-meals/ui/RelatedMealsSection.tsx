@@ -6,9 +6,14 @@ import Link from 'next/link';
 export interface RelatedMealsSectionProps {
   relatedMeals?: Meal[];
   category?: string;
+  imageAspectRatio?: string;
 }
 
-export const RelatedMealsSection = ({ relatedMeals, category }: RelatedMealsSectionProps) => {
+export const RelatedMealsSection = ({
+  relatedMeals,
+  category,
+  imageAspectRatio = 'aspect-square',
+}: RelatedMealsSectionProps) => {
   if (!relatedMeals || relatedMeals.length === 0) {
     return null;
   }
@@ -42,12 +47,13 @@ export const RelatedMealsSection = ({ relatedMeals, category }: RelatedMealsSect
         )}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 sm:gap-6">
         {relatedMeals.map((relatedMeal) => (
           <MealCard
             key={relatedMeal.id}
             meal={relatedMeal}
             from="details"
+            imageAspectRatio={imageAspectRatio}
             actionSlot={<FavoriteButton meal={relatedMeal} />}
           />
         ))}
