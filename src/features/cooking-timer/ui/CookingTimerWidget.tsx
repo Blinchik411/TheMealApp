@@ -1,6 +1,6 @@
 'use client';
 
-import { BellRing, Minus, Pause, Play, Plus, RotateCcw, Timer, X } from 'lucide-react';
+import { BellRing, Pause, Play, RotateCcw, Timer, X } from 'lucide-react';
 import { formatTimerTime, useCookingTimerStore } from '../model/timerStore';
 
 export const CookingTimerWidget = () => {
@@ -31,7 +31,7 @@ export const CookingTimerWidget = () => {
       {isOpen && (
         <section
           aria-label="Kitchen timer"
-          className="mb-3 w-80 sm:w-88 bg-card/95 backdrop-blur-md border border-border rounded-3xl p-5 shadow-2xl space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-200"
+          className="mb-3 w-[calc(100vw-3rem)] max-w-xs sm:w-88 bg-card/95 backdrop-blur-md border border-border rounded-3xl p-5 shadow-2xl space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-200"
         >
           {/* Шапка карточки */}
           <div className="flex items-center justify-between border-b border-border/50 pb-3">
@@ -56,7 +56,11 @@ export const CookingTimerWidget = () => {
 
           {/* Оповещение об окончании времени */}
           {isAlarming && (
-            <div className="p-3.5 rounded-2xl bg-destructive/15 border border-destructive/30 flex items-center justify-between gap-2 animate-bounce">
+            <div
+              role="alert"
+              aria-live="assertive"
+              className="p-3.5 rounded-2xl bg-destructive/15 border border-destructive/30 flex items-center justify-between gap-2 animate-bounce"
+            >
               <div className="flex items-center gap-2 text-destructive font-bold text-sm">
                 <BellRing className="size-5 shrink-0" />
                 <span>Time is up!</span>
@@ -175,7 +179,7 @@ export const CookingTimerWidget = () => {
               ? 'bg-primary text-primary-foreground px-4 py-3 ring-2 ring-primary/20'
               : remainingSeconds > 0
                 ? 'bg-amber-500 text-white px-4 py-3'
-                : 'size-13 p-3.5 bg-card border border-border text-foreground hover:bg-muted hover:border-primary/40'
+                : 'size-12 p-3 bg-card border border-border text-foreground hover:bg-muted hover:border-primary/40'
         }`}
       >
         {isAlarming ? (

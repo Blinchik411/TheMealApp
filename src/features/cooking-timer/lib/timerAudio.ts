@@ -44,6 +44,12 @@ export const playTimerAlarm = () => {
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
       navigator.vibrate([200, 100, 200, 100, 400]);
     }
+
+    // Clean up AudioContext to prevent hardware context limits exhaustion (Safari/Chrome limit is 6 active contexts)
+    const totalDurationMs = Math.ceil((0.48 + 0.4) * 1000) + 100;
+    setTimeout(() => {
+      ctx.close().catch(() => {});
+    }, totalDurationMs);
   } catch (err) {
     console.error('Failed to play timer alarm sound', err);
   }
