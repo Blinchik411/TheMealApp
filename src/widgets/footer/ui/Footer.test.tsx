@@ -3,15 +3,12 @@ import { describe, expect, it } from 'vitest';
 import { Footer } from './Footer';
 
 describe('Footer', () => {
-  it('renders branding and CTA banner correctly', () => {
+  it('renders branding correctly and does not render Surprise Me CTA banner', () => {
     render(<Footer />);
 
     expect(screen.getByRole('link', { name: /themealdb/i })).toBeInTheDocument();
-    expect(screen.getByText(/don't know what to cook today\?/i)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /surprise me/i })).toHaveAttribute(
-      'href',
-      '/meal/random',
-    );
+    expect(screen.queryByText(/don't know what to cook today\?/i)).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /surprise me/i })).not.toBeInTheDocument();
   });
 
   it('renders navigation, cuisines and categories sections', () => {

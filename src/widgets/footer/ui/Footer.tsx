@@ -1,4 +1,4 @@
-import { ChefHat, Dices, ExternalLink, Sparkles } from 'lucide-react';
+import { ChefHat, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
 function GithubIcon({ className }: { className?: string }) {
@@ -45,34 +45,6 @@ export function Footer() {
 
   return (
     <footer className="w-full border-t border-border bg-card/60 backdrop-blur-sm mt-auto print:hidden">
-      {/* Decorative / interactive CTA banner */}
-      <div className="border-b border-border/60 bg-muted/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-muted/50 via-muted/30 to-background border border-border">
-            <div className="flex items-center gap-3.5 text-center sm:text-left">
-              <div className="p-2.5 rounded-xl bg-primary/10 text-primary shrink-0">
-                <Sparkles className="size-5" aria-hidden="true" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-foreground">
-                  Don&apos;t know what to cook today?
-                </p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Get instant culinary inspiration with a single click.
-                </p>
-              </div>
-            </div>
-
-            <Link
-              href="/meal/random"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs sm:text-sm font-medium hover:bg-primary/90 transition-all shadow-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              <Dices className="size-4" aria-hidden="true" />
-              <span>Surprise Me</span>
-            </Link>
-          </div>
-        </div>
-      </div>
 
       {/* Main navigation grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
