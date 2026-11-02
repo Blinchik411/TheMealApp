@@ -32,7 +32,19 @@ export const FavoritesPage = () => {
 
   if (!hasHydrated) {
     return (
-      <div className="py-20 text-center text-sm text-muted-foreground">Loading favorites...</div>
+      <div className="space-y-8 pb-12 animate-pulse">
+        <div className="text-center max-w-2xl mx-auto space-y-3 pt-4">
+          <div className="h-6 w-44 bg-muted rounded-full mx-auto" />
+          <div className="h-9 w-64 bg-muted rounded-xl mx-auto" />
+          <div className="h-4 w-72 bg-muted rounded-md mx-auto" />
+        </div>
+        <div className="h-24 bg-card border border-border rounded-2xl" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {['skel-1', 'skel-2', 'skel-3', 'skel-4'].map((id) => (
+            <div key={id} className="bg-card border border-border rounded-2xl h-80" />
+          ))}
+        </div>
+      </div>
     );
   }
 
