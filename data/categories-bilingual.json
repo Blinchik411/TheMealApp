@@ -1,0 +1,198 @@
+[
+  {
+    "id": "3",
+    "slug": "dessert",
+    "name": {
+      "en": "Dessert",
+      "ru": "Десерты"
+    },
+    "imageUrl": "https://www.themealdb.com/images/category/dessert.png",
+    "description": {
+      "en": "Dessert is a course that concludes a meal. The course usually consists of sweet foods, such as confections dishes or fruit, and possibly a beverage such as dessert wine or liqueur, however in the United States it may include coffee, cheeses, nuts, or other savory items regarded as a separate course elsewhere. In some parts of the world, such as much of central and western Africa, and most parts of China, there is no tradition of a dessert course to conclude a meal.\r\n\r\nThe term dessert can apply to many confections, such as biscuits, cakes, cookies, custards, gelatins, ice creams, pastries, pies, puddings, and sweet soups, and tarts. Fruit is also commonly found in dessert courses because of its naturally occurring sweetness. Some cultures sweeten foods that are more commonly savory to create desserts.",
+      "ru": "Десерт – это блюдо, которое завершает трапезу. Курс обычно состоит из сладких блюд, таких как кондитерские блюда или фрукты, и, возможно, из напитков, таких как десертное вино или ликер, однако в Соединенных Штатах он может включать кофе, сыры, орехи или другие пикантные блюда, которые в других странах считаются отдельным курсом. В некоторых частях мира, например, в большей части Центральной и Западной Африки, а также в большинстве частей Китая, не существует традиции завершать трапезу десертом.\r\n\r\nТермин «десерт» может применяться ко многим кондитерским изделиям, таким как печенье, торты, печенье, заварной крем, желатин, мороженое, выпечка, пироги, пудинги, сладкие супы и пироги. Фрукты также часто встречаются в десертных блюдах из-за их естественной сладости. В некоторых культурах для приготовления десертов подслащивают пищу, которая чаще бывает пикантной."
+    },
+    "count": 168
+  },
+  {
+    "id": "12",
+    "slug": "vegetarian",
+    "name": {
+      "en": "Vegetarian",
+      "ru": "Вегетарианское"
+    },
+    "imageUrl": "https://www.themealdb.com/images/category/vegetarian.png",
+    "description": {
+      "en": "Vegetarianism is the practice of abstaining from the consumption of meat (red meat, poultry, seafood, and the flesh of any other animal), and may also include abstention from by-products of animal slaughter.\r\n\r\nVegetarianism may be adopted for various reasons. Many people object to eating meat out of respect for sentient life. Such ethical motivations have been codified under various religious beliefs, as well as animal rights advocacy. Other motivations for vegetarianism are health-related, political, environmental, cultural, aesthetic, economic, or personal preference. There are variations of the diet as well: an ovo-lacto vegetarian diet includes both eggs and dairy products, an ovo-vegetarian diet includes eggs but not dairy products, and a lacto-vegetarian diet includes dairy products but not eggs. A vegan diet excludes all animal products, including eggs and dairy. Some vegans also avoid other animal products such as beeswax, leather or silk clothing, and goose-fat shoe polish.",
+      "ru": "Вегетарианство — это практика воздержания от употребления мяса (красного мяса, птицы, морепродуктов и мяса любого другого животного), а также может включать воздержание от побочных продуктов убоя животных.\r\n\r\nВегетарианство может быть принято по разным причинам. Многие люди возражают против употребления мяса из уважения к разумной жизни. Такие этические мотивы были закреплены в различных религиозных убеждениях, а также в защите прав животных. Другие мотивы вегетарианства связаны со здоровьем, политическими, экологическими, культурными, эстетическими, экономическими или личными предпочтениями. Существуют также вариации диеты: ово-лактовегетарианская диета включает и яйца, и молочные продукты, ово-вегетарианская диета включает яйца, но не молочные продукты, и лакто-вегетарианская диета включает молочные продукты, но не яйца. Веганская диета исключает все продукты животного происхождения, включая яйца и молочные продукты. Некоторые веганы также избегают других продуктов животного происхождения, таких как пчелиный воск, кожаная или шелковая одежда и крем для обуви из гусиного жира."
+    },
+    "count": 100
+  },
+  {
+    "id": "1",
+    "slug": "beef",
+    "name": {
+      "en": "Beef",
+      "ru": "Говядина"
+    },
+    "imageUrl": "https://www.themealdb.com/images/category/beef.png",
+    "description": {
+      "en": "Beef is the culinary name for meat from cattle, particularly skeletal muscle. Humans have been eating beef since prehistoric times.[1] Beef is a source of high-quality protein and essential nutrients.[2]",
+      "ru": "Говядина — кулинарное название мяса крупного рогатого скота, особенно скелетных мышц. Люди ели говядину с доисторических времен.[1] Говядина является источником высококачественного белка и необходимых питательных веществ.[2]"
+    },
+    "count": 95
+  },
+  {
+    "id": "8",
+    "slug": "seafood",
+    "name": {
+      "en": "Seafood",
+      "ru": "Морепродукты"
+    },
+    "imageUrl": "https://www.themealdb.com/images/category/seafood.png",
+    "description": {
+      "en": "Seafood is any form of sea life regarded as food by humans. Seafood prominently includes fish and shellfish. Shellfish include various species of molluscs, crustaceans, and echinoderms. Historically, sea mammals such as whales and dolphins have been consumed as food, though that happens to a lesser extent in modern times. Edible sea plants, such as some seaweeds and microalgae, are widely eaten as seafood around the world, especially in Asia (see the category of sea vegetables). In North America, although not generally in the United Kingdom, the term \"seafood\" is extended to fresh water organisms eaten by humans, so all edible aquatic life may be referred to as seafood. For the sake of completeness, this article includes all edible aquatic life.",
+      "ru": "Морепродукты — это любая форма морской жизни, которую люди считают пищей. Морепродукты в основном включают рыбу и моллюсков. Моллюски включают различные виды моллюсков, ракообразных и иглокожих. Исторически морские млекопитающие, такие как киты и дельфины, употреблялись в пищу, хотя в наше время это происходит в меньшей степени. Съедобные морские растения, такие как некоторые морские водоросли и микроводоросли, широко употребляются в пищу в качестве морепродуктов во всем мире, особенно в Азии (см. категорию морских овощей). В Северной Америке, хотя и не в Соединенном Королевстве, термин «морепродукты» распространяется на пресноводные организмы, которые едят люди, поэтому всю съедобную водную жизнь можно называть морепродуктами. Для полноты картины в эту статью включены все съедобные водные обитатели."
+    },
+    "count": 84
+  },
+  {
+    "id": "9",
+    "slug": "side",
+    "name": {
+      "en": "Side",
+      "ru": "Гарниры"
+    },
+    "imageUrl": "https://www.themealdb.com/images/category/side.png",
+    "description": {
+      "en": "A side dish, sometimes referred to as a side order, side item, or simply a side, is a food item that accompanies the entrée or main course at a meal. Side dishes such as salad, potatoes and bread are commonly used with main courses throughout many countries of the western world. New side orders introduced within the past decade[citation needed], such as rice and couscous, have grown to be quite popular throughout Europe, especially at formal occasions (with couscous appearing more commonly at dinner parties with Middle Eastern dishes).",
+      "ru": "Гарнир, иногда называемый гарниром, гарниром или просто гарниром, представляет собой продукт, который сопровождает основное блюдо или основное блюдо во время еды. Гарниры, такие как салат, картофель и хлеб, обычно используются с основными блюдами во многих странах западного мира. Новые гарниры, введенные за последнее десятилетие, такие как рис и кускус, стали довольно популярными по всей Европе, особенно в официальных случаях (кускус чаще появляется на званых обедах с блюдами Ближнего Востока)."
+    },
+    "count": 84
+  },
+  {
+    "id": "2",
+    "slug": "chicken",
+    "name": {
+      "en": "Chicken",
+      "ru": "Курица"
+    },
+    "imageUrl": "https://www.themealdb.com/images/category/chicken.png",
+    "description": {
+      "en": "Chicken is a type of domesticated fowl, a subspecies of the red junglefowl. It is one of the most common and widespread domestic animals, with a total population of more than 19 billion as of 2011.[1] Humans commonly keep chickens as a source of food (consuming both their meat and eggs) and, more rarely, as pets.",
+      "ru": "Курица — это разновидность домашней птицы, подвид красной лесной птицы. Это одно из самых распространенных и распространенных домашних животных, общая популяция которого по состоянию на 2011 год составила более 19 миллиардов особей.[1] Люди обычно держат кур в качестве источника пищи (поедая и мясо, и яйца) и, реже, в качестве домашних животных."
+    },
+    "count": 81
+  },
+  {
+    "id": "7",
+    "slug": "pork",
+    "name": {
+      "en": "Pork",
+      "ru": "Свинина"
+    },
+    "imageUrl": "https://www.themealdb.com/images/category/pork.png",
+    "description": {
+      "en": "Pork is the culinary name for meat from a domestic pig (Sus scrofa domesticus). It is the most commonly consumed meat worldwide,[1] with evidence of pig husbandry dating back to 5000 BC. Pork is eaten both freshly cooked and preserved. Curing extends the shelf life of the pork products. Ham, smoked pork, gammon, bacon and sausage are examples of preserved pork. Charcuterie is the branch of cooking devoted to prepared meat products, many from pork.\r\n\r\nPork is the most popular meat in Eastern and Southeastern Asia, and is also very common in the Western world, especially in Central Europe. It is highly prized in Asian cuisines for its fat content and pleasant texture. Consumption of pork is forbidden by Jewish and Muslim dietary law, a taboo that is deeply rooted in tradition, with several suggested possible causes. The sale of pork is limited in Israel and illegal in certain Muslim countries.",
+      "ru": "Свинина — кулинарное название мяса домашней свиньи (Sus scrofa Domesticus). Это наиболее часто потребляемое мясо во всем мире,[1] свидетельства о свиноводстве которого датируются 5000 годом до нашей эры. Свинину едят как свежеприготовленную, так и консервированную. Вяление продлевает срок хранения свиной продукции. Ветчина, копченая свинина, окорок, бекон и колбаса — примеры консервированной свинины. Мясные закуски — это раздел кулинарии, посвященный приготовлению мясных продуктов, в основном из свинины.\r\n\r\nСвинина — самое популярное мясо в Восточной и Юго-Восточной Азии, а также очень распространено в западном мире, особенно в Центральной Европе. Он высоко ценится в азиатской кухне за жирность и приятную текстуру. Потребление свинины запрещено еврейским и мусульманским диетическим законом. Это табу, которое глубоко укоренилось в традициях и имеет несколько возможных причин. Продажа свинины ограничена в Израиле и незаконна в некоторых мусульманских странах."
+    },
+    "count": 61
+  },
+  {
+    "id": "4",
+    "slug": "lamb",
+    "name": {
+      "en": "Lamb",
+      "ru": "Баранина"
+    },
+    "imageUrl": "https://www.themealdb.com/images/category/lamb.png",
+    "description": {
+      "en": "Lamb, hogget, and mutton are the meat of domestic sheep (species Ovis aries) at different ages.\r\n\r\nA sheep in its first year is called a lamb, and its meat is also called lamb. The meat of a juvenile sheep older than one year is hogget; outside the USA this is also a term for the living animal. The meat of an adult sheep is mutton, a term only used for the meat, not the living animals. The term mutton is almost always used to refer to goat meat in the Indian subcontinent.\r\n\r\n",
+      "ru": "Ягненок, боров и баранина — это мясо домашних овец (вид Ovis aries) разного возраста.\r\n\r\nОвца первого года жизни называется ягненком, и ее мясо также называется ягненком. Мясо молодняка овец старше года — свиное; за пределами США это также термин для обозначения живого животного. Мясо взрослой овцы — баранина, этот термин используется только для мяса, а не для живых животных. Термин «баранина» почти всегда используется для обозначения козлятины на Индийском субконтиненте."
+    },
+    "count": 33
+  },
+  {
+    "id": "5",
+    "slug": "miscellaneous",
+    "name": {
+      "en": "Miscellaneous",
+      "ru": "Разное"
+    },
+    "imageUrl": "https://www.themealdb.com/images/category/miscellaneous.png",
+    "description": {
+      "en": "General foods that don't fit into another category",
+      "ru": "Общие продукты, которые не попадают в другую категорию"
+    },
+    "count": 33
+  },
+  {
+    "id": "13",
+    "slug": "breakfast",
+    "name": {
+      "en": "Breakfast",
+      "ru": "Завтраки"
+    },
+    "imageUrl": "https://www.themealdb.com/images/category/breakfast.png",
+    "description": {
+      "en": "Breakfast is the first meal of a day. The word in English refers to breaking the fasting period of the previous night. There is a strong likelihood for one or more \"typical\", or \"traditional\", breakfast menus to exist in most places, but their composition varies widely from place to place, and has varied over time, so that globally a very wide range of preparations and ingredients are now associated with breakfast.",
+      "ru": "Завтрак – это первый прием пищи в день. Это слово на английском языке означает прерывание периода поста предыдущей ночи. Существует большая вероятность существования одного или нескольких «типичных» или «традиционных» меню завтрака в большинстве мест, но их состав широко варьируется от места к месту и менялся с течением времени, так что во всем мире с завтраком теперь ассоциируется очень широкий спектр блюд и ингредиентов."
+    },
+    "count": 19
+  },
+  {
+    "id": "10",
+    "slug": "starter",
+    "name": {
+      "en": "Starter",
+      "ru": "Закуски"
+    },
+    "imageUrl": "https://www.themealdb.com/images/category/starter.png",
+    "description": {
+      "en": "An entrée in modern French table service and that of much of the English-speaking world (apart from the United States and parts of Canada) is a dish served before the main course of a meal; it may be the first dish served, or it may follow a soup or other small dish or dishes. In the United States and parts of Canada, an entrée is the main dish or the only dish of a meal.\r\n\r\nHistorically, the entrée was one of the stages of the “Classical Order” of formal French table service of the 18th and 19th centuries. It formed a part of the “first service” of the meal, which consisted of potage, hors d’œuvre, and entrée (including the bouilli and relevé). The “second service” consisted of roast (rôti), salad, and entremets (the entremets sometimes being separated into a “third service” of their own). The final service consisted only of dessert.[3]:3–11 :13–25",
+      "ru": "Основное блюдо в современной французской сервировке и в большей части англоязычного мира (за исключением США и некоторых частей Канады) - это блюдо, которое подается перед основным блюдом; это может быть первое подаваемое блюдо или оно может следовать за супом или другим небольшим блюдом или блюдами. В Соединенных Штатах и ​​некоторых частях Канады основное блюдо является основным или единственным блюдом еды.\r\n\r\nИсторически застолье было одним из этапов «классического ордера» формального французского столового сервиза XVIII-XIX веков. Он составлял часть «первой подачи» трапезы, которая состояла из похлебки, закусок и основных блюд (включая буйи и релеве). «Вторая подача» состояла из жаркого (роти), салата и антреме (иногда антреме выделяли в отдельную «третью подачу»). Заключительная служба состояла только из десерта.[3]:3–11:13–25."
+    },
+    "count": 14
+  },
+  {
+    "id": "6",
+    "slug": "pasta",
+    "name": {
+      "en": "Pasta",
+      "ru": "Паста"
+    },
+    "imageUrl": "https://www.themealdb.com/images/category/pasta.png",
+    "description": {
+      "en": "Pasta is a staple food of traditional Italian cuisine, with the first reference dating to 1154 in Sicily.\r\n\r\nAlso commonly used to refer to the variety of pasta dishes, pasta is typically a noodle made from an unleavened dough of a durum wheat flour mixed with water or eggs and formed into sheets or various shapes, then cooked by boiling or baking. As an alternative for those wanting a different taste, or who need to avoid products containing gluten, some pastas can be made using rice flour in place of wheat.[3][4] Pastas may be divided into two broad categories, dried (pasta secca) and fresh (pasta fresca).",
+      "ru": "Паста — основной продукт традиционной итальянской кухни, первое упоминание о ней датируется 1154 годом на Сицилии.\r\n\r\nМакаронные изделия, также часто используемые для обозначения разнообразных блюд из макарон, обычно представляют собой лапшу, приготовленную из пресного теста из муки твердых сортов пшеницы, смешанного с водой или яйцами и сформированного в листы или различные формы, а затем приготовленного путем варки или запекания. В качестве альтернативы для тех, кто хочет другой вкус или кому необходимо избегать продуктов, содержащих глютен, некоторые макаронные изделия можно приготовить с использованием рисовой муки вместо пшеничной.[3][4] Макаронные изделия можно разделить на две большие категории: сушеные (pasta secca) и свежие (pasta fresca)."
+    },
+    "count": 12
+  },
+  {
+    "id": "11",
+    "slug": "vegan",
+    "name": {
+      "en": "Vegan",
+      "ru": "Веганское"
+    },
+    "imageUrl": "https://www.themealdb.com/images/category/vegan.png",
+    "description": {
+      "en": "Veganism is both the practice of abstaining from the use of animal products, particularly in diet, and an associated philosophy that rejects the commodity status of animals.[b] A follower of either the diet or the philosophy is known as a vegan (pronounced /ˈviːɡən/ VEE-gən). Distinctions are sometimes made between several categories of veganism. Dietary vegans (or strict vegetarians) refrain from consuming animal products, not only meat but also eggs, dairy products and other animal-derived substances.[c] The term ethical vegan is often applied to those who not only follow a vegan diet but extend the philosophy into other areas of their lives, and oppose the use of animals for any purpose.[d] Another term is environmental veganism, which refers to the avoidance of animal products on the premise that the harvesting or industrial farming of animals is environmentally damaging and unsustainable.",
+      "ru": "Веганство - это одновременно практика воздержания от использования продуктов животного происхождения, особенно в диете, и связанная с ней философия, которая отвергает товарный статус животных. [b] Последователь диеты или философии известен как веган (произносится /ˈviːɡən/ VEE-gən). Иногда проводятся различия между несколькими категориями веганства. Диетические веганы (или строгие вегетарианцы) воздерживаются от употребления продуктов животного происхождения, не только мяса, но также яиц, молочных продуктов и других веществ животного происхождения. [c] Термин «этический веган» часто применяется к тем, кто не только следует веганской диете, но и распространяет эту философию на другие области своей жизни и выступает против использования животных для любых целей. [d] Другой термин - экологическое веганство, которое относится к отказу от продуктов животного происхождения на том основании, что их сбор или промышленность Разведение животных наносит ущерб окружающей среде и является неустойчивым."
+    },
+    "count": 7
+  },
+  {
+    "id": "14",
+    "slug": "goat",
+    "name": {
+      "en": "Goat",
+      "ru": "Козлятина"
+    },
+    "imageUrl": "https://www.themealdb.com/images/category/goat.png",
+    "description": {
+      "en": "The domestic goat or simply goat (Capra aegagrus hircus) is a subspecies of C. aegagrus domesticated from the wild goat of Southwest Asia and Eastern Europe. The goat is a member of the animal family Bovidae and the subfamily Caprinae, meaning it is closely related to the sheep. There are over 300 distinct breeds of goat. Goats are one of the oldest domesticated species of animal, and have been used for milk, meat, fur and skins across much of the world. Milk from goats is often turned into goat cheese.",
+      "ru": "Домашняя коза или просто коза (Capra aegagrus hircus) — подвид C. aegagrus, одомашненный от дикой козы Юго-Западной Азии и Восточной Европы. Коза является членом семейства животных Bovidae и подсемейства Caprinae, что означает, что она тесно связана с овцами. Существует более 300 различных пород коз. Козы — один из старейших одомашненных видов животных, и во многих странах мира их использовали для производства молока, мяса, меха и шкур. Козье молоко часто перерабатывают в козий сыр."
+    },
+    "count": 2
+  }
+]

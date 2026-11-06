@@ -10,7 +10,16 @@
     "lint": "biome check src",
     "check": "biome check --write src",
     "format": "biome format --write src",
-    "test": "vitest run"
+    "test": "vitest run",
+    "parse:meals": "node scripts/parse-themealdb.mjs",
+    "translate:meals": "node scripts/translate-meals.mjs",
+    "clean:meals": "node scripts/clean-and-normalize.mjs",
+    "enrich:meals": "node scripts/enrich-meals.mjs",
+    "parse:steps": "node scripts/parse-steps.mjs",
+    "add:types": "node scripts/add-meal-types-and-dietary.mjs",
+    "seed:supabase": "node scripts/seed-supabase.mjs",
+    "generate:sql": "node scripts/generate-sql-seed.mjs",
+    "clean:measures": "node scripts/fix-and-standardize-measures.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",

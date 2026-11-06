@@ -25,14 +25,25 @@ describe('parseInstructions', () => {
 
   it('filters out step headers, bare numbers, and empty lines', () => {
     const raw = `
+      Serves 2
+      Обслуживает 4
       STEP 1
       1
       
       Mix flour and eggs
       Step 2
       Pour into pan
+      ШАГ 3
+      Запекайте 20 минут
+      шаг 4:
+      Подавайте горячим
     `;
-    expect(parseInstructions(raw)).toEqual(['Mix flour and eggs', 'Pour into pan']);
+    expect(parseInstructions(raw)).toEqual([
+      'Mix flour and eggs',
+      'Pour into pan',
+      'Запекайте 20 минут',
+      'Подавайте горячим',
+    ]);
   });
 
   it('filters out common keywords like preparation, cooking, serving regardless of casing', () => {

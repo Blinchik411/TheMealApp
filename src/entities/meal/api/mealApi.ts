@@ -1,151 +1,274 @@
-import { API_ENDPOINTS } from '@/shared/api';
-import type { z } from 'zod';
-import { mapTheMealDbToMeal } from '../lib/mealAdapter';
-import {
-  areaResponseSchema,
-  categoryResponseSchema,
-  theMealDbResponseSchema,
-} from '../model/schema';
-import type { Meal } from '../model/types';
+import { supabase } from '@/shared/api';
+import { type SupabaseMealRow, mapSupabaseMealToMeal } from '../lib/supabaseMealAdapter';
+import type { Language, Meal } from '../model/types';
 
-const REQUEST_TIMEOUT_MS = 8000;
-const REVALIDATE_RECIPES = 3600;
-const REVALIDATE_META = 86400;
-
-async function fetchTheMealDb<T>(
-  url: string,
-  schema: z.ZodType<T>,
-  revalidate: number,
-  errorMessage: string,
-): Promise<T> {
-  const res = await fetch(url, {
-    next: { revalidate },
-    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-  });
-
-  if (!res.ok) {
-    throw new Error(`${errorMessage} (HTTP ${res.status})`);
-  }
-
-  let raw: unknown;
-  try {
-    raw = await res.json();
-  } catch {
-    throw new Error(`${errorMessage}: Invalid JSON response`);
-  }
-
-  const parsed = schema.safeParse(raw);
-  if (!parsed.success) {
-    console.error(`[MealApi Validation Error] at ${url}:`, parsed.error.format());
-    throw new Error(`${errorMessage}: API contract mismatch`);
-  }
-
-  return parsed.data;
+export interface GetMealsFilterOptions {
+  search?: string;
+  category?: string;
+  area?: string;
+  mealType?: string;
+  difficulty?: 'easy' | 'medium' | 'hard';
+  maxTime?: number;
+  dietary?: {
+    isVegetarian?: boolean;
+    isVegan?: boolean;
+    isGlutenFree?: boolean;
+    isDairyFree?: boolean;
+  };
+  limit?: number;
+  offset?: number;
+  lang?: Language;
 }
 
 export const mealApi = {
-  async getMealById(id: string): Promise<Meal | null> {
-    const trimmedId = id?.trim();
-    if (!trimmedId) return null;
+  /**
+   * Получить рецепт по ID или по Slug
+   */
+  async getMealById(idOrSlug: string, lang: Language = 'ru'): Promise<Meal | null> {
+    const trimmed = idOrSlug?.trim();
+    if (!trimmed) return null;
 
-    const data = await fetchTheMealDb(
-      API_ENDPOINTS.getMealById(trimmedId),
-      theMealDbResponseSchema,
-      REVALIDATE_RECIPES,
-      'Failed to load recipe',
-    );
-    const firstMeal = data.meals?.[0];
-    return firstMeal ? mapTheMealDbToMeal(firstMeal) : null;
+    try {
+      const { data, error } = await supabase
+        .from('meals')
+        .select('*')
+        .or(`id.eq.${trimmed},slug.eq.${trimmed}`)
+        .maybeSingle();
+
+      if (error || !data) return null;
+      return mapSupabaseMealToMeal(data as SupabaseMealRow, lang);
+    } catch (err) {
+      console.error('[mealApi.getMealById] error:', err);
+      return null;
+    }
   },
 
-  async searchByName(name: string): Promise<Meal[]> {
+  /**
+   * Поиск по названию (на русском и английском)
+   */
+  async searchByName(name: string, lang: Language = 'ru'): Promise<Meal[]> {
     const trimmed = name?.trim();
     if (!trimmed) return [];
 
-    const data = await fetchTheMealDb(
-      API_ENDPOINTS.searchByName(trimmed),
-      theMealDbResponseSchema,
-      REVALIDATE_RECIPES,
-      'Failed to search recipes',
-    );
-    return (data.meals ?? []).map((m) => mapTheMealDbToMeal(m));
+    try {
+      const { data, error } = await supabase
+        .from('meals')
+        .select('*')
+        .or(`name->>ru.ilike.%${trimmed}%,name->>en.ilike.%${trimmed}%`)
+        .order('id', { ascending: true })
+        .limit(50);
+
+      if (error || !data) return [];
+      return data.map((row) => mapSupabaseMealToMeal(row as SupabaseMealRow, lang));
+    } catch (err) {
+      console.error('[mealApi.searchByName] error:', err);
+      return [];
+    }
   },
 
-  async searchByLetter(letter: string): Promise<Meal[]> {
+  /**
+   * Поиск по первой букве названия
+   */
+  async searchByLetter(letter: string, lang: Language = 'ru'): Promise<Meal[]> {
     const char = letter?.trim().charAt(0);
     if (!char) return [];
 
-    const data = await fetchTheMealDb(
-      API_ENDPOINTS.searchByFirstLetter(char),
-      theMealDbResponseSchema,
-      REVALIDATE_RECIPES,
-      'Failed to load recipes by letter',
-    );
-    return (data.meals ?? []).map((m) => mapTheMealDbToMeal(m));
+    try {
+      const { data, error } = await supabase
+        .from('meals')
+        .select('*')
+        .or(`name->>en.ilike.${char}%,name->>ru.ilike.${char}%`)
+        .order('id', { ascending: true })
+        .limit(50);
+
+      if (error || !data) return [];
+      return data.map((row) => mapSupabaseMealToMeal(row as SupabaseMealRow, lang));
+    } catch (err) {
+      console.error('[mealApi.searchByLetter] error:', err);
+      return [];
+    }
   },
 
-  async filterByCategory(category: string): Promise<Meal[]> {
+  /**
+   * Фильтрация по категории (поддерживает EN и RU название или slug)
+   */
+  async filterByCategory(category: string, lang: Language = 'ru'): Promise<Meal[]> {
     const trimmed = category?.trim();
     if (!trimmed) return [];
 
-    const data = await fetchTheMealDb(
-      API_ENDPOINTS.searchByCategory(trimmed),
-      theMealDbResponseSchema,
-      REVALIDATE_RECIPES,
-      'Failed to filter by category',
-    );
-    return (data.meals ?? []).map((m) => mapTheMealDbToMeal(m, { fallbackCategory: trimmed }));
+    try {
+      const { data, error } = await supabase
+        .from('meals')
+        .select('*')
+        .or(`category->>en.eq.${trimmed},category->>ru.eq.${trimmed}`)
+        .order('id', { ascending: true })
+        .limit(100);
+
+      if (error || !data) return [];
+      return data.map((row) => mapSupabaseMealToMeal(row as SupabaseMealRow, lang));
+    } catch (err) {
+      console.error('[mealApi.filterByCategory] error:', err);
+      return [];
+    }
   },
 
-  async filterByArea(area: string): Promise<Meal[]> {
+  /**
+   * Фильтрация по кухне/региону (поддерживает EN и RU название или slug)
+   */
+  async filterByArea(area: string, lang: Language = 'ru'): Promise<Meal[]> {
     const trimmed = area?.trim();
     if (!trimmed) return [];
 
-    const data = await fetchTheMealDb(
-      API_ENDPOINTS.searchByArea(trimmed),
-      theMealDbResponseSchema,
-      REVALIDATE_RECIPES,
-      'Failed to filter by cuisine',
-    );
-    return (data.meals ?? []).map((m) => mapTheMealDbToMeal(m, { fallbackCuisine: trimmed }));
+    try {
+      const { data, error } = await supabase
+        .from('meals')
+        .select('*')
+        .or(`area->>en.eq.${trimmed},area->>ru.eq.${trimmed}`)
+        .order('id', { ascending: true })
+        .limit(100);
+
+      if (error || !data) return [];
+      return data.map((row) => mapSupabaseMealToMeal(row as SupabaseMealRow, lang));
+    } catch (err) {
+      console.error('[mealApi.filterByArea] error:', err);
+      return [];
+    }
   },
 
-  async getCategories(): Promise<string[]> {
-    const data = await fetchTheMealDb(
-      API_ENDPOINTS.getCategoryList(),
-      categoryResponseSchema,
-      REVALIDATE_META,
-      'Failed to load categories',
-    );
-    const categories =
-      data.meals
-        ?.map((item) => item.strCategory)
-        .filter((cat): cat is string => typeof cat === 'string' && cat.trim() !== '') ?? [];
-    return Array.from(new Set(categories)).sort();
+  /**
+   * Список категорий
+   */
+  async getCategories(lang: Language = 'ru'): Promise<string[]> {
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('name')
+        .neq('id', 'test')
+        .order('count', { ascending: false });
+
+      if (error || !data) return [];
+      return data
+        .map((row) => (row.name as { ru: string; en: string })[lang] || row.name.ru || row.name.en)
+        .filter(Boolean);
+    } catch (err) {
+      console.error('[mealApi.getCategories] error:', err);
+      return [];
+    }
   },
 
-  async getAreas(): Promise<string[]> {
-    const data = await fetchTheMealDb(
-      API_ENDPOINTS.getAreaList(),
-      areaResponseSchema,
-      REVALIDATE_META,
-      'Failed to load cuisines',
-    );
-    const areas =
-      data.meals
-        ?.map((item) => item.strArea)
-        .filter((area): area is string => typeof area === 'string' && area.trim() !== '') ?? [];
-    return Array.from(new Set(areas)).sort();
+  /**
+   * Список активных кухонь
+   */
+  async getAreas(lang: Language = 'ru'): Promise<string[]> {
+    try {
+      const { data, error } = await supabase
+        .from('areas')
+        .select('name')
+        .order('count', { ascending: false });
+
+      if (error || !data) return [];
+      return data
+        .map((row) => (row.name as { ru: string; en: string })[lang] || row.name.ru || row.name.en)
+        .filter(Boolean);
+    } catch (err) {
+      console.error('[mealApi.getAreas] error:', err);
+      return [];
+    }
   },
 
-  async getRandomMeal(): Promise<Meal | null> {
-    const data = await fetchTheMealDb(
-      API_ENDPOINTS.getRandomMeal(),
-      theMealDbResponseSchema,
-      0,
-      'Failed to load random recipe',
-    );
-    const firstMeal = data.meals?.[0];
-    return firstMeal ? mapTheMealDbToMeal(firstMeal) : null;
+  /**
+   * Случайный рецепт
+   */
+  async getRandomMeal(lang: Language = 'ru'): Promise<Meal | null> {
+    try {
+      // Pick a random offset between 0 and 792
+      const randomOffset = Math.floor(Math.random() * 790);
+      const { data, error } = await supabase
+        .from('meals')
+        .select('*')
+        .range(randomOffset, randomOffset)
+        .maybeSingle();
+
+      if (error || !data) {
+        const { data: first } = await supabase.from('meals').select('*').limit(1).maybeSingle();
+        return first ? mapSupabaseMealToMeal(first as SupabaseMealRow, lang) : null;
+      }
+      return mapSupabaseMealToMeal(data as SupabaseMealRow, lang);
+    } catch (err) {
+      console.error('[mealApi.getRandomMeal] error:', err);
+      return null;
+    }
+  },
+
+  /**
+   * Продвинутая составная фильтрация одним SQL-запросом в PostgreSQL
+   */
+  async getMeals(options: GetMealsFilterOptions = {}): Promise<Meal[]> {
+    const {
+      search,
+      category,
+      area,
+      mealType,
+      difficulty,
+      maxTime,
+      dietary,
+      limit = 24,
+      offset = 0,
+      lang = 'ru',
+    } = options;
+
+    try {
+      let query = supabase.from('meals').select('*');
+
+      if (search?.trim()) {
+        const s = search.trim();
+        query = query.or(`name->>ru.ilike.%${s}%,name->>en.ilike.%${s}%`);
+      }
+
+      if (category?.trim()) {
+        const c = category.trim();
+        query = query.or(`category->>en.eq.${c},category->>ru.eq.${c}`);
+      }
+
+      if (area?.trim()) {
+        const a = area.trim();
+        query = query.or(`area->>en.eq.${a},area->>ru.eq.${a}`);
+      }
+
+      if (mealType?.trim()) {
+        query = query.contains('meal_type', [mealType.trim().toLowerCase()]);
+      }
+
+      if (difficulty) {
+        query = query.eq('difficulty', difficulty);
+      }
+
+      if (maxTime && maxTime > 0) {
+        query = query.lte('total_time_minutes', maxTime);
+      }
+
+      if (dietary?.isVegetarian) {
+        query = query.eq('dietary->>isVegetarian', 'true');
+      }
+      if (dietary?.isVegan) {
+        query = query.eq('dietary->>isVegan', 'true');
+      }
+      if (dietary?.isGlutenFree) {
+        query = query.eq('dietary->>isGlutenFree', 'true');
+      }
+      if (dietary?.isDairyFree) {
+        query = query.eq('dietary->>isDairyFree', 'true');
+      }
+
+      query = query.order('id', { ascending: true }).range(offset, offset + limit - 1);
+
+      const { data, error } = await query;
+      if (error || !data) return [];
+
+      return data.map((row) => mapSupabaseMealToMeal(row as SupabaseMealRow, lang));
+    } catch (err) {
+      console.error('[mealApi.getMeals] error:', err);
+      return [];
+    }
   },
 };

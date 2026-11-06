@@ -1,0 +1,362 @@
+[
+  {
+    "slug": "international",
+    "name": {
+      "en": "International",
+      "ru": "Международная"
+    },
+    "count": 156
+  },
+  {
+    "slug": "british",
+    "name": {
+      "en": "British",
+      "ru": "Британская"
+    },
+    "count": 60
+  },
+  {
+    "slug": "spanish",
+    "name": {
+      "en": "Spanish",
+      "ru": "Испанская"
+    },
+    "count": 48
+  },
+  {
+    "slug": "american",
+    "name": {
+      "en": "American",
+      "ru": "Американская"
+    },
+    "count": 34
+  },
+  {
+    "slug": "turkish",
+    "name": {
+      "en": "Turkish",
+      "ru": "Турецкая"
+    },
+    "count": 30
+  },
+  {
+    "slug": "french",
+    "name": {
+      "en": "French",
+      "ru": "Французская"
+    },
+    "count": 29
+  },
+  {
+    "slug": "chinese",
+    "name": {
+      "en": "Chinese",
+      "ru": "Китайская"
+    },
+    "count": 27
+  },
+  {
+    "slug": "vietnamese",
+    "name": {
+      "en": "Vietnamese",
+      "ru": "Вьетнамская"
+    },
+    "count": 27
+  },
+  {
+    "slug": "polish",
+    "name": {
+      "en": "Polish",
+      "ru": "Польская"
+    },
+    "count": 27
+  },
+  {
+    "slug": "jamaican",
+    "name": {
+      "en": "Jamaican",
+      "ru": "Ямайская"
+    },
+    "count": 27
+  },
+  {
+    "slug": "thai",
+    "name": {
+      "en": "Thai",
+      "ru": "Тайская"
+    },
+    "count": 27
+  },
+  {
+    "slug": "canadian",
+    "name": {
+      "en": "Canadian",
+      "ru": "Канадская"
+    },
+    "count": 22
+  },
+  {
+    "slug": "italian",
+    "name": {
+      "en": "Italian",
+      "ru": "Итальянская"
+    },
+    "count": 22
+  },
+  {
+    "slug": "norwegian",
+    "name": {
+      "en": "Norwegian",
+      "ru": "Норвежская"
+    },
+    "count": 18
+  },
+  {
+    "slug": "dutch",
+    "name": {
+      "en": "Dutch",
+      "ru": "Голландская"
+    },
+    "count": 17
+  },
+  {
+    "slug": "indian",
+    "name": {
+      "en": "Indian",
+      "ru": "Индийская"
+    },
+    "count": 17
+  },
+  {
+    "slug": "australian",
+    "name": {
+      "en": "Australian",
+      "ru": "Австралийская"
+    },
+    "count": 13
+  },
+  {
+    "slug": "algerian",
+    "name": {
+      "en": "Algerian",
+      "ru": "Алжирская"
+    },
+    "count": 12
+  },
+  {
+    "slug": "saudi-arabian",
+    "name": {
+      "en": "Saudi Arabian",
+      "ru": "Саудовская"
+    },
+    "count": 12
+  },
+  {
+    "slug": "argentinian",
+    "name": {
+      "en": "Argentinian",
+      "ru": "Аргентинская"
+    },
+    "count": 10
+  },
+  {
+    "slug": "venezuelan",
+    "name": {
+      "en": "Venezuelan",
+      "ru": "Венесуэльская"
+    },
+    "count": 10
+  },
+  {
+    "slug": "uruguayan",
+    "name": {
+      "en": "Uruguayan",
+      "ru": "Уругвайская"
+    },
+    "count": 9
+  },
+  {
+    "slug": "japanese",
+    "name": {
+      "en": "Japanese",
+      "ru": "Японская"
+    },
+    "count": 9
+  },
+  {
+    "slug": "malaysian",
+    "name": {
+      "en": "Malaysian",
+      "ru": "Малайзийская"
+    },
+    "count": 8
+  },
+  {
+    "slug": "filipino",
+    "name": {
+      "en": "Filipino",
+      "ru": "Филиппинская"
+    },
+    "count": 8
+  },
+  {
+    "slug": "irish",
+    "name": {
+      "en": "Irish",
+      "ru": "Ирландская"
+    },
+    "count": 8
+  },
+  {
+    "slug": "mexican",
+    "name": {
+      "en": "Mexican",
+      "ru": "Мексиканская"
+    },
+    "count": 8
+  },
+  {
+    "slug": "croatian",
+    "name": {
+      "en": "Croatian",
+      "ru": "Хорватская"
+    },
+    "count": 8
+  },
+  {
+    "slug": "tunisian",
+    "name": {
+      "en": "Tunisian",
+      "ru": "Тунисская"
+    },
+    "count": 8
+  },
+  {
+    "slug": "greek",
+    "name": {
+      "en": "Greek",
+      "ru": "Греческая"
+    },
+    "count": 8
+  },
+  {
+    "slug": "egyptian",
+    "name": {
+      "en": "Egyptian",
+      "ru": "Египетская"
+    },
+    "count": 8
+  },
+  {
+    "slug": "portuguese",
+    "name": {
+      "en": "Portuguese",
+      "ru": "Португальская"
+    },
+    "count": 8
+  },
+  {
+    "slug": "cambodian",
+    "name": {
+      "en": "Cambodian",
+      "ru": "Камбоджийская"
+    },
+    "count": 7
+  },
+  {
+    "slug": "russian",
+    "name": {
+      "en": "Russian",
+      "ru": "Русская"
+    },
+    "count": 7
+  },
+  {
+    "slug": "ukrainian",
+    "name": {
+      "en": "Ukrainian",
+      "ru": "Украинская"
+    },
+    "count": 7
+  },
+  {
+    "slug": "syrian",
+    "name": {
+      "en": "Syrian",
+      "ru": "Сирийская"
+    },
+    "count": 6
+  },
+  {
+    "slug": "moroccan",
+    "name": {
+      "en": "Moroccan",
+      "ru": "Марокканская"
+    },
+    "count": 6
+  },
+  {
+    "slug": "brazilian",
+    "name": {
+      "en": "Brazilian",
+      "ru": "Бразильская"
+    },
+    "count": 5
+  },
+  {
+    "slug": "colombian",
+    "name": {
+      "en": "Colombian",
+      "ru": "Колумбийская"
+    },
+    "count": 5
+  },
+  {
+    "slug": "kenyan",
+    "name": {
+      "en": "Kenyan",
+      "ru": "Кенийская"
+    },
+    "count": 5
+  },
+  {
+    "slug": "slovak",
+    "name": {
+      "en": "Slovak",
+      "ru": "Словацкая"
+    },
+    "count": 4
+  },
+  {
+    "slug": "laotian",
+    "name": {
+      "en": "Laotian",
+      "ru": "Лаосская"
+    },
+    "count": 2
+  },
+  {
+    "slug": "swedish",
+    "name": {
+      "en": "Swedish",
+      "ru": "Шведская"
+    },
+    "count": 2
+  },
+  {
+    "slug": "antiguan",
+    "name": {
+      "en": "Antiguan",
+      "ru": "Антигуанская"
+    },
+    "count": 1
+  },
+  {
+    "slug": "albanian",
+    "name": {
+      "en": "Albanian",
+      "ru": "Албанская"
+    },
+    "count": 1
+  }
+]

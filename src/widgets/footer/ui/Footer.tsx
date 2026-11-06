@@ -45,7 +45,6 @@ export function Footer() {
 
   return (
     <footer className="w-full border-t border-border bg-card/60 backdrop-blur-sm mt-auto print:hidden">
-
       {/* Main navigation grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4 lg:gap-12">

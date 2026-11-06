@@ -1,165 +1,111 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { supabase } from '@/shared/api';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mealApi } from './mealApi';
 
-describe('mealApi', () => {
-  beforeEach(() => {
-    vi.restoreAllMocks();
-  });
+vi.mock('@/shared/api', () => ({
+  supabase: {
+    from: vi.fn(),
+  },
+}));
 
-  afterEach(() => {
-    vi.unstubAllGlobals();
+describe('mealApi with Supabase', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
   it('getMealById возвращает null при пустом id', async () => {
-    const fetchSpy = vi.fn();
-    vi.stubGlobal('fetch', fetchSpy);
-
     const result = await mealApi.getMealById('   ');
     expect(result).toBeNull();
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(supabase.from).not.toHaveBeenCalled();
   });
 
   it('getMealById возвращает смапленный рецепт при успешном запросе', async () => {
-    const mockJson = {
-      meals: [
-        {
-          idMeal: '52772',
-          strMeal: 'Chicken Teriyaki',
-          strMealThumb: 'https://example.com/pic.jpg',
-          strCategory: 'Chicken',
-          strArea: 'Japanese',
-        },
-      ],
+    const mockRow = {
+      id: '52772',
+      slug: 'chicken-teriyaki',
+      name: { en: 'Chicken Teriyaki', ru: 'Курица терияки' },
+      category: { en: 'Chicken', ru: 'Курица' },
+      area: { en: 'Japanese', ru: 'Японская' },
+      image_url: 'https://example.com/pic.jpg',
+      ingredients: [],
+      steps: [],
+      instructions: { en: 'Cook it', ru: 'Приготовьте' },
+      nutrition: { calories: 450, protein: 35, fat: 12, carbs: 20 },
+      servings: 2,
+      prep_time_minutes: 10,
+      cook_time_minutes: 15,
+      total_time_minutes: 25,
+      difficulty: 'easy',
+      dietary: { isVegetarian: false, isVegan: false, isGlutenFree: false, isDairyFree: true },
+      meal_type: ['lunch', 'dinner'],
     };
 
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({
-        ok: true,
-        json: async () => mockJson,
-      }),
-    );
+    const maybeSingleMock = vi.fn().mockResolvedValue({ data: mockRow, error: null });
+    const orMock = vi.fn().mockReturnValue({ maybeSingle: maybeSingleMock });
+    const selectMock = vi.fn().mockReturnValue({ or: orMock });
 
-    const result = await mealApi.getMealById('52772');
+    vi.mocked(supabase.from).mockReturnValue({ select: selectMock } as unknown as ReturnType<
+      typeof supabase.from
+    >);
+
+    const result = await mealApi.getMealById('52772', 'ru');
     expect(result).not.toBeNull();
     expect(result?.id).toBe('52772');
-    expect(result?.title).toBe('Chicken Teriyaki');
-    expect(result?.category).toBe('Chicken');
+    expect(result?.title).toBe('Курица терияки');
+    expect(result?.category).toBe('Курица');
+    expect(result?.totalTimeMinutes).toBe(25);
   });
 
-  it('filterByCategory прокидывает переданную категорию в fallback', async () => {
-    const mockFilterJson = {
-      meals: [
-        {
-          idMeal: '123',
-          strMeal: 'Salmon Steak',
-          strMealThumb: 'https://example.com/salmon.jpg',
-        },
-      ],
-    };
-
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({
-        ok: true,
-        json: async () => mockFilterJson,
-      }),
-    );
-
-    const result = await mealApi.filterByCategory('Seafood');
-    expect(result).toHaveLength(1);
-    expect(result[0]?.category).toBe('Seafood');
+  it('searchByName возвращает пустой массив при пустом запросе', async () => {
+    const result = await mealApi.searchByName('  ');
+    expect(result).toEqual([]);
+    expect(supabase.from).not.toHaveBeenCalled();
   });
 
-  it('filterByArea прокидывает переданную кухню в fallback', async () => {
-    const mockFilterJson = {
-      meals: [
-        {
-          idMeal: '456',
-          strMeal: 'Carbonara',
-          strMealThumb: 'https://example.com/pasta.jpg',
-        },
-      ],
-    };
+  it('searchByName выполняет поиск в Supabase', async () => {
+    const mockRows = [
+      {
+        id: '1',
+        slug: 'chicken-soup',
+        name: { en: 'Chicken Soup', ru: 'Куриный суп' },
+        category: { en: 'Chicken', ru: 'Курица' },
+        area: { en: 'Russian', ru: 'Русская' },
+        image_url: 'https://example.com/soup.jpg',
+        ingredients: [],
+        steps: [],
+        instructions: { en: '', ru: '' },
+      },
+    ];
 
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({
-        ok: true,
-        json: async () => mockFilterJson,
-      }),
-    );
+    const limitMock = vi.fn().mockResolvedValue({ data: mockRows, error: null });
+    const orderMock = vi.fn().mockReturnValue({ limit: limitMock });
+    const orMock = vi.fn().mockReturnValue({ order: orderMock });
+    const selectMock = vi.fn().mockReturnValue({ or: orMock });
 
-    const result = await mealApi.filterByArea('Italian');
-    expect(result).toHaveLength(1);
-    expect(result[0]?.cuisine).toBe('Italian');
+    vi.mocked(supabase.from).mockReturnValue({ select: selectMock } as unknown as ReturnType<
+      typeof supabase.from
+    >);
+
+    const results = await mealApi.searchByName('суп', 'ru');
+    expect(results).toHaveLength(1);
+    expect(results[0].title).toBe('Куриный суп');
   });
 
-  it('searchByLetter нормализует строку до первого символа', async () => {
-    const fetchSpy = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({ meals: [] }),
-    });
-    vi.stubGlobal('fetch', fetchSpy);
+  it('getCategories возвращает список названий категорий', async () => {
+    const mockCategories = [
+      { name: { en: 'Dessert', ru: 'Десерты' } },
+      { name: { en: 'Chicken', ru: 'Курица' } },
+    ];
 
-    await mealApi.searchByLetter('chicken');
-    expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('f=c'), expect.any(Object));
-  });
+    const orderMock = vi.fn().mockResolvedValue({ data: mockCategories, error: null });
+    const neqMock = vi.fn().mockReturnValue({ order: orderMock });
+    const selectMock = vi.fn().mockReturnValue({ neq: neqMock });
 
-  it('выбрасывает ошибку при HTTP статусе отличного от 2xx', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({
-        ok: false,
-        status: 500,
-      }),
-    );
+    vi.mocked(supabase.from).mockReturnValue({ select: selectMock } as unknown as ReturnType<
+      typeof supabase.from
+    >);
 
-    await expect(mealApi.getMealById('123')).rejects.toThrow('Failed to load recipe (HTTP 500)');
-  });
-
-  it('выбрасывает ошибку при невалидном JSON ответе', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({
-        ok: true,
-        json: async () => {
-          throw new SyntaxError('Unexpected token <');
-        },
-      }),
-    );
-
-    await expect(mealApi.getMealById('123')).rejects.toThrow(
-      'Failed to load recipe: Invalid JSON response',
-    );
-  });
-
-  it('getRandomMeal возвращает случайный рецепт', async () => {
-    const mockJson = {
-      meals: [
-        {
-          idMeal: '52999',
-          strMeal: 'Random Pasta',
-          strMealThumb: 'https://example.com/pasta.jpg',
-          strCategory: 'Pasta',
-          strArea: 'Italian',
-        },
-      ],
-    };
-
-    const fetchSpy = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => mockJson,
-    });
-    vi.stubGlobal('fetch', fetchSpy);
-
-    const result = await mealApi.getRandomMeal();
-    expect(result).not.toBeNull();
-    expect(result?.id).toBe('52999');
-    expect(result?.title).toBe('Random Pasta');
-    expect(fetchSpy).toHaveBeenCalledWith(
-      expect.stringContaining('/random.php'),
-      expect.objectContaining({ next: { revalidate: 0 } }),
-    );
+    const categories = await mealApi.getCategories('ru');
+    expect(categories).toEqual(['Десерты', 'Курица']);
   });
 });

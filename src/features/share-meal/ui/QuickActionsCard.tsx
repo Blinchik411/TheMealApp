@@ -26,7 +26,7 @@ export const QuickActionsCard = ({ mealTitle, ingredients }: QuickActionsCardPro
   const handleCopyIngredients = async () => {
     const lines = [
       `🛒 Ingredients for "${mealTitle}":`,
-      ...ingredients.map((item) => `• ${item.name}: ${item.measure?.trim() || 'To taste'}`),
+      ...ingredients.map((item) => `• ${item.name}: ${item.measure?.trim() || 'По вкусу'}`),
     ];
     try {
       if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {

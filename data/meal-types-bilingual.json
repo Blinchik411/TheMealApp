@@ -1,0 +1,42 @@
+[
+  {
+    "id": "breakfast",
+    "name": {
+      "ru": "Завтрак",
+      "en": "Breakfast"
+    },
+    "count": 37
+  },
+  {
+    "id": "lunch",
+    "name": {
+      "ru": "Обед",
+      "en": "Lunch"
+    },
+    "count": 482
+  },
+  {
+    "id": "dinner",
+    "name": {
+      "ru": "Ужин",
+      "en": "Dinner"
+    },
+    "count": 482
+  },
+  {
+    "id": "dessert",
+    "name": {
+      "ru": "Десерт",
+      "en": "Dessert"
+    },
+    "count": 201
+  },
+  {
+    "id": "snack",
+    "name": {
+      "ru": "Перекус / Закуска",
+      "en": "Snack / Starter"
+    },
+    "count": 114
+  }
+]

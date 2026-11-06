@@ -64,7 +64,7 @@ export const MealIngredientsList = ({
                   <span className="text-sm font-medium text-foreground">{item.name}</span>
                 </div>
                 <span className="text-xs font-semibold text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
-                  {item.measure?.trim() || 'To taste'}
+                  {item.measure?.trim() || 'По вкусу'}
                 </span>
               </button>
             </li>

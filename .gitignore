@@ -37,3 +37,7 @@ lerna-debug.log*
 # TypeScript cache
 *.tsbuildinfo
 next-env.d.ts
+
+# Data backups
+data/backups/
+
