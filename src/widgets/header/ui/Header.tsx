@@ -3,8 +3,9 @@
 import { useUserStore } from '@/entities/user';
 import { AuthModal } from '@/features/auth';
 import { useFavoritesSync } from '@/features/favorite-meal';
+import { LanguageSwitcher } from '@/features/language-switcher';
+import { Link } from '@/shared/config/i18n';
 import { Heart, LogIn, LogOut, User as UserIcon } from 'lucide-react';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export const Header = () => {
@@ -43,6 +44,8 @@ export const Header = () => {
               <span className="hidden sm:inline">Favorites</span>
               <Heart className="size-4.5 text-red-500 fill-none group-hover:fill-red-500 group-hover:scale-130 transition-all duration-200" />
             </Link>
+
+            <LanguageSwitcher />
 
             <div className="h-4 w-px bg-border mx-1" />
 
