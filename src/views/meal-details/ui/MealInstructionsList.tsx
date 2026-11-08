@@ -1,5 +1,6 @@
 import { InteractiveStepText } from '@/features/cooking-timer';
 import { Check } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export interface MealInstructionsListProps {
   instructions: string[];
@@ -12,6 +13,8 @@ export const MealInstructionsList = ({
   checkedSteps,
   onToggleStep,
 }: MealInstructionsListProps) => {
+  const t = useTranslations('MealDetails');
+
   if (instructions.length === 0) {
     return null;
   }
@@ -19,8 +22,8 @@ export const MealInstructionsList = ({
   return (
     <div className="bg-card border border-border rounded-3xl p-6 sm:p-8 shadow-xs space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold tracking-tight text-foreground">Step-by-step Recipe</h2>
-        <span className="text-xs text-muted-foreground">Click to check off</span>
+        <h2 className="text-2xl font-bold tracking-tight text-foreground">{t('stepByStep')}</h2>
+        <span className="text-xs text-muted-foreground">{t('clickToCheckOff')}</span>
       </div>
 
       <ol className="space-y-3">

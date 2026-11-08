@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 interface HomePaginationProps {
@@ -8,6 +9,7 @@ interface HomePaginationProps {
 }
 
 export const HomePagination = ({ currentPage, totalPages }: HomePaginationProps) => {
+  const t = useTranslations('Pagination');
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -33,11 +35,11 @@ export const HomePagination = ({ currentPage, totalPages }: HomePaginationProps)
         onClick={() => handlePageChange(currentPage - 1)}
         className="px-4 py-2 text-xs font-medium rounded-xl border border-border bg-card hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer shadow-2xs"
       >
-        ← Previous
+        {t('previous')}
       </button>
 
       <span className="text-xs font-medium text-muted-foreground px-2">
-        Page {currentPage} of {totalPages}
+        {t('pageOf', { current: currentPage, total: totalPages })}
       </span>
 
       <button
@@ -46,7 +48,7 @@ export const HomePagination = ({ currentPage, totalPages }: HomePaginationProps)
         onClick={() => handlePageChange(currentPage + 1)}
         className="px-4 py-2 text-xs font-medium rounded-xl border border-border bg-card hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer shadow-2xs"
       >
-        Next →
+        {t('next')}
       </button>
     </div>
   );

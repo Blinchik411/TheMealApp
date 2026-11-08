@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/shared/lib';
+import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 
 interface MealCategoryFilterProps {
@@ -14,6 +15,7 @@ export const MealCategoryFilter = ({
   activeCategory,
   onSelectCategory,
 }: MealCategoryFilterProps) => {
+  const t = useTranslations('Filters');
   const uniqueCategories = useMemo(() => Array.from(new Set(categories)), [categories]);
 
   return (
@@ -28,7 +30,7 @@ export const MealCategoryFilter = ({
             : 'bg-card text-muted-foreground border-border hover:bg-accent hover:text-accent-foreground',
         )}
       >
-        All Categories
+        {t('allCategories')}
       </button>
 
       {uniqueCategories.map((category) => {

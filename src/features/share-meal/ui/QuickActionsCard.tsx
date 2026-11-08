@@ -2,6 +2,7 @@
 
 import type { IngredientItem } from '@/entities/meal';
 import { Check, ClipboardList, Printer, Share2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 
 export interface QuickActionsCardProps {
@@ -10,6 +11,7 @@ export interface QuickActionsCardProps {
 }
 
 export const QuickActionsCard = ({ mealTitle, ingredients }: QuickActionsCardProps) => {
+  const t = useTranslations('MealDetails');
   const [isIngredientsCopied, setIsIngredientsCopied] = useState(false);
   const [isLinkCopied, setIsLinkCopied] = useState(false);
 
@@ -77,7 +79,7 @@ export const QuickActionsCard = ({ mealTitle, ingredients }: QuickActionsCardPro
     <div className="bg-card border border-border rounded-3xl p-5 shadow-xs space-y-3.5 print:hidden">
       <div className="flex items-center justify-between">
         <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Quick Actions
+          {t('quickActions')}
         </span>
       </div>
 
@@ -91,12 +93,12 @@ export const QuickActionsCard = ({ mealTitle, ingredients }: QuickActionsCardPro
           {isIngredientsCopied ? (
             <>
               <Check className="size-4 text-emerald-500 stroke-[2.5]" />
-              <span className="text-emerald-600 font-semibold truncate">Copied!</span>
+              <span className="text-emerald-600 font-semibold truncate">{t('copied')}</span>
             </>
           ) : (
             <>
               <ClipboardList className="size-4 text-primary shrink-0" />
-              <span className="truncate">Copy list</span>
+              <span className="truncate">{t('copyList')}</span>
             </>
           )}
         </button>
@@ -110,12 +112,12 @@ export const QuickActionsCard = ({ mealTitle, ingredients }: QuickActionsCardPro
           {isLinkCopied ? (
             <>
               <Check className="size-4 text-emerald-500 stroke-[2.5]" />
-              <span className="text-emerald-600 font-semibold truncate">Copied!</span>
+              <span className="text-emerald-600 font-semibold truncate">{t('copied')}</span>
             </>
           ) : (
             <>
               <Share2 className="size-4 text-primary shrink-0" />
-              <span className="truncate">Share</span>
+              <span className="truncate">{t('share')}</span>
             </>
           )}
         </button>
@@ -127,7 +129,7 @@ export const QuickActionsCard = ({ mealTitle, ingredients }: QuickActionsCardPro
           title="Print recipe"
         >
           <Printer className="size-4 text-primary shrink-0" />
-          <span className="truncate">Print</span>
+          <span className="truncate">{t('print')}</span>
         </button>
       </div>
     </div>

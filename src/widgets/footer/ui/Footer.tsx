@@ -1,5 +1,5 @@
+import { Link } from '@/shared/config/i18n';
 import { ChefHat, ExternalLink } from 'lucide-react';
-import Link from 'next/link';
 
 function GithubIcon({ className }: { className?: string }) {
   return (

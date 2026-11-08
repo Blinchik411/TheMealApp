@@ -2,12 +2,14 @@
 
 import { useFavoritesStore } from '@/features/favorite-meal';
 import { MealCategoryFilter, MealSearch } from '@/features/filter-meals';
+import { Link } from '@/shared/config/i18n';
 import { MealGrid } from '@/widgets/meal-grid';
 import { Heart, Sparkles } from 'lucide-react';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 
 export const FavoritesPage = () => {
+  const t = useTranslations('Favorites');
   const favorites = useFavoritesStore((state) => state.favorites);
   const hasHydrated = useFavoritesStore((state) => state.hasHydrated);
 
@@ -54,17 +56,13 @@ export const FavoritesPage = () => {
         <div className="flex items-center justify-center size-16 rounded-3xl bg-red-500/10 text-red-500 mb-2">
           <Heart className="size-8" />
         </div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          Your favorites list is empty
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Save recipes you like using the heart icon on any meal card to easily find them here.
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">{t('emptyTitle')}</h1>
+        <p className="text-sm text-muted-foreground">{t('emptyDescription')}</p>
         <Link
           href="/"
           className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-all shadow-xs"
         >
-          Explore Recipe Catalog
+          {t('exploreButton')}
         </Link>
       </div>
     );
@@ -75,14 +73,12 @@ export const FavoritesPage = () => {
       <div className="text-center max-w-2xl mx-auto space-y-2 pt-4">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-red-500/10 text-red-500 mb-2">
           <Sparkles className="size-3.5" />
-          <span>Your personal culinary collection</span>
+          <span>{t('subtitle')}</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
-          Favorite Recipes ({favorites.length})
+          {t('title')} ({favorites.length})
         </h1>
-        <p className="text-muted-foreground text-sm sm:text-base">
-          Quickly search and filter through your saved dishes.
-        </p>
+        <p className="text-muted-foreground text-sm sm:text-base">{t('subtitle')}</p>
       </div>
 
       <div className="bg-card border border-border rounded-2xl p-4 sm:p-6 shadow-xs space-y-4">
@@ -99,11 +95,7 @@ export const FavoritesPage = () => {
         )}
       </div>
 
-      <MealGrid
-        meals={filteredFavorites}
-        from="favorites"
-        emptyMessage="No favorite recipes match this filter."
-      />
+      <MealGrid meals={filteredFavorites} from="favorites" emptyMessage={t('emptyDescription')} />
     </div>
   );
 };

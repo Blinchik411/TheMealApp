@@ -2,11 +2,18 @@
   "Header": {
     "favorites": "Favorites",
     "signIn": "Sign In",
-    "signOut": "Sign Out"
+    "signOut": "Logout"
   },
   "Footer": {
     "rights": "All rights reserved.",
-    "tagline": "Discover culinary delights from around the world."
+    "tagline": "Discover delicious recipes from around the globe with step-by-step instructions, ingredients, and video guides.",
+    "poweredBy": "Powered by TheMealDB",
+    "explore": "Explore",
+    "cuisines": "World Cuisines",
+    "categories": "Popular Categories",
+    "recipeCatalog": "Recipe Catalog",
+    "randomRecipe": "Random Recipe",
+    "favoriteMeals": "Favorite Meals"
   },
   "Home": {
     "badge": "Thousands of verified recipes",
@@ -14,5 +21,49 @@
     "description": "Discover the best recipes from around the world, filter by cuisine, and save your favorites.",
     "surpriseMe": "Not sure what to cook? Surprise Me",
     "emptyMessage": "No recipes found matching your query. Try resetting filters."
+  },
+  "Filters": {
+    "searchPlaceholder": "Search recipes by name...",
+    "search": "Search",
+    "clear": "Clear search",
+    "allCategories": "All Categories",
+    "allCuisines": "All Cuisines",
+    "reset": "Reset filters"
+  },
+  "MealDetails": {
+    "backToCatalog": "Back to catalog",
+    "backToFavorites": "Back to favorites",
+    "ingredients": "Ingredients",
+    "stepByStep": "Step-by-step Recipe",
+    "clickToCheckOff": "Click to check off",
+    "resetProgress": "Reset progress",
+    "quickActions": "Quick Actions",
+    "copyList": "Copy list",
+    "copied": "Copied!",
+    "share": "Share",
+    "print": "Print",
+    "videoRecipe": "Video Recipe",
+    "watchOnYouTube": "Watch on YouTube",
+    "relatedRecipes": "Similar Recipes",
+    "viewAllCategory": "View all",
+    "cookingTimer": "Cooking Timer"
+  },
+  "Favorites": {
+    "title": "Favorite Recipes",
+    "subtitle": "Your personal collection of saved recipes",
+    "emptyTitle": "Your favorites list is empty",
+    "emptyDescription": "Save recipes you like using the heart icon on any meal card to easily find them here.",
+    "exploreButton": "Explore Recipe Catalog"
+  },
+  "FavoriteButton": {
+    "inFavorites": "In Favorites",
+    "toFavorites": "To Favorites",
+    "addAria": "Add to favorites",
+    "removeAria": "Remove from favorites"
+  },
+  "Pagination": {
+    "previous": "← Previous",
+    "next": "Next →",
+    "pageOf": "Page {current} of {total}"
   }
 }

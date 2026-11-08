@@ -1,6 +1,6 @@
+import { Link } from '@/shared/config/i18n';
 import { cn } from '@/shared/lib/utils';
 import Image from 'next/image';
-import Link from 'next/link';
 import type { ReactNode } from 'react';
 import type { Meal } from '../model/types';
 

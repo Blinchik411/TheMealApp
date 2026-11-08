@@ -1,6 +1,7 @@
 'use client';
 
 import { Globe } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 
 interface MealAreaFilterProps {
@@ -16,6 +17,7 @@ export const MealAreaFilter = ({
   onSelectArea,
   isLoading = false,
 }: MealAreaFilterProps) => {
+  const t = useTranslations('Filters');
   const uniqueAreas = useMemo(() => Array.from(new Set(areas)), [areas]);
 
   return (
@@ -27,7 +29,7 @@ export const MealAreaFilter = ({
         onChange={(e) => onSelectArea(e.target.value)}
         className="w-full pl-9 pr-8 py-2 text-xs font-medium rounded-xl border border-border bg-card text-foreground appearance-none outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer disabled:opacity-50"
       >
-        <option value="">All Cuisines</option>
+        <option value="">{t('allCuisines')}</option>
         {uniqueAreas.map((area) => (
           <option key={area} value={area}>
             {area}

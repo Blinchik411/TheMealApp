@@ -1,14 +1,16 @@
 'use client';
 
+import { Link } from '@/shared/config/i18n';
 import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 
 export const MealBackButton = () => {
+  const t = useTranslations('MealDetails');
   const searchParams = useSearchParams();
   const backTo = searchParams.get('from') === 'favorites' ? '/favorites' : '/';
   const backLabel =
-    searchParams.get('from') === 'favorites' ? 'Back to favorites' : 'Back to catalog';
+    searchParams.get('from') === 'favorites' ? t('backToFavorites') : t('backToCatalog');
 
   return (
     <div className="print:hidden">

@@ -1,7 +1,7 @@
 import { type Meal, MealCard } from '@/entities/meal';
 import { FavoriteButton } from '@/features/favorite-meal';
+import { Link } from '@/shared/config/i18n';
 import { ArrowRight, Utensils } from 'lucide-react';
-import Link from 'next/link';
 
 export interface RelatedMealsSectionProps {
   relatedMeals?: Meal[];

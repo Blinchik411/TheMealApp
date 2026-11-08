@@ -10,6 +10,7 @@ export interface MealSearchProps {
   action?: string;
   hiddenFields?: Record<string, string | undefined>;
   placeholder?: string;
+  searchLabel?: string;
   className?: string;
 }
 
@@ -19,6 +20,7 @@ export const MealSearch = ({
   action = '/',
   hiddenFields,
   placeholder = 'Pancake',
+  searchLabel = 'Search',
   className,
 }: MealSearchProps) => {
   const [inputValue, setInputValue] = useState(value);
@@ -80,7 +82,7 @@ export const MealSearch = ({
         type="submit"
         className="px-5 py-2 bg-primary text-primary-foreground hover:bg-primary/90 font-medium text-sm rounded-xl transition-all active:scale-95 cursor-pointer shadow-xs"
       >
-        Search
+        {searchLabel}
       </button>
     </form>
   );

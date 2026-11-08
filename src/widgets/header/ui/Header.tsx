@@ -6,9 +6,11 @@ import { useFavoritesSync } from '@/features/favorite-meal';
 import { LanguageSwitcher } from '@/features/language-switcher';
 import { Link } from '@/shared/config/i18n';
 import { Heart, LogIn, LogOut, User as UserIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
 export const Header = () => {
+  const t = useTranslations('Header');
   const { syncWithCloud } = useFavoritesSync();
 
   const user = useUserStore((state) => state.user);
@@ -41,7 +43,7 @@ export const Header = () => {
               href="/favorites"
               className="group flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
             >
-              <span className="hidden sm:inline">Favorites</span>
+              <span className="hidden sm:inline">{t('favorites')}</span>
               <Heart className="size-4.5 text-red-500 fill-none group-hover:fill-red-500 group-hover:scale-130 transition-all duration-200" />
             </Link>
 
@@ -59,10 +61,10 @@ export const Header = () => {
                   type="button"
                   onClick={handleSignOut}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer"
-                  title="Sign Out"
+                  title={t('signOut')}
                 >
                   <LogOut className="size-4" />
-                  <span className="hidden sm:inline">Logout</span>
+                  <span className="hidden sm:inline">{t('signOut')}</span>
                 </button>
               </div>
             ) : (
@@ -72,7 +74,7 @@ export const Header = () => {
                 className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-all cursor-pointer shadow-xs"
               >
                 <LogIn className="size-4" />
-                <span>Sign In</span>
+                <span>{t('signIn')}</span>
               </button>
             )}
           </nav>

@@ -2,6 +2,7 @@
 
 import { MealAreaFilter, MealCategoryFilter, MealSearch } from '@/features/filter-meals';
 import { RotateCcw } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
 
@@ -20,6 +21,7 @@ export const HomeFilters = ({
   selectedCategory,
   selectedArea,
 }: HomeFiltersProps) => {
+  const t = useTranslations('Filters');
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -67,6 +69,8 @@ export const HomeFilters = ({
         value={searchQuery}
         onSearch={handleSearch}
         action={pathname}
+        placeholder={t('searchPlaceholder')}
+        searchLabel={t('search')}
         hiddenFields={{
           category: selectedCategory || undefined,
           area: selectedArea || undefined,
@@ -87,7 +91,7 @@ export const HomeFilters = ({
               className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-destructive hover:bg-destructive/10 rounded-xl transition-colors cursor-pointer border border-transparent hover:border-destructive/20"
             >
               <RotateCcw className="size-3.5" />
-              <span>Reset filters</span>
+              <span>{t('reset')}</span>
             </button>
           )}
         </div>

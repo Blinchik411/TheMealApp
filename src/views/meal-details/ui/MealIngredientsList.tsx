@@ -1,5 +1,6 @@
 import type { IngredientItem } from '@/entities/meal';
 import { CheckCircle2, RotateCcw } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export interface MealIngredientsListProps {
   ingredients: IngredientItem[];
@@ -20,11 +21,13 @@ export const MealIngredientsList = ({
   onToggleIngredient,
   onReset,
 }: MealIngredientsListProps) => {
+  const t = useTranslations('MealDetails');
+
   return (
     <div className="bg-card border border-border rounded-3xl p-6 shadow-xs space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold tracking-tight text-foreground">
-          Ingredients ({ingredients.length})
+          {t('ingredients')} ({ingredients.length})
         </h2>
         {hasProgress ? (
           <button
@@ -34,10 +37,10 @@ export const MealIngredientsList = ({
             title="Reset ingredient checklist and steps"
           >
             <RotateCcw className="size-3.5" />
-            <span>Reset progress</span>
+            <span>{t('resetProgress')}</span>
           </button>
         ) : (
-          <span className="text-xs text-muted-foreground">Click to check off</span>
+          <span className="text-xs text-muted-foreground">{t('clickToCheckOff')}</span>
         )}
       </div>
 
