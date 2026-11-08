@@ -1,5 +1,5 @@
+import { Link } from '@/shared/config/i18n';
 import { Utensils } from 'lucide-react';
-import Link from 'next/link';
 
 export default function NotFound() {
   return (

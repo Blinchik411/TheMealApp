@@ -1,14 +1,19 @@
 import { catalogFilterSchema, getFilteredCatalog } from '@/features/filter-meals';
 import { getPaginatedData } from '@/shared/lib';
 import { HomePage } from '@/views/home';
+import { setRequestLocale } from 'next-intl/server';
 
 const ITEMS_PER_PAGE = 12;
 
 interface PageProps {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export default async function Page({ searchParams }: PageProps) {
+export default async function Page({ params, searchParams }: PageProps) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const rawParams = await searchParams;
 
   const filters = catalogFilterSchema.parse({

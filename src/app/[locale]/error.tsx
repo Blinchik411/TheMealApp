@@ -1,7 +1,7 @@
 'use client';
 
+import { Link } from '@/shared/config/i18n';
 import { AlertCircle, Home, RotateCcw } from 'lucide-react';
-import Link from 'next/link';
 import { useEffect } from 'react';
 
 export default function ErrorBoundary({

@@ -1,11 +1,12 @@
 import { type Meal, mealApi } from '@/entities/meal';
 import { MealDetailsPage } from '@/views/meal-details';
 import type { Metadata } from 'next';
+import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 
 interface PageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ locale: string; id: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -40,7 +41,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function Page({ params }: PageProps) {
-  const { id } = await params;
+  const { locale, id } = await params;
+  setRequestLocale(locale);
+
   const meal = await mealApi.getMealById(id);
 
   if (!meal) {
