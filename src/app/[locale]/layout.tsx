@@ -14,32 +14,57 @@ const inter = Inter({
   variable: '--font-sans',
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://the-meal-app-three.vercel.app'),
-  title: {
-    default: 'TheMealApp — Recipe Book & Culinary Catalog',
-    template: '%s | TheMealApp',
-  },
-  description: 'Search recipes, filter by world cuisines and categories, save your favorite meals',
-  alternates: {
-    canonical: '/',
-  },
-  openGraph: {
-    title: 'TheMealApp — Recipe Book & Culinary Catalog',
-    description:
-      'Search recipes, filter by world cuisines and categories, save your favorite meals',
-    url: 'https://the-meal-app-three.vercel.app',
-    siteName: 'TheMealApp',
-    locale: 'en_US',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'TheMealApp — Recipe Book & Culinary Catalog',
-    description:
-      'Search recipes, filter by world cuisines and categories, save your favorite meals',
-  },
-};
+interface GenerateMetadataProps {
+  params: Promise<{ locale: string }>;
+}
+
+export async function generateMetadata({ params }: GenerateMetadataProps): Promise<Metadata> {
+  const { locale } = await params;
+  const isRu = locale === 'ru';
+
+  return {
+    metadataBase: new URL('https://the-meal-app-three.vercel.app'),
+    title: {
+      default: isRu
+        ? 'TheMealApp — Кулинарная книга и каталог рецептов'
+        : 'TheMealApp — Recipe Book & Culinary Catalog',
+      template: '%s | TheMealApp',
+    },
+    description: isRu
+      ? 'Ищите рецепты, фильтруйте по кухням мира и категориям, сохраняйте любимые блюда'
+      : 'Search recipes, filter by world cuisines and categories, save your favorite meals',
+    alternates: {
+      canonical: isRu ? '/ru' : '/',
+      languages: {
+        'en-US': '/',
+        'ru-RU': '/ru',
+      },
+    },
+    openGraph: {
+      title: isRu
+        ? 'TheMealApp — Кулинарная книга и каталог рецептов'
+        : 'TheMealApp — Recipe Book & Culinary Catalog',
+      description: isRu
+        ? 'Ищите рецепты, фильтруйте по кухням мира и категориям, сохраняйте любимые блюда'
+        : 'Search recipes, filter by world cuisines and categories, save your favorite meals',
+      url: isRu
+        ? 'https://the-meal-app-three.vercel.app/ru'
+        : 'https://the-meal-app-three.vercel.app',
+      siteName: 'TheMealApp',
+      locale: isRu ? 'ru_RU' : 'en_US',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: isRu
+        ? 'TheMealApp — Кулинарная книга и каталог рецептов'
+        : 'TheMealApp — Recipe Book & Culinary Catalog',
+      description: isRu
+        ? 'Ищите рецепты, фильтруйте по кухням мира и категориям, сохраняйте любимые блюда'
+        : 'Search recipes, filter by world cuisines and categories, save your favorite meals',
+    },
+  };
+}
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));

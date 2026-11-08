@@ -11,22 +11,34 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale, id } = await params;
+  const isRu = locale === 'ru';
   try {
     const meal = await mealApi.getMealById(id, locale as Language);
-    if (!meal) return { title: 'Recipe Not Found' };
+    if (!meal) return { title: isRu ? 'Рецепт не найден' : 'Recipe Not Found' };
 
-    const title = `${meal.title} — Recipe`;
-    const description = meal.instructions?.slice(0, 160) ?? `How to prepare ${meal.title}`;
+    const titleSuffix = isRu ? 'Рецепт' : 'Recipe';
+    const title = `${meal.title} — ${titleSuffix}`;
+    const description =
+      meal.instructions?.slice(0, 160) ??
+      (isRu ? `Как приготовить ${meal.title}` : `How to prepare ${meal.title}`);
     const images = meal.image ? [{ url: meal.image, alt: meal.title }] : [];
 
     return {
       title,
       description,
+      alternates: {
+        canonical: isRu ? `/ru/meal/${id}` : `/meal/${id}`,
+        languages: {
+          'en-US': `/meal/${id}`,
+          'ru-RU': `/ru/meal/${id}`,
+        },
+      },
       openGraph: {
         title,
         description,
         images,
         type: 'article',
+        locale: isRu ? 'ru_RU' : 'en_US',
       },
       twitter: {
         card: 'summary_large_image',
@@ -36,7 +48,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       },
     };
   } catch {
-    return { title: 'Recipe' };
+    return { title: isRu ? 'Рецепт' : 'Recipe' };
   }
 }
 
