@@ -30,7 +30,7 @@ describe('getFilteredCatalog', () => {
       area: undefined,
     });
 
-    expect(letterSpy).toHaveBeenCalledWith('b');
+    expect(letterSpy).toHaveBeenCalledWith('b', 'en');
     expect(result.meals).toEqual(defaultMeals);
     expect(result.categories).toEqual(['Seafood', 'Pasta']);
     expect(result.areas).toEqual(['Italian', 'Canadian']);
@@ -47,7 +47,7 @@ describe('getFilteredCatalog', () => {
       area: undefined,
     });
 
-    expect(catSpy).toHaveBeenCalledWith('Seafood');
+    expect(catSpy).toHaveBeenCalledWith('Seafood', 'en');
     expect(result.meals).toEqual(categoryMeals);
   });
 
@@ -96,5 +96,27 @@ describe('getFilteredCatalog', () => {
 
     expect(result.categories).toEqual([]);
     expect(result.meals).toHaveLength(1);
+  });
+
+  it('пробрасывает переданный язык (ru) во все вызовы mealApi', async () => {
+    const ruMeals = [mockMeal('1', 'Борщ')];
+    const letterSpy = vi.spyOn(mealApi, 'searchByLetter').mockResolvedValue(ruMeals);
+    const catSpy = vi.spyOn(mealApi, 'getCategories').mockResolvedValue(['Супы']);
+    const areaSpy = vi.spyOn(mealApi, 'getAreas').mockResolvedValue(['Русская']);
+
+    const result = await getFilteredCatalog(
+      {
+        page: 1,
+        search: undefined,
+        category: undefined,
+        area: undefined,
+      },
+      'ru',
+    );
+
+    expect(letterSpy).toHaveBeenCalledWith('b', 'ru');
+    expect(catSpy).toHaveBeenCalledWith('ru');
+    expect(areaSpy).toHaveBeenCalledWith('ru');
+    expect(result.meals).toEqual(ruMeals);
   });
 });

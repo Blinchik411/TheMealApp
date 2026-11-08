@@ -1,4 +1,4 @@
-import { mealApi } from '@/entities/meal';
+import { type Language, mealApi } from '@/entities/meal';
 import { redirect } from '@/shared/config/i18n';
 import { setRequestLocale } from 'next-intl/server';
 
@@ -12,7 +12,7 @@ export default async function RandomMealPage({ params }: PageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const meal = await mealApi.getRandomMeal();
+  const meal = await mealApi.getRandomMeal(locale as Language);
 
   if (meal) {
     redirect({ href: `/meal/${meal.id}`, locale });

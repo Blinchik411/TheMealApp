@@ -24,7 +24,7 @@ export const mealApi = {
   /**
    * Получить рецепт по ID или по Slug
    */
-  async getMealById(idOrSlug: string, lang: Language = 'ru'): Promise<Meal | null> {
+  async getMealById(idOrSlug: string, lang: Language = 'en'): Promise<Meal | null> {
     const trimmed = idOrSlug?.trim();
     if (!trimmed) return null;
 
@@ -46,7 +46,7 @@ export const mealApi = {
   /**
    * Поиск по названию (на русском и английском)
    */
-  async searchByName(name: string, lang: Language = 'ru'): Promise<Meal[]> {
+  async searchByName(name: string, lang: Language = 'en'): Promise<Meal[]> {
     const trimmed = name?.trim();
     if (!trimmed) return [];
 
@@ -69,7 +69,7 @@ export const mealApi = {
   /**
    * Поиск по первой букве названия
    */
-  async searchByLetter(letter: string, lang: Language = 'ru'): Promise<Meal[]> {
+  async searchByLetter(letter: string, lang: Language = 'en'): Promise<Meal[]> {
     const char = letter?.trim().charAt(0);
     if (!char) return [];
 
@@ -92,7 +92,7 @@ export const mealApi = {
   /**
    * Фильтрация по категории (поддерживает EN и RU название или slug)
    */
-  async filterByCategory(category: string, lang: Language = 'ru'): Promise<Meal[]> {
+  async filterByCategory(category: string, lang: Language = 'en'): Promise<Meal[]> {
     const trimmed = category?.trim();
     if (!trimmed) return [];
 
@@ -115,7 +115,7 @@ export const mealApi = {
   /**
    * Фильтрация по кухне/региону (поддерживает EN и RU название или slug)
    */
-  async filterByArea(area: string, lang: Language = 'ru'): Promise<Meal[]> {
+  async filterByArea(area: string, lang: Language = 'en'): Promise<Meal[]> {
     const trimmed = area?.trim();
     if (!trimmed) return [];
 
@@ -138,7 +138,7 @@ export const mealApi = {
   /**
    * Список категорий
    */
-  async getCategories(lang: Language = 'ru'): Promise<string[]> {
+  async getCategories(lang: Language = 'en'): Promise<string[]> {
     try {
       const { data, error } = await supabase
         .from('categories')
@@ -148,7 +148,7 @@ export const mealApi = {
 
       if (error || !data) return [];
       return data
-        .map((row) => (row.name as { ru: string; en: string })[lang] || row.name.ru || row.name.en)
+        .map((row) => (row.name as { ru: string; en: string })[lang] || row.name.en || row.name.ru)
         .filter(Boolean);
     } catch (err) {
       console.error('[mealApi.getCategories] error:', err);
@@ -159,7 +159,7 @@ export const mealApi = {
   /**
    * Список активных кухонь
    */
-  async getAreas(lang: Language = 'ru'): Promise<string[]> {
+  async getAreas(lang: Language = 'en'): Promise<string[]> {
     try {
       const { data, error } = await supabase
         .from('areas')
@@ -168,7 +168,7 @@ export const mealApi = {
 
       if (error || !data) return [];
       return data
-        .map((row) => (row.name as { ru: string; en: string })[lang] || row.name.ru || row.name.en)
+        .map((row) => (row.name as { ru: string; en: string })[lang] || row.name.en || row.name.ru)
         .filter(Boolean);
     } catch (err) {
       console.error('[mealApi.getAreas] error:', err);
@@ -179,7 +179,7 @@ export const mealApi = {
   /**
    * Случайный рецепт
    */
-  async getRandomMeal(lang: Language = 'ru'): Promise<Meal | null> {
+  async getRandomMeal(lang: Language = 'en'): Promise<Meal | null> {
     try {
       // Pick a random offset between 0 and 792
       const randomOffset = Math.floor(Math.random() * 790);
@@ -214,7 +214,7 @@ export const mealApi = {
       dietary,
       limit = 24,
       offset = 0,
-      lang = 'ru',
+      lang = 'en',
     } = options;
 
     try {

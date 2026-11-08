@@ -1,4 +1,4 @@
-import { type Meal, mealApi } from '@/entities/meal';
+import { type Language, type Meal, mealApi } from '@/entities/meal';
 import type { CatalogFilterParams } from './catalog.schema';
 
 const DEFAULT_INITIAL_LETTER = 'b';
@@ -28,13 +28,16 @@ function intersectMealLists(lists: Meal[][]): Meal[] {
 /**
  * Сервис многокритериальной фильтрации рецептов (Compound Filtering)
  */
-export async function getFilteredCatalog(filters: CatalogFilterParams): Promise<CatalogResult> {
+export async function getFilteredCatalog(
+  filters: CatalogFilterParams,
+  lang: Language = 'en',
+): Promise<CatalogResult> {
   const { search, category, area } = filters;
 
   // 1. Отказоустойчивая параллельная загрузка метаданных (Promise.allSettled)
   const [categoriesResult, areasResult] = await Promise.allSettled([
-    mealApi.getCategories(),
-    mealApi.getAreas(),
+    mealApi.getCategories(lang),
+    mealApi.getAreas(lang),
   ]);
 
   const categories = categoriesResult.status === 'fulfilled' ? categoriesResult.value : [];
@@ -44,13 +47,13 @@ export async function getFilteredCatalog(filters: CatalogFilterParams): Promise<
   const activeQueries: Promise<Meal[]>[] = [];
 
   if (search) {
-    activeQueries.push(mealApi.searchByName(search));
+    activeQueries.push(mealApi.searchByName(search, lang));
   }
   if (category) {
-    activeQueries.push(mealApi.filterByCategory(category));
+    activeQueries.push(mealApi.filterByCategory(category, lang));
   }
   if (area) {
-    activeQueries.push(mealApi.filterByArea(area));
+    activeQueries.push(mealApi.filterByArea(area, lang));
   }
 
   // 3. Выборка и пересечение
@@ -58,7 +61,7 @@ export async function getFilteredCatalog(filters: CatalogFilterParams): Promise<
     let meals: Meal[] = [];
 
     if (activeQueries.length === 0) {
-      meals = await mealApi.searchByLetter(DEFAULT_INITIAL_LETTER);
+      meals = await mealApi.searchByLetter(DEFAULT_INITIAL_LETTER, lang);
     } else if (activeQueries.length === 1) {
       const [singleQuery] = activeQueries;
       meals = singleQuery ? await singleQuery : [];

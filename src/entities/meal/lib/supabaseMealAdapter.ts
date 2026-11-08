@@ -36,26 +36,26 @@ export interface SupabaseMealRow {
   instructions: { en: string; ru: string } | string;
 }
 
-export function mapSupabaseMealToMeal(row: SupabaseMealRow, lang: Language = 'ru'): Meal {
+export function mapSupabaseMealToMeal(row: SupabaseMealRow, lang: Language = 'en'): Meal {
   // Localized or fallback fields
   const title =
     typeof row.name === 'object' && row.name !== null
-      ? row.name[lang] || row.name.ru || row.name.en || 'Без названия'
-      : String(row.name || 'Без названия');
+      ? row.name[lang] || row.name.en || row.name.ru || 'Untitled'
+      : String(row.name || 'Untitled');
 
   const category =
     typeof row.category === 'object' && row.category !== null
-      ? row.category[lang] || row.category.ru || row.category.en || 'Разное'
-      : String(row.category || 'Разное');
+      ? row.category[lang] || row.category.en || row.category.ru || 'General'
+      : String(row.category || 'General');
 
   const cuisine =
     typeof row.area === 'object' && row.area !== null
-      ? row.area[lang] || row.area.ru || row.area.en || 'Международная'
-      : String(row.area || 'Международная');
+      ? row.area[lang] || row.area.en || row.area.ru || 'International'
+      : String(row.area || 'International');
 
   const instructionsText =
     typeof row.instructions === 'object' && row.instructions !== null
-      ? row.instructions[lang] || row.instructions.ru || row.instructions.en || ''
+      ? row.instructions[lang] || row.instructions.en || row.instructions.ru || ''
       : String(row.instructions || '');
 
   // Normalized ingredients
@@ -65,14 +65,14 @@ export function mapSupabaseMealToMeal(row: SupabaseMealRow, lang: Language = 'ru
 
     const ingName = isNameObj
       ? (item.ingredient as { en: string; ru: string })[lang] ||
-        (item.ingredient as { en: string; ru: string }).ru ||
-        (item.ingredient as { en: string; ru: string }).en
+        (item.ingredient as { en: string; ru: string }).en ||
+        (item.ingredient as { en: string; ru: string }).ru
       : String(item.ingredient || '');
 
     const ingMeasure = isMeasureObj
       ? (item.measure as { en: string; ru: string })[lang] ||
-        (item.measure as { en: string; ru: string }).ru ||
-        (item.measure as { en: string; ru: string }).en
+        (item.measure as { en: string; ru: string }).en ||
+        (item.measure as { en: string; ru: string }).ru
       : String(item.measure || '');
 
     return {

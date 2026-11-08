@@ -1,4 +1,4 @@
-import { type Meal, mealApi } from '@/entities/meal';
+import { type Language, type Meal, mealApi } from '@/entities/meal';
 import { MealDetailsPage } from '@/views/meal-details';
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
@@ -10,9 +10,9 @@ interface PageProps {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { id } = await params;
+  const { locale, id } = await params;
   try {
-    const meal = await mealApi.getMealById(id);
+    const meal = await mealApi.getMealById(id, locale as Language);
     if (!meal) return { title: 'Recipe Not Found' };
 
     const title = `${meal.title} — Recipe`;
@@ -44,7 +44,7 @@ export default async function Page({ params }: PageProps) {
   const { locale, id } = await params;
   setRequestLocale(locale);
 
-  const meal = await mealApi.getMealById(id);
+  const meal = await mealApi.getMealById(id, locale as Language);
 
   if (!meal) {
     notFound();
@@ -53,10 +53,10 @@ export default async function Page({ params }: PageProps) {
   let relatedMeals: Meal[] = [];
   try {
     if (meal.category && meal.category !== 'General') {
-      const categoryMeals = await mealApi.filterByCategory(meal.category);
+      const categoryMeals = await mealApi.filterByCategory(meal.category, locale as Language);
       relatedMeals = categoryMeals.filter((m) => m.id !== meal.id).slice(0, 4);
     } else if (meal.cuisine && meal.cuisine !== 'International') {
-      const areaMeals = await mealApi.filterByArea(meal.cuisine);
+      const areaMeals = await mealApi.filterByArea(meal.cuisine, locale as Language);
       relatedMeals = areaMeals.filter((m) => m.id !== meal.id).slice(0, 4);
     }
   } catch (error) {

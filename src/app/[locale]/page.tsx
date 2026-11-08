@@ -1,3 +1,4 @@
+import type { Language } from '@/entities/meal';
 import { catalogFilterSchema, getFilteredCatalog } from '@/features/filter-meals';
 import { getPaginatedData } from '@/shared/lib';
 import { HomePage } from '@/views/home';
@@ -23,7 +24,7 @@ export default async function Page({ params, searchParams }: PageProps) {
     page: typeof rawParams.page === 'string' ? rawParams.page : undefined,
   });
 
-  const { meals, categories, areas, error } = await getFilteredCatalog(filters);
+  const { meals, categories, areas, error } = await getFilteredCatalog(filters, locale as Language);
 
   const { paginatedItems, totalPages } = getPaginatedData(meals, filters.page, ITEMS_PER_PAGE);
 
