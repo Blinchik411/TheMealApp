@@ -1,6 +1,22 @@
+'use client';
+
 import { Link } from '@/shared/config/i18n';
-import { ChefHat, ExternalLink } from 'lucide-react';
+import {
+  ArrowRight,
+  ArrowUp,
+  BookOpen,
+  ChefHat,
+  Compass,
+  ExternalLink,
+  Globe2,
+  Heart,
+  Sparkles,
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
+
+export interface FooterProps {
+  className?: string;
+}
 
 function GithubIcon({ className }: { className?: string }) {
   return (
@@ -16,14 +32,20 @@ function GithubIcon({ className }: { className?: string }) {
   );
 }
 
-export function Footer() {
+export function Footer({ className = '' }: FooterProps) {
   const t = useTranslations('Footer');
   const currentYear = new Date().getFullYear();
 
+  const handleScrollToTop = () => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   const navigationLinks = [
-    { label: t('recipeCatalog'), href: '/' },
-    { label: t('randomRecipe'), href: '/meal/random' },
-    { label: t('favoriteMeals'), href: '/favorites' },
+    { label: t('recipeCatalog'), href: '/', icon: BookOpen },
+    { label: t('randomRecipe'), href: '/meal/random', icon: Compass },
+    { label: t('favoriteMeals'), href: '/favorites', icon: Heart },
   ];
 
   const popularCuisines = [
@@ -41,22 +63,26 @@ export function Footer() {
   ];
 
   return (
-    <footer className="w-full border-t border-border bg-card/60 backdrop-blur-sm mt-auto print:hidden">
-      {/* Main navigation grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4 lg:gap-12">
-          {/* Column 1: Brand & About */}
-          <div className="space-y-4">
-            <Link
-              href="/"
-              className="text-lg font-bold tracking-tight text-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg inline-block"
-            >
-              TheMealApp
-            </Link>
-            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-              {t('tagline')}
-            </p>
-            <div className="pt-1">
+    <footer
+      className={`w-full border-t border-border/80 bg-background/80 backdrop-blur-md mt-auto print:hidden ${className}`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-8">
+        {/* Bento Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {/* Bento Card 1: Brand & Identity */}
+          <div className="rounded-2xl border border-border/70 bg-card/60 p-6 flex flex-col justify-between shadow-2xs hover:border-primary/30 transition-colors">
+            <div className="space-y-3">
+              <Link
+                href="/"
+                className="text-xl font-bold tracking-tight text-foreground hover:text-primary transition-colors inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg"
+              >
+                TheMealApp
+              </Link>
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                {t('tagline')}
+              </p>
+            </div>
+            <div className="pt-6">
               <a
                 href="https://www.themealdb.com/api.php"
                 target="_blank"
@@ -65,79 +91,112 @@ export function Footer() {
               >
                 <span>{t('poweredBy')}</span>
                 <ExternalLink
-                  className="size-3 text-muted-foreground group-hover:text-foreground transition-colors"
+                  className="size-3 text-muted-foreground group-hover:text-foreground"
                   aria-hidden="true"
                 />
               </a>
             </div>
           </div>
 
-          {/* Column 2: Navigation */}
-          <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground mb-4">
-              {t('explore')}
-            </h3>
-            <ul className="space-y-2.5">
-              {navigationLinks.map((item) => (
-                <li key={item.href}>
+          {/* Bento Card 2: Quick Links & Cuisines */}
+          <div className="rounded-2xl border border-border/70 bg-card/60 p-6 flex flex-col justify-between shadow-2xs hover:border-primary/30 transition-colors">
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground mb-3 flex items-center gap-1.5">
+                <Globe2 className="size-3.5 text-primary" aria-hidden="true" />
+                <span>{t('cuisines')}</span>
+              </h3>
+              <nav aria-label="Bento cuisines" className="flex flex-wrap gap-2 mb-6">
+                {popularCuisines.map((item) => (
                   <Link
+                    key={item.href}
                     href={item.href}
-                    className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+                    className="px-3 py-1.5 rounded-xl text-xs font-medium bg-muted/60 hover:bg-primary/10 hover:text-primary transition-all border border-border/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     {item.label}
                   </Link>
-                </li>
-              ))}
-            </ul>
+                ))}
+              </nav>
+
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground mb-3 flex items-center gap-1.5">
+                <Compass className="size-3.5 text-primary" aria-hidden="true" />
+                <span>{t('explore')}</span>
+              </h3>
+              <nav aria-label="Bento explore" className="space-y-1">
+                {navigationLinks.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="group text-xs sm:text-sm text-muted-foreground hover:text-foreground flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-muted/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <span className="flex items-center gap-2">
+                        <Icon
+                          className="size-3.5 text-muted-foreground/60 group-hover:text-primary transition-colors"
+                          aria-hidden="true"
+                        />
+                        <span>{item.label}</span>
+                      </span>
+                      <ArrowRight
+                        className="size-3 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all"
+                        aria-hidden="true"
+                      />
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
           </div>
 
-          {/* Column 3: World Cuisines */}
-          <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground mb-4">
-              {t('cuisines')}
-            </h3>
-            <ul className="space-y-2.5">
-              {popularCuisines.map((item) => (
-                <li key={item.href}>
+          {/* Bento Card 3: Categories & Action */}
+          <div className="rounded-2xl border border-border/70 bg-card/60 p-6 flex flex-col justify-between shadow-2xs hover:border-primary/30 transition-colors">
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground mb-3 flex items-center gap-1.5">
+                <Sparkles className="size-3.5 text-primary" aria-hidden="true" />
+                <span>{t('categories')}</span>
+              </h3>
+              <nav aria-label="Bento categories" className="grid grid-cols-2 gap-2">
+                {popularCategories.map((item) => (
                   <Link
+                    key={item.href}
                     href={item.href}
-                    className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+                    className="p-3 rounded-xl border border-border/50 bg-background/50 hover:bg-background hover:shadow-2xs text-xs font-medium text-foreground transition-all flex items-center justify-between group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
-                    {item.label}
+                    <span>{item.label}</span>
+                    <span
+                      className="size-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"
+                      aria-hidden="true"
+                    />
                   </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+                ))}
+              </nav>
+            </div>
 
-          {/* Column 4: Categories */}
-          <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground mb-4">
-              {t('categories')}
-            </h3>
-            <ul className="space-y-2.5">
-              {popularCategories.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <div className="pt-6 flex items-center justify-between border-t border-border/50 mt-6">
+              <span className="text-xs text-muted-foreground italic">
+                &ldquo;{t('culinaryQuote')}&rdquo;
+              </span>
+              <button
+                type="button"
+                onClick={handleScrollToTop}
+                aria-label={t('backToTop')}
+                className="group/btn size-9 rounded-xl bg-muted/80 hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <ArrowUp
+                  className="size-4 transition-transform group-hover/btn:-translate-y-0.5"
+                  aria-hidden="true"
+                />
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Sub-footer */}
-      <div className="border-t border-border/80 bg-background/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+        {/* Sub-footer */}
+        <div className="pt-6 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
           <p>{t('rights', { year: currentYear })}</p>
 
           <div className="flex items-center gap-4">
-            <span className="hidden sm:inline-flex items-center gap-1.5 text-muted-foreground/70">
+            <span className="hidden sm:inline-flex items-center gap-1.5 text-muted-foreground/80 font-medium">
               <ChefHat className="size-3.5 text-primary" aria-hidden="true" />
               <span>{t('happyCooking')}</span>
             </span>
@@ -149,7 +208,7 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub Repository"
-              className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <GithubIcon className="size-4" />
             </a>

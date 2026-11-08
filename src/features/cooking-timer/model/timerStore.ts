@@ -77,7 +77,7 @@ export const useCookingTimerStore = create<CookingTimerState>()((set, get) => ({
         clearTimerInterval();
         set({ remainingSeconds: 0, isRunning: false, isAlarming: true, isOpen: true });
         playTimerAlarm();
-      } else {
+      } else if (get().remainingSeconds !== left) {
         set({ remainingSeconds: left });
       }
     }, 500);
@@ -116,7 +116,7 @@ export const useCookingTimerStore = create<CookingTimerState>()((set, get) => ({
         clearTimerInterval();
         set({ remainingSeconds: 0, isRunning: false, isAlarming: true, isOpen: true });
         playTimerAlarm();
-      } else {
+      } else if (get().remainingSeconds !== left) {
         set({ remainingSeconds: left });
       }
     }, 500);

@@ -1,15 +1,18 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { useMealChecklistStore } from './mealChecklistStore';
 import { useMealChecklist } from './useMealChecklist';
 
 describe('useMealChecklist', () => {
   beforeEach(() => {
     localStorage.clear();
+    useMealChecklistStore.getState().resetAll();
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
     localStorage.clear();
+    useMealChecklistStore.getState().resetAll();
   });
 
   it('initializes with empty states and 0 progress', () => {

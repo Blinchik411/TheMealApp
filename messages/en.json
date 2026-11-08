@@ -22,7 +22,9 @@
     "dessert": "Dessert",
     "vegetarian": "Vegetarian",
     "breakfast": "Breakfast",
-    "happyCooking": "Happy Cooking"
+    "happyCooking": "Happy Cooking",
+    "backToTop": "Back to top",
+    "culinaryQuote": "Cooking is love made visible."
   },
   "Home": {
     "badge": "Thousands of verified recipes",

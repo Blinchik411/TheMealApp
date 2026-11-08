@@ -3,7 +3,6 @@
 import { type Meal, parseInstructions } from '@/entities/meal';
 import { CookingTimerWidget } from '@/features/cooking-timer';
 import { FavoriteButton } from '@/features/favorite-meal';
-import { useMealChecklist } from '@/features/meal-checklist';
 import { QuickActionsCard } from '@/features/share-meal';
 import { RelatedMealsSection } from '@/widgets/related-meals';
 import { Globe, Tag } from 'lucide-react';
@@ -30,20 +29,6 @@ export const MealDetailsPage = ({
 }: MealDetailsPageProps) => {
   const ingredients = useMemo(() => meal.ingredients ?? [], [meal.ingredients]);
   const instructions = useMemo(() => parseInstructions(meal.instructions), [meal.instructions]);
-
-  const {
-    checkedIngredients,
-    checkedSteps,
-    checkedIngredientsCount,
-    ingredientsProgress,
-    hasProgress,
-    toggleIngredient,
-    toggleStep,
-    reset,
-  } = useMealChecklist({
-    mealId: meal.id,
-    totalIngredients: ingredients.length,
-  });
 
   return (
     <>
@@ -102,23 +87,11 @@ export const MealDetailsPage = ({
             <QuickActionsCard mealTitle={meal.title} ingredients={ingredients} />
           </div>
 
-          <MealIngredientsList
-            ingredients={ingredients}
-            checkedIngredients={checkedIngredients}
-            checkedIngredientsCount={checkedIngredientsCount}
-            ingredientsProgress={ingredientsProgress}
-            hasProgress={hasProgress}
-            onToggleIngredient={toggleIngredient}
-            onReset={reset}
-          />
+          <MealIngredientsList mealId={meal.id} ingredients={ingredients} />
         </div>
 
         {/* Пошаговый рецепт */}
-        <MealInstructionsList
-          instructions={instructions}
-          checkedSteps={checkedSteps}
-          onToggleStep={toggleStep}
-        />
+        <MealInstructionsList mealId={meal.id} instructions={instructions} />
 
         {/* Видео рецепта */}
         <MealVideoSection youtubeUrl={meal.youtubeUrl} title={meal.title} />

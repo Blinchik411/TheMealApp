@@ -1,8 +1,12 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Footer } from './Footer';
 
 describe('Footer', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('renders branding correctly and does not render Surprise Me CTA banner', () => {
     render(<Footer />);
 
@@ -60,5 +64,18 @@ describe('Footer', () => {
     render(<Footer />);
     const currentYear = new Date().getFullYear();
     expect(screen.getByText(new RegExp(`© ${currentYear} TheMealApp`, 'i'))).toBeInTheDocument();
+  });
+
+  it('renders Back to top button and handles smooth scrolling on click', () => {
+    const scrollToMock = vi.fn();
+    window.scrollTo = scrollToMock;
+
+    render(<Footer />);
+
+    const backToTopBtn = screen.getByRole('button', { name: /back to top/i });
+    expect(backToTopBtn).toBeInTheDocument();
+
+    fireEvent.click(backToTopBtn);
+    expect(scrollToMock).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
   });
 });
