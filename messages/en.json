@@ -1,0 +1,18 @@
+{
+  "Header": {
+    "favorites": "Favorites",
+    "signIn": "Sign In",
+    "signOut": "Sign Out"
+  },
+  "Footer": {
+    "rights": "All rights reserved.",
+    "tagline": "Discover culinary delights from around the world."
+  },
+  "Home": {
+    "badge": "Thousands of verified recipes",
+    "title": "Recipe Catalog",
+    "description": "Discover the best recipes from around the world, filter by cuisine, and save your favorites.",
+    "surpriseMe": "Not sure what to cook? Surprise Me",
+    "emptyMessage": "No recipes found matching your query. Try resetting filters."
+  }
+}

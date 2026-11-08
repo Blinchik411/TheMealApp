@@ -29,8 +29,6 @@ describe('FavoriteButton', () => {
     useFavoritesStore.setState({
       favorites: [],
       hasHydrated: true,
-      isLoading: false,
-      error: null,
     });
   });
 
