@@ -49,3 +49,11 @@ vi.mock('@/shared/config/i18n', () => ({
   usePathname: () => '/',
   redirect: vi.fn(),
 }));
+
+// Global mock for next/cache in test environment
+vi.mock('next/cache', () => ({
+  unstable_cache: <T extends (...args: unknown[]) => unknown>(fn: T) => fn,
+  revalidateTag: vi.fn(),
+  revalidatePath: vi.fn(),
+}));
+

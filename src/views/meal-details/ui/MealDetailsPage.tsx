@@ -8,7 +8,7 @@ import { QuickActionsCard } from '@/features/share-meal';
 import { RelatedMealsSection } from '@/widgets/related-meals';
 import { Globe, Tag } from 'lucide-react';
 import Image from 'next/image';
-import { useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import { MealBackButton } from './MealBackButton';
 import { MealIngredientsList } from './MealIngredientsList';
 import { MealInstructionsList } from './MealInstructionsList';
@@ -18,9 +18,16 @@ import { MealVideoSection } from './MealVideoSection';
 export interface MealDetailsPageProps {
   meal: Meal;
   relatedMeals?: Meal[];
+  relatedMealsSlot?: ReactNode;
+  children?: ReactNode;
 }
 
-export const MealDetailsPage = ({ meal, relatedMeals }: MealDetailsPageProps) => {
+export const MealDetailsPage = ({
+  meal,
+  relatedMeals,
+  relatedMealsSlot,
+  children,
+}: MealDetailsPageProps) => {
   const ingredients = useMemo(() => meal.ingredients ?? [], [meal.ingredients]);
   const instructions = useMemo(() => parseInstructions(meal.instructions), [meal.instructions]);
 
@@ -109,7 +116,17 @@ export const MealDetailsPage = ({ meal, relatedMeals }: MealDetailsPageProps) =>
         <MealVideoSection youtubeUrl={meal.youtubeUrl} title={meal.title} />
 
         {/* Похожие рецепты */}
-        <RelatedMealsSection relatedMeals={relatedMeals} category={meal.category} />
+        {children ? (
+          <div key="related-meals-slot">{children}</div>
+        ) : relatedMealsSlot ? (
+          <div key="related-meals-slot">{relatedMealsSlot}</div>
+        ) : (
+          <RelatedMealsSection
+            key="related-meals-section"
+            relatedMeals={relatedMeals}
+            category={meal.category}
+          />
+        )}
       </div>
 
       {/* Плавающий кухонный таймер */}

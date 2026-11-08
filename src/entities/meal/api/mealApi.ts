@@ -1,4 +1,6 @@
 import { supabase } from '@/shared/api';
+import { unstable_cache } from 'next/cache';
+import { cache } from 'react';
 import { type SupabaseMealRow, mapSupabaseMealToMeal } from '../lib/supabaseMealAdapter';
 import type { Language, Meal } from '../model/types';
 
@@ -20,19 +22,16 @@ export interface GetMealsFilterOptions {
   lang?: Language;
 }
 
-export const mealApi = {
-  /**
-   * Получить рецепт по ID или по Slug
-   */
-  async getMealById(idOrSlug: string, lang: Language = 'en'): Promise<Meal | null> {
-    const trimmed = idOrSlug?.trim();
-    if (!trimmed) return null;
-
+/**
+ * Кешированные серверные запросы (Next.js Data Cache)
+ */
+const fetchMealByIdFromSupabase = unstable_cache(
+  async (idOrSlug: string, lang: Language): Promise<Meal | null> => {
     try {
       const { data, error } = await supabase
         .from('meals')
         .select('*')
-        .or(`id.eq.${trimmed},slug.eq.${trimmed}`)
+        .or(`id.eq.${idOrSlug},slug.eq.${idOrSlug}`)
         .maybeSingle();
 
       if (error || !data) return null;
@@ -41,6 +40,131 @@ export const mealApi = {
       console.error('[mealApi.getMealById] error:', err);
       return null;
     }
+  },
+  ['meal-by-id'],
+  { revalidate: 3600, tags: ['meals'] },
+);
+
+const getMealByIdMemoized = cache(
+  async (idOrSlug: string, lang: Language = 'en'): Promise<Meal | null> => {
+    const trimmed = idOrSlug?.trim();
+    if (!trimmed) return null;
+    return fetchMealByIdFromSupabase(trimmed, lang);
+  },
+);
+
+const fetchCategoriesCached = unstable_cache(
+  async (lang: Language = 'en'): Promise<string[]> => {
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('name')
+        .neq('id', 'test')
+        .order('count', { ascending: false });
+
+      if (error || !data) return [];
+      return data
+        .map((row) => (row.name as { ru: string; en: string })[lang] || row.name.en || row.name.ru)
+        .filter(Boolean);
+    } catch (err) {
+      console.error('[mealApi.getCategories] error:', err);
+      return [];
+    }
+  },
+  ['meal-categories'],
+  { revalidate: 86400, tags: ['categories'] },
+);
+
+const fetchAreasCached = unstable_cache(
+  async (lang: Language = 'en'): Promise<string[]> => {
+    try {
+      const { data, error } = await supabase
+        .from('areas')
+        .select('name')
+        .order('count', { ascending: false });
+
+      if (error || !data) return [];
+      return data
+        .map((row) => (row.name as { ru: string; en: string })[lang] || row.name.en || row.name.ru)
+        .filter(Boolean);
+    } catch (err) {
+      console.error('[mealApi.getAreas] error:', err);
+      return [];
+    }
+  },
+  ['meal-areas'],
+  { revalidate: 86400, tags: ['areas'] },
+);
+
+const fetchMealsByLetterCached = unstable_cache(
+  async (char: string, lang: Language): Promise<Meal[]> => {
+    try {
+      const { data, error } = await supabase
+        .from('meals')
+        .select('*')
+        .or(`name->>en.ilike.${char}%,name->>ru.ilike.${char}%`)
+        .order('id', { ascending: true })
+        .limit(50);
+
+      if (error || !data) return [];
+      return data.map((row) => mapSupabaseMealToMeal(row as SupabaseMealRow, lang));
+    } catch (err) {
+      console.error('[mealApi.searchByLetter] error:', err);
+      return [];
+    }
+  },
+  ['meals-by-letter'],
+  { revalidate: 3600, tags: ['meals'] },
+);
+
+const fetchMealsByCategoryCached = unstable_cache(
+  async (category: string, lang: Language): Promise<Meal[]> => {
+    try {
+      const { data, error } = await supabase
+        .from('meals')
+        .select('*')
+        .or(`category->>en.eq.${category},category->>ru.eq.${category}`)
+        .order('id', { ascending: true })
+        .limit(30);
+
+      if (error || !data) return [];
+      return data.map((row) => mapSupabaseMealToMeal(row as SupabaseMealRow, lang));
+    } catch (err) {
+      console.error('[mealApi.filterByCategory] error:', err);
+      return [];
+    }
+  },
+  ['meals-by-category'],
+  { revalidate: 3600, tags: ['meals'] },
+);
+
+const fetchMealsByAreaCached = unstable_cache(
+  async (area: string, lang: Language): Promise<Meal[]> => {
+    try {
+      const { data, error } = await supabase
+        .from('meals')
+        .select('*')
+        .or(`area->>en.eq.${area},area->>ru.eq.${area}`)
+        .order('id', { ascending: true })
+        .limit(30);
+
+      if (error || !data) return [];
+      return data.map((row) => mapSupabaseMealToMeal(row as SupabaseMealRow, lang));
+    } catch (err) {
+      console.error('[mealApi.filterByArea] error:', err);
+      return [];
+    }
+  },
+  ['meals-by-area'],
+  { revalidate: 3600, tags: ['meals'] },
+);
+
+export const mealApi = {
+  /**
+   * Получить рецепт по ID или по Slug (дедуплицируется в рамках запроса + кешируется на сервере)
+   */
+  async getMealById(idOrSlug: string, lang: Language = 'en'): Promise<Meal | null> {
+    return getMealByIdMemoized(idOrSlug, lang);
   },
 
   /**
@@ -67,113 +191,44 @@ export const mealApi = {
   },
 
   /**
-   * Поиск по первой букве названия
+   * Поиск по первой букве названия (кешируется в Data Cache)
    */
   async searchByLetter(letter: string, lang: Language = 'en'): Promise<Meal[]> {
     const char = letter?.trim().charAt(0);
     if (!char) return [];
-
-    try {
-      const { data, error } = await supabase
-        .from('meals')
-        .select('*')
-        .or(`name->>en.ilike.${char}%,name->>ru.ilike.${char}%`)
-        .order('id', { ascending: true })
-        .limit(50);
-
-      if (error || !data) return [];
-      return data.map((row) => mapSupabaseMealToMeal(row as SupabaseMealRow, lang));
-    } catch (err) {
-      console.error('[mealApi.searchByLetter] error:', err);
-      return [];
-    }
+    return fetchMealsByLetterCached(char, lang);
   },
 
   /**
-   * Фильтрация по категории (поддерживает EN и RU название или slug)
+   * Фильтрация по категории (кешируется в Data Cache)
    */
   async filterByCategory(category: string, lang: Language = 'en'): Promise<Meal[]> {
     const trimmed = category?.trim();
     if (!trimmed) return [];
-
-    try {
-      const { data, error } = await supabase
-        .from('meals')
-        .select('*')
-        .or(`category->>en.eq.${trimmed},category->>ru.eq.${trimmed}`)
-        .order('id', { ascending: true })
-        .limit(100);
-
-      if (error || !data) return [];
-      return data.map((row) => mapSupabaseMealToMeal(row as SupabaseMealRow, lang));
-    } catch (err) {
-      console.error('[mealApi.filterByCategory] error:', err);
-      return [];
-    }
+    return fetchMealsByCategoryCached(trimmed, lang);
   },
 
   /**
-   * Фильтрация по кухне/региону (поддерживает EN и RU название или slug)
+   * Фильтрация по кухне/региону (кешируется в Data Cache)
    */
   async filterByArea(area: string, lang: Language = 'en'): Promise<Meal[]> {
     const trimmed = area?.trim();
     if (!trimmed) return [];
-
-    try {
-      const { data, error } = await supabase
-        .from('meals')
-        .select('*')
-        .or(`area->>en.eq.${trimmed},area->>ru.eq.${trimmed}`)
-        .order('id', { ascending: true })
-        .limit(100);
-
-      if (error || !data) return [];
-      return data.map((row) => mapSupabaseMealToMeal(row as SupabaseMealRow, lang));
-    } catch (err) {
-      console.error('[mealApi.filterByArea] error:', err);
-      return [];
-    }
+    return fetchMealsByAreaCached(trimmed, lang);
   },
 
   /**
-   * Список категорий
+   * Список категорий (кешируется на 24 часа в Data Cache)
    */
   async getCategories(lang: Language = 'en'): Promise<string[]> {
-    try {
-      const { data, error } = await supabase
-        .from('categories')
-        .select('name')
-        .neq('id', 'test')
-        .order('count', { ascending: false });
-
-      if (error || !data) return [];
-      return data
-        .map((row) => (row.name as { ru: string; en: string })[lang] || row.name.en || row.name.ru)
-        .filter(Boolean);
-    } catch (err) {
-      console.error('[mealApi.getCategories] error:', err);
-      return [];
-    }
+    return fetchCategoriesCached(lang);
   },
 
   /**
-   * Список активных кухонь
+   * Список активных кухонь (кешируется на 24 часа в Data Cache)
    */
   async getAreas(lang: Language = 'en'): Promise<string[]> {
-    try {
-      const { data, error } = await supabase
-        .from('areas')
-        .select('name')
-        .order('count', { ascending: false });
-
-      if (error || !data) return [];
-      return data
-        .map((row) => (row.name as { ru: string; en: string })[lang] || row.name.en || row.name.ru)
-        .filter(Boolean);
-    } catch (err) {
-      console.error('[mealApi.getAreas] error:', err);
-      return [];
-    }
+    return fetchAreasCached(lang);
   },
 
   /**

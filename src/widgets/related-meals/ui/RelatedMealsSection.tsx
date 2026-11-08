@@ -48,14 +48,39 @@ export const RelatedMealsSection = ({
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 sm:gap-6">
-        {relatedMeals.map((relatedMeal) => (
+        {relatedMeals.map((relatedMeal, index) => (
           <MealCard
-            key={relatedMeal.id}
+            key={relatedMeal.id || `related-meal-${index + 1}`}
             meal={relatedMeal}
             from="details"
             imageAspectRatio={imageAspectRatio}
             actionSlot={<FavoriteButton meal={relatedMeal} />}
           />
+        ))}
+      </div>
+    </section>
+  );
+};
+
+export const RelatedMealsSkeleton = () => {
+  return (
+    <section className="pt-8 border-t border-border/60 space-y-6 print:hidden animate-pulse">
+      <div className="space-y-2">
+        <div className="h-5 w-32 bg-muted rounded-full" />
+        <div className="h-7 w-48 bg-muted rounded-lg" />
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 sm:gap-6">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div
+            key={`rel-skel-${i + 1}`}
+            className="flex flex-col h-full bg-card rounded-2xl overflow-hidden border border-border"
+          >
+            <div className="w-full aspect-square bg-muted" />
+            <div className="p-3 sm:p-4 flex flex-col gap-2 flex-1">
+              <div className="h-4 bg-muted rounded w-3/4" />
+              <div className="h-8 bg-muted rounded-lg w-full mt-auto" />
+            </div>
+          </div>
         ))}
       </div>
     </section>

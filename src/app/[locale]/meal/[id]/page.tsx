@@ -1,5 +1,6 @@
 import { type Language, type Meal, mealApi } from '@/entities/meal';
 import { MealDetailsPage } from '@/views/meal-details';
+import { RelatedMealsSection, RelatedMealsSkeleton } from '@/widgets/related-meals';
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -7,6 +8,28 @@ import { Suspense } from 'react';
 
 interface PageProps {
   params: Promise<{ locale: string; id: string }>;
+}
+
+interface RelatedMealsProps {
+  meal: Meal;
+  locale: Language;
+}
+
+async function RelatedMeals({ meal, locale }: RelatedMealsProps) {
+  let relatedMeals: Meal[] = [];
+  try {
+    if (meal.category && meal.category !== 'General') {
+      const categoryMeals = await mealApi.filterByCategory(meal.category, locale);
+      relatedMeals = categoryMeals.filter((m) => m.id !== meal.id).slice(0, 4);
+    } else if (meal.cuisine && meal.cuisine !== 'International') {
+      const areaMeals = await mealApi.filterByArea(meal.cuisine, locale);
+      relatedMeals = areaMeals.filter((m) => m.id !== meal.id).slice(0, 4);
+    }
+  } catch (error) {
+    console.error('Failed to load related recipes:', error);
+  }
+
+  return <RelatedMealsSection relatedMeals={relatedMeals} category={meal.category} />;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -62,26 +85,11 @@ export default async function Page({ params }: PageProps) {
     notFound();
   }
 
-  let relatedMeals: Meal[] = [];
-  try {
-    if (meal.category && meal.category !== 'General') {
-      const categoryMeals = await mealApi.filterByCategory(meal.category, locale as Language);
-      relatedMeals = categoryMeals.filter((m) => m.id !== meal.id).slice(0, 4);
-    } else if (meal.cuisine && meal.cuisine !== 'International') {
-      const areaMeals = await mealApi.filterByArea(meal.cuisine, locale as Language);
-      relatedMeals = areaMeals.filter((m) => m.id !== meal.id).slice(0, 4);
-    }
-  } catch (error) {
-    console.error('Failed to load related recipes:', error);
-  }
-
   return (
-    <Suspense
-      fallback={
-        <div className="py-20 text-center text-sm text-muted-foreground">Loading recipe...</div>
-      }
-    >
-      <MealDetailsPage meal={meal} relatedMeals={relatedMeals} />
-    </Suspense>
+    <MealDetailsPage meal={meal}>
+      <Suspense key="related-meals-suspense" fallback={<RelatedMealsSkeleton />}>
+        <RelatedMeals meal={meal} locale={locale as Language} />
+      </Suspense>
+    </MealDetailsPage>
   );
 }
