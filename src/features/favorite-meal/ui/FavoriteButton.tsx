@@ -3,6 +3,7 @@
 import type { Meal } from '@/entities/meal';
 import { cn } from '@/shared/lib';
 import { Heart } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import type { MouseEvent } from 'react';
 import { useFavoritesSync } from '../lib/useFavoritesSync';
 import { useFavoritesStore } from '../model/favoritesStore';
@@ -22,6 +23,7 @@ export const FavoriteButton = ({
   className,
   size = 'default',
 }: FavoriteButtonProps) => {
+  const t = useTranslations('FavoriteButton');
   const { toggleWithSync } = useFavoritesSync();
   const hasHydrated = useFavoritesStore((state) => state.hasHydrated);
   const isFav = useFavoritesStore((state) => state.isFavorite(meal.id));
@@ -42,7 +44,7 @@ export const FavoriteButton = ({
     <button
       type="button"
       onClick={handleClick}
-      aria-label={liked ? 'Remove from favorites' : 'Add to favorites'}
+      aria-label={liked ? t('removeAria') : t('addAria')}
       className={cn(
         'inline-flex items-center transition-all duration-200 cursor-pointer',
         'hover:scale-105 active:scale-95',
@@ -78,7 +80,7 @@ export const FavoriteButton = ({
             !isCustomSize && 'text-xs font-semibold',
           )}
         >
-          {liked ? 'In Favorites' : 'To Favorites'}
+          {liked ? t('inFavorites') : t('toFavorites')}
         </span>
       )}
     </button>
