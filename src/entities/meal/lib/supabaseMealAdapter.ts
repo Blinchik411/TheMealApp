@@ -1,3 +1,4 @@
+import type { Tables } from '@/shared/api';
 import type {
   IngredientItem,
   Language,
@@ -9,32 +10,7 @@ import type {
 
 export const DEFAULT_MEAL_IMAGE = '/placeholder-meal.svg';
 
-export interface SupabaseMealRow {
-  id: string;
-  slug: string;
-  name: { en: string; ru: string };
-  category: { en: string; ru: string };
-  area: { en: string; ru: string };
-  meal_type: string[];
-  dietary: MealDietary;
-  servings: number;
-  prep_time_minutes: number;
-  cook_time_minutes: number;
-  total_time_minutes: number;
-  difficulty: 'easy' | 'medium' | 'hard';
-  nutrition: MealNutrition;
-  image_url: string;
-  youtube_url: string | null;
-  source_url: string | null;
-  tags: { en: string[]; ru: string[] } | string[];
-  ingredients: Array<{
-    ingredient: { en: string; ru: string } | string;
-    measure: { en: string; ru: string } | string;
-    imageUrl?: string;
-  }>;
-  steps: MealStep[];
-  instructions: { en: string; ru: string } | string;
-}
+export type SupabaseMealRow = Tables<'meals'>;
 
 export function mapSupabaseMealToMeal(row: SupabaseMealRow, lang: Language = 'en'): Meal {
   // Localized or fallback fields

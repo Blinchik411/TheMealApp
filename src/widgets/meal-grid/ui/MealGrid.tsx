@@ -2,7 +2,7 @@
 
 import { type Meal, MealCard } from '@/entities/meal';
 import { FavoriteButton } from '@/features/favorite-meal';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@/shared/lib';
 import { Utensils } from 'lucide-react';
 
 const SKELETON_KEYS = Array.from({ length: 24 }, (_, i) => `meal-skeleton-${i + 1}`);

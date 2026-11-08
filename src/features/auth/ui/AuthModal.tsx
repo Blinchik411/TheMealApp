@@ -1,36 +1,27 @@
 'use client';
 
-import { authApi } from '@/entities/user';
 import { cn, useFocusTrap } from '@/shared/lib';
 import { Lock, Mail, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { type SubmitEvent, useMemo, useRef, useState } from 'react';
-import { z } from 'zod';
+import { useRef } from 'react';
+import { useAuthForm } from '../lib/useAuthForm';
 
-interface AuthModalProps {
+export interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
 }
 
-export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
-  const t = useTranslations('Auth');
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const authSchema = useMemo(
-    () =>
-      z.object({
-        email: z.string().trim().min(1, t('emailRequired')).email(t('emailInvalid')),
-        password: z.string().min(6, t('passwordMin')),
-      }),
-    [t],
+const inputCls = (err?: string) =>
+  cn(
+    'w-full rounded-xl border bg-muted/40 pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all',
+    err
+      ? 'border-red-500/60 focus:ring-red-500/20 focus:border-red-500'
+      : 'border-border focus:ring-primary/20 focus:border-primary',
   );
 
+export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
+  const t = useTranslations('Auth');
   const emailInputRef = useRef<HTMLInputElement>(null);
   const modalRef = useFocusTrap<HTMLDialogElement>({
     isActive: isOpen,
@@ -38,39 +29,20 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
     initialFocusRef: emailInputRef,
   });
 
+  const { isSignUp, serverError, isSubmitting, errors, register, handleSubmit, toggleAuthMode } =
+    useAuthForm({
+      onSuccess,
+      onClose,
+      translations: {
+        emailRequired: t('emailRequired'),
+        emailInvalid: t('emailInvalid'),
+        passwordMin: t('passwordMin'),
+      },
+      defaultErrorMessage: t('authFailed'),
+    });
+
   if (!isOpen) return null;
-
-  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setErrorMsg(null);
-    setFieldErrors({});
-
-    const validationResult = authSchema.safeParse({ email, password });
-    if (!validationResult.success) {
-      const issues = validationResult.error.format();
-      setFieldErrors({
-        email: issues.email?._errors[0],
-        password: issues.password?._errors[0],
-      });
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      if (isSignUp) {
-        await authApi.signUp(email.trim(), password);
-      } else {
-        await authApi.signIn(email.trim(), password);
-      }
-      onSuccess?.();
-      onClose();
-    } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : t('authFailed'));
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const { ref: registerEmailRef, ...emailField } = register('email');
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -105,9 +77,9 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
           {isSignUp ? t('signUpSubtitle') : t('signInSubtitle')}
         </p>
 
-        {errorMsg && (
+        {serverError && (
           <div className="mb-4 rounded-xl bg-red-500/10 border border-red-500/20 p-3 text-sm text-red-500">
-            {errorMsg}
+            {serverError}
           </div>
         )}
 
@@ -122,27 +94,19 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
             <div className="relative">
               <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
               <input
-                ref={emailInputRef}
                 id="auth-email"
                 type="email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (fieldErrors.email) {
-                    setFieldErrors((prev) => ({ ...prev, email: undefined }));
-                  }
+                {...emailField}
+                ref={(node) => {
+                  registerEmailRef(node);
+                  emailInputRef.current = node;
                 }}
                 placeholder={t('emailPlaceholder')}
-                className={cn(
-                  'w-full rounded-xl border bg-muted/40 pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all',
-                  fieldErrors.email
-                    ? 'border-red-500/60 focus:ring-red-500/20 focus:border-red-500'
-                    : 'border-border focus:ring-primary/20 focus:border-primary',
-                )}
+                className={inputCls(errors.email?.message)}
               />
             </div>
-            {fieldErrors.email && (
-              <p className="text-xs text-red-500 mt-1.5">{fieldErrors.email}</p>
+            {errors.email?.message && (
+              <p className="text-xs text-red-500 mt-1.5">{errors.email.message}</p>
             )}
           </div>
 
@@ -158,24 +122,13 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
               <input
                 id="auth-password"
                 type="password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (fieldErrors.password) {
-                    setFieldErrors((prev) => ({ ...prev, password: undefined }));
-                  }
-                }}
+                {...register('password')}
                 placeholder={t('passwordPlaceholder')}
-                className={cn(
-                  'w-full rounded-xl border bg-muted/40 pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all',
-                  fieldErrors.password
-                    ? 'border-red-500/60 focus:ring-red-500/20 focus:border-red-500'
-                    : 'border-border focus:ring-primary/20 focus:border-primary',
-                )}
+                className={inputCls(errors.password?.message)}
               />
             </div>
-            {fieldErrors.password && (
-              <p className="text-xs text-red-500 mt-1.5">{fieldErrors.password}</p>
+            {errors.password?.message && (
+              <p className="text-xs text-red-500 mt-1.5">{errors.password.message}</p>
             )}
           </div>
 
@@ -192,11 +145,7 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
           {isSignUp ? t('alreadyHaveAccount') : t('dontHaveAccount')}{' '}
           <button
             type="button"
-            onClick={() => {
-              setIsSignUp(!isSignUp);
-              setErrorMsg(null);
-              setFieldErrors({});
-            }}
+            onClick={toggleAuthMode}
             className="text-primary font-semibold hover:underline cursor-pointer"
           >
             {isSignUp ? t('signInButton') : t('signUpButton')}

@@ -1,5 +1,5 @@
 import { Link } from '@/shared/config/i18n';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@/shared/lib';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import type { ReactNode } from 'react';
