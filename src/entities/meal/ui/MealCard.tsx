@@ -1,5 +1,6 @@
 import { Link } from '@/shared/config/i18n';
 import { cn } from '@/shared/lib/utils';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import type { ReactNode } from 'react';
 import type { Meal } from '../model/types';
@@ -19,6 +20,7 @@ export const MealCard = ({
   priority = false,
   imageAspectRatio = 'aspect-square',
 }: MealCardProps) => {
+  const t = useTranslations('MealCard');
   const linkTo = from ? `/meal/${meal.id}?from=${from}` : `/meal/${meal.id}`;
 
   return (
@@ -62,7 +64,7 @@ export const MealCard = ({
           href={linkTo}
           className="mt-auto inline-flex w-full items-center justify-center rounded-lg sm:rounded-xl px-2.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-xs"
         >
-          View Recipe
+          {t('viewRecipe')}
         </Link>
       </div>
     </div>

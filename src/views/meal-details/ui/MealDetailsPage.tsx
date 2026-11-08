@@ -66,6 +66,14 @@ export const MealDetailsPage = ({
                   {meal.cuisine}
                 </span>
               )}
+              {meal.tags?.map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-muted text-muted-foreground border border-border/60"
+                >
+                  #{tag}
+                </span>
+              ))}
             </div>
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
               {meal.title}

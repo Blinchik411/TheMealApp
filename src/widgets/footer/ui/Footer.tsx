@@ -1,5 +1,6 @@
 import { Link } from '@/shared/config/i18n';
 import { ChefHat, ExternalLink } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 function GithubIcon({ className }: { className?: string }) {
   return (
@@ -15,33 +16,29 @@ function GithubIcon({ className }: { className?: string }) {
   );
 }
 
-interface FooterLink {
-  label: string;
-  href: string;
-}
-
-const NAVIGATION_LINKS: FooterLink[] = [
-  { label: 'Recipe Catalog', href: '/' },
-  { label: 'Random Recipe', href: '/meal/random' },
-  { label: 'Favorite Meals', href: '/favorites' },
-];
-
-const POPULAR_CUISINES: FooterLink[] = [
-  { label: 'Italian', href: '/?area=Italian' },
-  { label: 'Japanese', href: '/?area=Japanese' },
-  { label: 'Mexican', href: '/?area=Mexican' },
-  { label: 'French', href: '/?area=French' },
-];
-
-const POPULAR_CATEGORIES: FooterLink[] = [
-  { label: 'Seafood', href: '/?category=Seafood' },
-  { label: 'Dessert', href: '/?category=Dessert' },
-  { label: 'Vegetarian', href: '/?category=Vegetarian' },
-  { label: 'Breakfast', href: '/?category=Breakfast' },
-];
-
 export function Footer() {
+  const t = useTranslations('Footer');
   const currentYear = new Date().getFullYear();
+
+  const navigationLinks = [
+    { label: t('recipeCatalog'), href: '/' },
+    { label: t('randomRecipe'), href: '/meal/random' },
+    { label: t('favoriteMeals'), href: '/favorites' },
+  ];
+
+  const popularCuisines = [
+    { label: t('italian'), href: '/?area=Italian' },
+    { label: t('japanese'), href: '/?area=Japanese' },
+    { label: t('mexican'), href: '/?area=Mexican' },
+    { label: t('french'), href: '/?area=French' },
+  ];
+
+  const popularCategories = [
+    { label: t('seafood'), href: '/?category=Seafood' },
+    { label: t('dessert'), href: '/?category=Dessert' },
+    { label: t('vegetarian'), href: '/?category=Vegetarian' },
+    { label: t('breakfast'), href: '/?category=Breakfast' },
+  ];
 
   return (
     <footer className="w-full border-t border-border bg-card/60 backdrop-blur-sm mt-auto print:hidden">
@@ -57,8 +54,7 @@ export function Footer() {
               TheMealApp
             </Link>
             <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-              Discover delicious recipes from around the globe with step-by-step instructions,
-              ingredients, and video guides.
+              {t('tagline')}
             </p>
             <div className="pt-1">
               <a
@@ -67,7 +63,7 @@ export function Footer() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors group"
               >
-                <span>Powered by TheMealDB</span>
+                <span>{t('poweredBy')}</span>
                 <ExternalLink
                   className="size-3 text-muted-foreground group-hover:text-foreground transition-colors"
                   aria-hidden="true"
@@ -79,10 +75,10 @@ export function Footer() {
           {/* Column 2: Navigation */}
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground mb-4">
-              Explore
+              {t('explore')}
             </h3>
             <ul className="space-y-2.5">
-              {NAVIGATION_LINKS.map((item) => (
+              {navigationLinks.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
@@ -98,16 +94,16 @@ export function Footer() {
           {/* Column 3: World Cuisines */}
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground mb-4">
-              World Cuisines
+              {t('cuisines')}
             </h3>
             <ul className="space-y-2.5">
-              {POPULAR_CUISINES.map((item) => (
+              {popularCuisines.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
                     className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
                   >
-                    {item.label} Cuisine
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -117,10 +113,10 @@ export function Footer() {
           {/* Column 4: Categories */}
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground mb-4">
-              Popular Categories
+              {t('categories')}
             </h3>
             <ul className="space-y-2.5">
-              {POPULAR_CATEGORIES.map((item) => (
+              {popularCategories.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
@@ -138,12 +134,12 @@ export function Footer() {
       {/* Sub-footer */}
       <div className="border-t border-border/80 bg-background/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
-          <p>© {currentYear} TheMealApp. Built for food lovers and home cooks.</p>
+          <p>{t('rights', { year: currentYear })}</p>
 
           <div className="flex items-center gap-4">
             <span className="hidden sm:inline-flex items-center gap-1.5 text-muted-foreground/70">
               <ChefHat className="size-3.5 text-primary" aria-hidden="true" />
-              <span>Happy Cooking</span>
+              <span>{t('happyCooking')}</span>
             </span>
 
             <div className="h-3 w-px bg-border hidden sm:block" />

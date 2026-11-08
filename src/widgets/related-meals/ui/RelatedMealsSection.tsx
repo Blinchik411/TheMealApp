@@ -2,6 +2,7 @@ import { type Meal, MealCard } from '@/entities/meal';
 import { FavoriteButton } from '@/features/favorite-meal';
 import { Link } from '@/shared/config/i18n';
 import { ArrowRight, Utensils } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export interface RelatedMealsSectionProps {
   relatedMeals?: Meal[];
@@ -14,11 +15,13 @@ export const RelatedMealsSection = ({
   category,
   imageAspectRatio = 'aspect-square',
 }: RelatedMealsSectionProps) => {
+  const t = useTranslations('MealDetails');
+
   if (!relatedMeals || relatedMeals.length === 0) {
     return null;
   }
 
-  const categoryName = category || 'Recipes';
+  const categoryName = category || t('defaultCategory');
 
   return (
     <section className="pt-8 border-t border-border/60 space-y-6 print:hidden">
@@ -26,14 +29,12 @@ export const RelatedMealsSection = ({
         <div>
           <div className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary mb-1.5">
             <Utensils className="size-3" />
-            <span>Related Recipes</span>
+            <span>{t('relatedRecipes')}</span>
           </div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground">
-            More in {categoryName}
+            {t('moreInCategory', { category: categoryName })}
           </h2>
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            You might also enjoy these popular dishes
-          </p>
+          <p className="text-xs sm:text-sm text-muted-foreground">{t('moreInCategorySubtitle')}</p>
         </div>
 
         {category && category !== 'General' && (
@@ -41,7 +42,7 @@ export const RelatedMealsSection = ({
             href={`/?category=${encodeURIComponent(category)}`}
             className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-primary hover:underline group"
           >
-            <span>View all {category}</span>
+            <span>{t('viewAllInCategory', { category })}</span>
             <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
           </Link>
         )}

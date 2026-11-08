@@ -5,7 +5,7 @@
     "signOut": "Выйти"
   },
   "Footer": {
-    "rights": "Все права защищены.",
+    "rights": "© {year} TheMealApp. Создано для любителей вкусной еды.",
     "tagline": "Откройте для себя вкусные рецепты со всего мира с пошаговыми инструкциями, ингредиентами и видео-руководствами.",
     "poweredBy": "Работает на TheMealDB",
     "explore": "Навигация",
@@ -13,7 +13,16 @@
     "categories": "Популярные категории",
     "recipeCatalog": "Каталог рецептов",
     "randomRecipe": "Случайный рецепт",
-    "favoriteMeals": "Избранные рецепты"
+    "favoriteMeals": "Избранные рецепты",
+    "italian": "Итальянская кухня",
+    "japanese": "Японская кухня",
+    "mexican": "Мексиканская кухня",
+    "french": "Французская кухня",
+    "seafood": "Морепродукты",
+    "dessert": "Десерты",
+    "vegetarian": "Вегетарианские",
+    "breakfast": "Завтраки",
+    "happyCooking": "Приятного аппетита"
   },
   "Home": {
     "badge": "Тысячи проверенных рецептов",
@@ -29,6 +38,9 @@
     "allCategories": "Все категории",
     "allCuisines": "Все кухни",
     "reset": "Сбросить фильтры"
+  },
+  "MealCard": {
+    "viewRecipe": "Смотреть рецепт"
   },
   "MealDetails": {
     "backToCatalog": "Назад в каталог",
@@ -46,7 +58,27 @@
     "watchOnYouTube": "Смотреть на YouTube",
     "relatedRecipes": "Похожие рецепты",
     "viewAllCategory": "Смотреть все",
-    "cookingTimer": "Кухонный таймер"
+    "cookingTimer": "Кухонный таймер",
+    "preparedItems": "Подготовлено",
+    "progressRatio": "{checked} из {total} ({percent}%)",
+    "toTaste": "По вкусу",
+    "ingredientsFor": "🛒 Ингредиенты для «{title}»:",
+    "shareText": "Посмотрите рецепт «{title}» на TheMealApp!",
+    "moreInCategory": "Еще в категории «{category}»",
+    "moreInCategorySubtitle": "Вам также могут понравиться эти блюда",
+    "viewAllInCategory": "Смотреть все рецепты: {category}",
+    "cookingVideo": "Видео-рецепт",
+    "categoryLabel": "Категория",
+    "cuisineLabel": "Кухня",
+    "itemsCount": "{count} шт.",
+    "stepsCount": "{count} шагов",
+    "checklistForKitchen": "Чеклист для кухни",
+    "instructionsCount": "Инструкция ({count} шагов)",
+    "cooksNotes": "Заметки повара:",
+    "printableRecipe": "TheMealApp • Версия для печати",
+    "printedRecipeAria": "Распечатанный рецепт",
+    "videoIframeTitle": "Видео приготовления для {title}",
+    "defaultCategory": "Рецепты"
   },
   "Favorites": {
     "title": "Любимые рецепты",
@@ -60,6 +92,50 @@
     "toFavorites": "В избранное",
     "addAria": "Добавить в избранное",
     "removeAria": "Удалить из избранного"
+  },
+  "CookingTimer": {
+    "title": "Кухонный таймер",
+    "timeIsUp": "Время вышло!",
+    "stop": "Стоп",
+    "min": "мин",
+    "sec": "сек",
+    "setTime": "Задать время",
+    "cancel": "Отмена",
+    "clickToSetTime": "Нажмите, чтобы ввести время",
+    "clickToEditAria": "Текущее время: {time}. Нажмите для редактирования",
+    "pause": "Пауза",
+    "resume": "Продолжить",
+    "start": "Старт",
+    "start5m": "Старт 5 мин",
+    "resetTimer": "Сбросить таймер",
+    "alarm": "Звонок!",
+    "toggleAria": "Кухонный таймер",
+    "closeAria": "Закрыть панель таймера",
+    "overlayAria": "Закрыть оверлей таймера",
+    "minutesAria": "Минуты",
+    "secondsAria": "Секунды",
+    "startForAria": "Запустить кухонный таймер на {text}"
+  },
+  "Auth": {
+    "welcomeBack": "С возвращением",
+    "createAccount": "Создать аккаунт",
+    "signInSubtitle": "Войдите, чтобы получить доступ к сохраненным рецептам",
+    "signUpSubtitle": "Зарегистрируйтесь, чтобы синхронизировать избранное на всех устройствах",
+    "email": "Электронная почта",
+    "emailPlaceholder": "name@example.com",
+    "password": "Пароль",
+    "passwordPlaceholder": "••••••••",
+    "signInButton": "Войти",
+    "signUpButton": "Зарегистрироваться",
+    "loading": "Загрузка...",
+    "alreadyHaveAccount": "Уже есть аккаунт?",
+    "dontHaveAccount": "Нет аккаунта?",
+    "closeModal": "Закрыть окно",
+    "closeOverlay": "Закрыть модальное окно",
+    "emailRequired": "Введите адрес электронной почты",
+    "emailInvalid": "Пожалуйста, введите корректный email",
+    "passwordMin": "Пароль должен содержать не менее 6 символов",
+    "authFailed": "Ошибка входа. Проверьте данные"
   },
   "Pagination": {
     "previous": "← Назад",

@@ -1,6 +1,7 @@
 'use client';
 
 import { Timer } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import { parseStepWithTimeTokens } from '../lib/parseTimeTokens';
 import { useCookingTimerStore } from '../model/timerStore';
@@ -10,6 +11,7 @@ export interface InteractiveStepTextProps {
 }
 
 export const InteractiveStepText = ({ text }: InteractiveStepTextProps) => {
+  const t = useTranslations('CookingTimer');
   const startTimer = useCookingTimerStore((state) => state.startTimer);
   const tokens = useMemo(() => parseStepWithTimeTokens(text), [text]);
 
@@ -34,7 +36,7 @@ export const InteractiveStepText = ({ text }: InteractiveStepTextProps) => {
               startTimer(token.seconds || 60, token.label);
             }}
             className="inline-flex items-center gap-1 mx-1 px-2 py-0.5 rounded-lg bg-primary/15 text-primary hover:bg-primary hover:text-primary-foreground font-semibold text-xs sm:text-sm transition-all cursor-pointer shadow-2xs active:scale-95"
-            title={`Start kitchen timer for ${token.text}`}
+            title={t('startForAria', { text: token.text })}
           >
             <Timer className="size-3.5 shrink-0" />
             <span>{token.text}</span>

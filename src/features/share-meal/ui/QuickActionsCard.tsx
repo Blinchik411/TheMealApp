@@ -27,8 +27,8 @@ export const QuickActionsCard = ({ mealTitle, ingredients }: QuickActionsCardPro
 
   const handleCopyIngredients = async () => {
     const lines = [
-      `🛒 Ingredients for "${mealTitle}":`,
-      ...ingredients.map((item) => `• ${item.name}: ${item.measure?.trim() || 'По вкусу'}`),
+      t('ingredientsFor', { title: mealTitle }),
+      ...ingredients.map((item) => `• ${item.name}: ${item.measure?.trim() || t('toTaste')}`),
     ];
     try {
       if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
@@ -48,7 +48,7 @@ export const QuickActionsCard = ({ mealTitle, ingredients }: QuickActionsCardPro
       try {
         await navigator.share({
           title: mealTitle,
-          text: `Check out this recipe for ${mealTitle} on TheMealApp!`,
+          text: t('shareText', { title: mealTitle }),
           url,
         });
         return;
@@ -88,7 +88,7 @@ export const QuickActionsCard = ({ mealTitle, ingredients }: QuickActionsCardPro
           type="button"
           onClick={handleCopyIngredients}
           className="flex flex-col sm:flex-row items-center justify-center gap-1.5 p-2.5 rounded-xl border border-border bg-background hover:bg-muted/60 text-xs font-medium text-foreground transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-[0.98]"
-          title="Copy shopping list to clipboard"
+          title={t('copyList')}
         >
           {isIngredientsCopied ? (
             <>
@@ -107,7 +107,7 @@ export const QuickActionsCard = ({ mealTitle, ingredients }: QuickActionsCardPro
           type="button"
           onClick={handleShare}
           className="flex flex-col sm:flex-row items-center justify-center gap-1.5 p-2.5 rounded-xl border border-border bg-background hover:bg-muted/60 text-xs font-medium text-foreground transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-[0.98]"
-          title="Share this recipe"
+          title={t('share')}
         >
           {isLinkCopied ? (
             <>
@@ -126,7 +126,7 @@ export const QuickActionsCard = ({ mealTitle, ingredients }: QuickActionsCardPro
           type="button"
           onClick={handlePrint}
           className="flex flex-col sm:flex-row items-center justify-center gap-1.5 p-2.5 rounded-xl border border-border bg-background hover:bg-muted/60 text-xs font-medium text-foreground transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-[0.98]"
-          title="Print recipe"
+          title={t('print')}
         >
           <Printer className="size-4 text-primary shrink-0" />
           <span className="truncate">{t('print')}</span>

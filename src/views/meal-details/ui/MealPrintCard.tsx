@@ -1,4 +1,5 @@
 import type { IngredientItem, Meal } from '@/entities/meal';
+import { useTranslations } from 'next-intl';
 
 interface MealPrintCardProps {
   meal: Meal;
@@ -7,6 +8,8 @@ interface MealPrintCardProps {
 }
 
 export const MealPrintCard = ({ meal, ingredients, instructions }: MealPrintCardProps) => {
+  const t = useTranslations('MealDetails');
+
   return (
     <div
       data-testid="meal-print-layout"
@@ -17,15 +20,24 @@ export const MealPrintCard = ({ meal, ingredients, instructions }: MealPrintCard
       <div className="border-b-2 border-black/80 pb-4 flex items-start justify-between gap-4">
         <div className="space-y-1.5 flex-1">
           <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-neutral-600 font-semibold">
-            {meal.category && <span>Category: {meal.category}</span>}
+            {meal.category && (
+              <span>
+                {t('categoryLabel')}: {meal.category}
+              </span>
+            )}
             {meal.category && meal.cuisine && <span>•</span>}
-            {meal.cuisine && <span>Cuisine: {meal.cuisine}</span>}
+            {meal.cuisine && (
+              <span>
+                {t('cuisineLabel')}: {meal.cuisine}
+              </span>
+            )}
           </div>
           <h2 className="text-3xl font-extrabold tracking-tight leading-tight text-black">
             {meal.title}
           </h2>
           <p className="text-xs text-neutral-500">
-            Ingredients: {ingredients.length} items • Instructions: {instructions.length} steps
+            {t('ingredients')}: {t('itemsCount', { count: ingredients.length })} • {t('stepByStep')}
+            : {t('stepsCount', { count: instructions.length })}
           </p>
         </div>
 
@@ -43,9 +55,9 @@ export const MealPrintCard = ({ meal, ingredients, instructions }: MealPrintCard
         <div className="space-y-3 break-inside-avoid">
           <div className="flex items-center justify-between border-b border-neutral-200 pb-1">
             <h3 className="text-sm font-bold uppercase tracking-wider text-black">
-              Ingredients ({ingredients.length})
+              {t('ingredients')} ({ingredients.length})
             </h3>
-            <span className="text-xs text-neutral-500 italic">Checklist for kitchen</span>
+            <span className="text-xs text-neutral-500 italic">{t('checklistForKitchen')}</span>
           </div>
 
           <ul className="grid grid-cols-2 gap-x-6 gap-y-2 text-xs sm:text-sm">
@@ -67,7 +79,7 @@ export const MealPrintCard = ({ meal, ingredients, instructions }: MealPrintCard
         <div className="space-y-4">
           <div className="border-b border-neutral-200 pb-1">
             <h3 className="text-sm font-bold uppercase tracking-wider text-black">
-              Instructions ({instructions.length} steps)
+              {t('instructionsCount', { count: instructions.length })}
             </h3>
           </div>
 
@@ -90,15 +102,15 @@ export const MealPrintCard = ({ meal, ingredients, instructions }: MealPrintCard
       {/* Поле для заметок повара */}
       <div className="border border-dashed border-neutral-300 rounded-lg p-3 space-y-1.5 break-inside-avoid">
         <span className="text-xs font-bold uppercase tracking-wider text-neutral-600">
-          Cook&apos;s Notes:
+          {t('cooksNotes')}
         </span>
         <div className="h-8 border-b border-neutral-200" />
       </div>
 
       {/* Подвал листа печати */}
       <div className="pt-3 border-t border-neutral-300 flex items-center justify-between text-[11px] text-neutral-500 break-inside-avoid">
-        <span>TheMealApp • Printable Recipe</span>
-        <span>Printed recipe</span>
+        <span>{t('printableRecipe')}</span>
+        <span>{t('printedRecipeAria')}</span>
       </div>
     </div>
   );

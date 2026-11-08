@@ -2,10 +2,12 @@
 
 import { useFocusTrap } from '@/shared/lib';
 import { BellRing, Pause, Play, RotateCcw, Timer, X } from 'lucide-react';
-import { type FormEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { type SubmitEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { formatTimerTime, useCookingTimerStore } from '../model/timerStore';
 
 export const CookingTimerWidget = () => {
+  const t = useTranslations('CookingTimer');
   const remainingSeconds = useCookingTimerStore((state) => state.remainingSeconds);
   const isRunning = useCookingTimerStore((state) => state.isRunning);
   const isAlarming = useCookingTimerStore((state) => state.isAlarming);
@@ -59,7 +61,7 @@ export const CookingTimerWidget = () => {
     setSecondsInput(s.toString().padStart(2, '0'));
   };
 
-  const handleApplyTime = (e?: FormEvent) => {
+  const handleApplyTime = (e?: SubmitEvent<HTMLFormElement>) => {
     e?.preventDefault();
     const mins = Math.max(0, Number.parseInt(minutesInput, 10) || 0);
     const secs = Math.max(0, Math.min(59, Number.parseInt(secondsInput, 10) || 0));
@@ -89,7 +91,7 @@ export const CookingTimerWidget = () => {
           tabIndex={-1}
           data-testid="timer-modal-backdrop"
           onClick={handleClose}
-          aria-label="Close timer overlay"
+          aria-label={t('overlayAria')}
           className="fixed inset-0 bg-black/40 backdrop-blur-xs cursor-default border-none outline-none z-40"
         />
       )}
@@ -109,7 +111,7 @@ export const CookingTimerWidget = () => {
               <div className="flex items-center gap-2">
                 <Timer className="size-4 text-primary" />
                 <h2 id="cooking-timer-title" className="font-bold text-sm text-foreground">
-                  Kitchen Timer
+                  {t('title')}
                 </h2>
                 {label && label.toLowerCase() !== 'timer' && (
                   <span className="text-xs text-muted-foreground truncate max-w-[120px]">
@@ -121,7 +123,7 @@ export const CookingTimerWidget = () => {
                 type="button"
                 onClick={handleClose}
                 className="p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
-                aria-label="Close timer panel"
+                aria-label={t('closeAria')}
               >
                 <X className="size-4" />
               </button>
@@ -136,14 +138,14 @@ export const CookingTimerWidget = () => {
               >
                 <div className="flex items-center gap-2 text-destructive font-bold text-sm">
                   <BellRing className="size-5 shrink-0" />
-                  <span>Time is up!</span>
+                  <span>{t('timeIsUp')}</span>
                 </div>
                 <button
                   type="button"
                   onClick={dismissAlarm}
                   className="px-3 py-1 bg-destructive text-destructive-foreground hover:bg-destructive/90 text-xs font-bold rounded-xl transition-all cursor-pointer shadow-xs"
                 >
-                  Stop
+                  {t('stop')}
                 </button>
               </div>
             )}
@@ -171,11 +173,11 @@ export const CookingTimerWidget = () => {
                           setIsEditingTime(false);
                         }
                       }}
-                      aria-label="Minutes"
+                      aria-label={t('minutesAria')}
                       className="w-20 text-center rounded-2xl bg-muted/80 border border-primary/50 text-foreground py-1 px-1 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                     />
                     <span className="text-[11px] font-sans font-medium text-muted-foreground mt-0.5">
-                      min
+                      {t('min')}
                     </span>
                   </div>
 
@@ -199,11 +201,11 @@ export const CookingTimerWidget = () => {
                           setIsEditingTime(false);
                         }
                       }}
-                      aria-label="Seconds"
+                      aria-label={t('secondsAria')}
                       className="w-20 text-center rounded-2xl bg-muted/80 border border-primary/50 text-foreground py-1 px-1 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                     />
                     <span className="text-[11px] font-sans font-medium text-muted-foreground mt-0.5">
-                      sec
+                      {t('sec')}
                     </span>
                   </div>
                 </div>
@@ -213,14 +215,14 @@ export const CookingTimerWidget = () => {
                     type="submit"
                     className="px-3.5 py-1.5 bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-semibold rounded-xl transition-all cursor-pointer shadow-xs"
                   >
-                    Set time
+                    {t('setTime')}
                   </button>
                   <button
                     type="button"
                     onClick={() => setIsEditingTime(false)}
                     className="px-3.5 py-1.5 bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground text-xs font-semibold rounded-xl transition-all cursor-pointer"
                   >
-                    Cancel
+                    {t('cancel')}
                   </button>
                 </div>
               </form>
@@ -229,15 +231,15 @@ export const CookingTimerWidget = () => {
                 <button
                   type="button"
                   onClick={handleStartEditing}
-                  title="Click to enter specific time"
-                  aria-label={`Current time: ${formatTimerTime(remainingSeconds)}. Click to edit time`}
+                  title={t('clickToSetTime')}
+                  aria-label={t('clickToEditAria', { time: formatTimerTime(remainingSeconds) })}
                   className="group relative inline-flex flex-col items-center px-4 py-1.5 rounded-2xl hover:bg-muted/60 border border-transparent hover:border-border/60 transition-all cursor-pointer"
                 >
                   <div className="text-4xl sm:text-5xl font-mono font-extrabold tracking-tight text-foreground select-none group-hover:text-primary transition-colors">
                     {formatTimerTime(remainingSeconds)}
                   </div>
                   <span className="text-[11px] text-muted-foreground group-hover:text-foreground transition-colors mt-0.5">
-                    Click to set time
+                    {t('clickToSetTime')}
                   </span>
                 </button>
               </div>
@@ -277,7 +279,7 @@ export const CookingTimerWidget = () => {
                   className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-secondary hover:bg-secondary/80 text-secondary-foreground font-bold text-xs transition-all cursor-pointer active:scale-95"
                 >
                   <Pause className="size-4" />
-                  <span>Pause</span>
+                  <span>{t('pause')}</span>
                 </button>
               ) : remainingSeconds > 0 ? (
                 <button
@@ -286,7 +288,7 @@ export const CookingTimerWidget = () => {
                   className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs transition-all cursor-pointer active:scale-95 shadow-xs"
                 >
                   <Play className="size-4" />
-                  <span>{hasStarted ? 'Resume' : 'Start'}</span>
+                  <span>{hasStarted ? t('resume') : t('start')}</span>
                 </button>
               ) : (
                 <button
@@ -295,7 +297,7 @@ export const CookingTimerWidget = () => {
                   className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs transition-all cursor-pointer active:scale-95 shadow-xs"
                 >
                   <Play className="size-4" />
-                  <span>Start 5m</span>
+                  <span>{t('start5m')}</span>
                 </button>
               )}
 
@@ -304,8 +306,8 @@ export const CookingTimerWidget = () => {
                 onClick={handleReset}
                 disabled={remainingSeconds === 0 && !isAlarming}
                 className="p-2.5 rounded-xl border border-border bg-background hover:bg-muted/80 text-muted-foreground hover:text-foreground font-medium text-xs transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-                title="Reset timer"
-                aria-label="Reset timer"
+                title={t('resetTimer')}
+                aria-label={t('resetTimer')}
               >
                 <RotateCcw className="size-4" />
               </button>
@@ -317,7 +319,7 @@ export const CookingTimerWidget = () => {
         <button
           type="button"
           onClick={toggleOpen}
-          aria-label="Toggle cooking timer"
+          aria-label={t('toggleAria')}
           className={`group flex items-center justify-center gap-2 rounded-full shadow-lg transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95 ${
             isAlarming
               ? 'bg-destructive text-destructive-foreground px-4 py-3 animate-bounce ring-4 ring-destructive/30'
@@ -331,7 +333,7 @@ export const CookingTimerWidget = () => {
           {isAlarming ? (
             <>
               <BellRing className="size-5 shrink-0" />
-              <span className="font-bold text-xs uppercase tracking-wider">Alarm!</span>
+              <span className="font-bold text-xs uppercase tracking-wider">{t('alarm')}</span>
             </>
           ) : isRunning ? (
             <>

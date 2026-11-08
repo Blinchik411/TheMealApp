@@ -3,13 +3,9 @@
 import { authApi } from '@/entities/user';
 import { cn, useFocusTrap } from '@/shared/lib';
 import { Lock, Mail, X } from 'lucide-react';
-import { type FormEvent, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { type SubmitEvent, useMemo, useRef, useState } from 'react';
 import { z } from 'zod';
-
-const authSchema = z.object({
-  email: z.string().trim().min(1, 'Email is required').email('Please enter a valid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters long'),
-});
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -18,12 +14,22 @@ interface AuthModalProps {
 }
 
 export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
+  const t = useTranslations('Auth');
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const authSchema = useMemo(
+    () =>
+      z.object({
+        email: z.string().trim().min(1, t('emailRequired')).email(t('emailInvalid')),
+        password: z.string().min(6, t('passwordMin')),
+      }),
+    [t],
+  );
 
   const emailInputRef = useRef<HTMLInputElement>(null);
   const modalRef = useFocusTrap<HTMLDialogElement>({
@@ -34,7 +40,7 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
 
   if (!isOpen) return null;
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMsg(null);
     setFieldErrors({});
@@ -60,7 +66,7 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
       onSuccess?.();
       onClose();
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'Authentication failed');
+      setErrorMsg(err instanceof Error ? err.message : t('authFailed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -73,7 +79,7 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
         tabIndex={-1}
         data-testid="auth-modal-backdrop"
         onClick={onClose}
-        aria-label="Close modal overlay"
+        aria-label={t('closeOverlay')}
         className="fixed inset-0 bg-black/60 backdrop-blur-sm cursor-default border-none outline-none"
       />
       <dialog
@@ -87,18 +93,16 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
           type="button"
           onClick={onClose}
           className="absolute top-4 right-4 text-muted-foreground hover:text-foreground cursor-pointer"
-          aria-label="Close modal"
+          aria-label={t('closeModal')}
         >
           <X className="size-5" />
         </button>
 
         <h2 id="auth-modal-title" className="text-xl font-bold tracking-tight text-foreground mb-1">
-          {isSignUp ? 'Create an account' : 'Welcome back'}
+          {isSignUp ? t('createAccount') : t('welcomeBack')}
         </h2>
         <p className="text-sm text-muted-foreground mb-5">
-          {isSignUp
-            ? 'Sign up to sync your favorites across all devices'
-            : 'Sign in to access your saved recipes'}
+          {isSignUp ? t('signUpSubtitle') : t('signInSubtitle')}
         </p>
 
         {errorMsg && (
@@ -113,7 +117,7 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
               htmlFor="auth-email"
               className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5"
             >
-              Email
+              {t('email')}
             </label>
             <div className="relative">
               <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
@@ -128,7 +132,7 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
                     setFieldErrors((prev) => ({ ...prev, email: undefined }));
                   }
                 }}
-                placeholder="name@example.com"
+                placeholder={t('emailPlaceholder')}
                 className={cn(
                   'w-full rounded-xl border bg-muted/40 pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all',
                   fieldErrors.email
@@ -147,7 +151,7 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
               htmlFor="auth-password"
               className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5"
             >
-              Password
+              {t('password')}
             </label>
             <div className="relative">
               <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
@@ -161,7 +165,7 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
                     setFieldErrors((prev) => ({ ...prev, password: undefined }));
                   }
                 }}
-                placeholder="••••••••"
+                placeholder={t('passwordPlaceholder')}
                 className={cn(
                   'w-full rounded-xl border bg-muted/40 pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all',
                   fieldErrors.password
@@ -180,12 +184,12 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
             disabled={isSubmitting}
             className="w-full py-2.5 px-4 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 transition-all cursor-pointer"
           >
-            {isSubmitting ? 'Loading...' : isSignUp ? 'Sign Up' : 'Sign In'}
+            {isSubmitting ? t('loading') : isSignUp ? t('signUpButton') : t('signInButton')}
           </button>
         </form>
 
         <div className="mt-5 text-center text-xs text-muted-foreground">
-          {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+          {isSignUp ? t('alreadyHaveAccount') : t('dontHaveAccount')}{' '}
           <button
             type="button"
             onClick={() => {
@@ -195,7 +199,7 @@ export const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
             }}
             className="text-primary font-semibold hover:underline cursor-pointer"
           >
-            {isSignUp ? 'Sign In' : 'Sign Up'}
+            {isSignUp ? t('signInButton') : t('signUpButton')}
           </button>
         </div>
       </dialog>

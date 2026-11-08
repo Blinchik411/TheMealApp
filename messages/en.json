@@ -5,7 +5,7 @@
     "signOut": "Logout"
   },
   "Footer": {
-    "rights": "All rights reserved.",
+    "rights": "© {year} TheMealApp. Built for food lovers and home cooks.",
     "tagline": "Discover delicious recipes from around the globe with step-by-step instructions, ingredients, and video guides.",
     "poweredBy": "Powered by TheMealDB",
     "explore": "Explore",
@@ -13,7 +13,16 @@
     "categories": "Popular Categories",
     "recipeCatalog": "Recipe Catalog",
     "randomRecipe": "Random Recipe",
-    "favoriteMeals": "Favorite Meals"
+    "favoriteMeals": "Favorite Meals",
+    "italian": "Italian Cuisine",
+    "japanese": "Japanese Cuisine",
+    "mexican": "Mexican Cuisine",
+    "french": "French Cuisine",
+    "seafood": "Seafood",
+    "dessert": "Dessert",
+    "vegetarian": "Vegetarian",
+    "breakfast": "Breakfast",
+    "happyCooking": "Happy Cooking"
   },
   "Home": {
     "badge": "Thousands of verified recipes",
@@ -29,6 +38,9 @@
     "allCategories": "All Categories",
     "allCuisines": "All Cuisines",
     "reset": "Reset filters"
+  },
+  "MealCard": {
+    "viewRecipe": "View Recipe"
   },
   "MealDetails": {
     "backToCatalog": "Back to catalog",
@@ -46,7 +58,27 @@
     "watchOnYouTube": "Watch on YouTube",
     "relatedRecipes": "Similar Recipes",
     "viewAllCategory": "View all",
-    "cookingTimer": "Cooking Timer"
+    "cookingTimer": "Cooking Timer",
+    "preparedItems": "Prepared items",
+    "progressRatio": "{checked} of {total} ({percent}%)",
+    "toTaste": "To taste",
+    "ingredientsFor": "🛒 Ingredients for \"{title}\":",
+    "shareText": "Check out this recipe for {title} on TheMealApp!",
+    "moreInCategory": "More in {category}",
+    "moreInCategorySubtitle": "You might also enjoy these popular dishes",
+    "viewAllInCategory": "View all {category}",
+    "cookingVideo": "Cooking Video",
+    "categoryLabel": "Category",
+    "cuisineLabel": "Cuisine",
+    "itemsCount": "{count} items",
+    "stepsCount": "{count} steps",
+    "checklistForKitchen": "Checklist for kitchen",
+    "instructionsCount": "Instructions ({count} steps)",
+    "cooksNotes": "Cook's Notes:",
+    "printableRecipe": "TheMealApp • Printable Recipe",
+    "printedRecipeAria": "Printed recipe",
+    "videoIframeTitle": "Cooking video for {title}",
+    "defaultCategory": "Recipes"
   },
   "Favorites": {
     "title": "Favorite Recipes",
@@ -60,6 +92,50 @@
     "toFavorites": "To Favorites",
     "addAria": "Add to favorites",
     "removeAria": "Remove from favorites"
+  },
+  "CookingTimer": {
+    "title": "Kitchen Timer",
+    "timeIsUp": "Time is up!",
+    "stop": "Stop",
+    "min": "min",
+    "sec": "sec",
+    "setTime": "Set time",
+    "cancel": "Cancel",
+    "clickToSetTime": "Click to set time",
+    "clickToEditAria": "Current time: {time}. Click to edit time",
+    "pause": "Pause",
+    "resume": "Resume",
+    "start": "Start",
+    "start5m": "Start 5m",
+    "resetTimer": "Reset timer",
+    "alarm": "Alarm!",
+    "toggleAria": "Toggle cooking timer",
+    "closeAria": "Close timer panel",
+    "overlayAria": "Close timer overlay",
+    "minutesAria": "Minutes",
+    "secondsAria": "Seconds",
+    "startForAria": "Start kitchen timer for {text}"
+  },
+  "Auth": {
+    "welcomeBack": "Welcome back",
+    "createAccount": "Create an account",
+    "signInSubtitle": "Sign in to access your saved recipes",
+    "signUpSubtitle": "Sign up to sync your favorites across all devices",
+    "email": "Email",
+    "emailPlaceholder": "name@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "••••••••",
+    "signInButton": "Sign In",
+    "signUpButton": "Sign Up",
+    "loading": "Loading...",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "closeModal": "Close modal",
+    "closeOverlay": "Close modal overlay",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Please enter a valid email address",
+    "passwordMin": "Password must be at least 6 characters long",
+    "authFailed": "Authentication failed"
   },
   "Pagination": {
     "previous": "← Previous",

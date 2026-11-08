@@ -34,7 +34,7 @@ export const MealIngredientsList = ({
             type="button"
             onClick={onReset}
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-destructive transition-colors cursor-pointer py-0.5 px-1.5 -mr-1.5 rounded-lg hover:bg-destructive/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive/30"
-            title="Reset ingredient checklist and steps"
+            title={t('resetProgress')}
           >
             <RotateCcw className="size-3.5" />
             <span>{t('resetProgress')}</span>
@@ -67,7 +67,7 @@ export const MealIngredientsList = ({
                   <span className="text-sm font-medium text-foreground">{item.name}</span>
                 </div>
                 <span className="text-xs font-semibold text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
-                  {item.measure?.trim() || 'По вкусу'}
+                  {item.measure?.trim() || t('toTaste')}
                 </span>
               </button>
             </li>
@@ -78,9 +78,13 @@ export const MealIngredientsList = ({
       {ingredients.length > 0 && (
         <div className="space-y-1.5 pt-3 border-t border-border/50">
           <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>Prepared items</span>
+            <span>{t('preparedItems')}</span>
             <span className="font-semibold text-foreground">
-              {checkedIngredientsCount} of {ingredients.length} ({ingredientsProgress}%)
+              {t('progressRatio', {
+                checked: checkedIngredientsCount,
+                total: ingredients.length,
+                percent: ingredientsProgress,
+              })}
             </span>
           </div>
           <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
