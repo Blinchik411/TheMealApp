@@ -1,11 +1,12 @@
 'use client';
 
-import { type Meal, parseInstructions } from '@/entities/meal';
+import type { Meal } from '@/entities/meal';
 import { CookingTimerWidget } from '@/features/cooking-timer';
 import { FavoriteButton } from '@/features/favorite-meal';
 import { QuickActionsCard } from '@/features/share-meal';
 import { RelatedMealsSection } from '@/widgets/related-meals';
 import { Globe, Tag } from 'lucide-react';
+import { useLocale } from 'next-intl';
 import Image from 'next/image';
 import { type ReactNode, useMemo } from 'react';
 import { MealBackButton } from './MealBackButton';
@@ -27,8 +28,11 @@ export const MealDetailsPage = ({
   relatedMealsSlot,
   children,
 }: MealDetailsPageProps) => {
+  const locale = useLocale() as 'ru' | 'en';
   const ingredients = useMemo(() => meal.ingredients ?? [], [meal.ingredients]);
-  const instructions = useMemo(() => parseInstructions(meal.instructions), [meal.instructions]);
+  const instructions = useMemo(() => {
+    return meal.steps?.map((step) => step.instruction[locale] || step.instruction.en) ?? [];
+  }, [meal.steps, locale]);
 
   return (
     <>

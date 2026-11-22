@@ -19,6 +19,24 @@ const mockMeal: Meal = {
   category: 'Chicken',
   cuisine: 'Japanese',
   instructions: 'Preheat oven to 350 F.\nBake for 30 minutes.',
+  steps: [
+    {
+      stepNumber: 1,
+      instruction: {
+        en: 'Preheat oven to 350 F.',
+        ru: 'Разогрейте духовку до 175 C.',
+      },
+      timerMinutes: null,
+    },
+    {
+      stepNumber: 2,
+      instruction: {
+        en: 'Bake for 30 minutes.',
+        ru: 'Выпекайте 30 минут.',
+      },
+      timerMinutes: 30,
+    },
+  ],
   ingredients: [
     { id: 'ing-1', name: 'soy sauce', measure: '3/4 cup' },
     { id: 'ing-2', name: 'water', measure: '1/2 cup' },
@@ -123,5 +141,12 @@ describe('MealDetailsPage', () => {
     const printLayout = screen.getByTestId('meal-print-layout');
     expect(printLayout).toBeInTheDocument();
     expect(printLayout).toHaveClass('hidden', 'print:block');
+  });
+
+  it('renders structured cooking steps from meal.steps based on locale', () => {
+    render(<MealDetailsPage meal={mockMeal} />);
+
+    expect(screen.getAllByText('Preheat oven to 350 F.')).toHaveLength(2);
+    expect(screen.getAllByText(/Bake for/)).toHaveLength(2);
   });
 });
