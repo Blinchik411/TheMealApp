@@ -170,11 +170,12 @@ async function main() {
       },
       measure: {
         en: item.measure.en.trim(),
-        ru: item.measure.ru.trim(),
+        ru: item.measure.ru.trim() === 'вытирание пыли' ? 'для припыла / посыпки' : item.measure.ru.trim(),
       },
     }));
 
     return {
+      ...meal,
       id: meal.id,
       slug: finalSlug,
       name: meal.name,
@@ -192,6 +193,7 @@ async function main() {
 
   // 6. Build Active Areas Catalog
   const activeAreas = Array.from(areaCounters.values())
+    .filter((item) => item.count >= 1)
     .map((item) => ({
       slug: generateSlug(item.name.en),
       name: item.name,

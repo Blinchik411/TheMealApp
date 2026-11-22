@@ -108,4 +108,24 @@ describe('mealApi with Supabase', () => {
     const categories = await mealApi.getCategories('ru');
     expect(categories).toEqual(['Десерты', 'Курица']);
   });
+
+  it('getAreas возвращает список кухонь с count > 0', async () => {
+    const mockAreas = [
+      { name: { en: 'Italian', ru: 'Итальянская' } },
+      { name: { en: 'French', ru: 'Французская' } },
+    ];
+
+    const orderMock = vi.fn().mockResolvedValue({ data: mockAreas, error: null });
+    const gtMock = vi.fn().mockReturnValue({ order: orderMock });
+    const selectMock = vi.fn().mockReturnValue({ gt: gtMock });
+
+    vi.mocked(supabase.from).mockReturnValue({ select: selectMock } as unknown as ReturnType<
+      typeof supabase.from
+    >);
+
+    const areas = await mealApi.getAreas('ru');
+    expect(selectMock).toHaveBeenCalledWith('name');
+    expect(gtMock).toHaveBeenCalledWith('count', 0);
+    expect(areas).toEqual(['Итальянская', 'Французская']);
+  });
 });

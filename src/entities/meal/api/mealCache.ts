@@ -27,6 +27,7 @@ export async function fetchAreasRaw(lang: Language = 'en'): Promise<string[]> {
     const { data, error } = await supabase
       .from('areas')
       .select('name')
+      .gt('count', 0)
       .order('count', { ascending: false });
     if (error || !data) return [];
     return data.map((row) => row.name[lang] || row.name.en || row.name.ru).filter(Boolean);
