@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import { parseStepWithTimeTokens } from '../lib/parseTimeTokens';
 import { useCookingTimerStore } from '../model/timerStore';
+import { useTimerUiStore } from '../model/timerUiStore';
 
 export interface InteractiveStepTextProps {
   text: string;
@@ -12,7 +13,8 @@ export interface InteractiveStepTextProps {
 
 export const InteractiveStepText = ({ text }: InteractiveStepTextProps) => {
   const t = useTranslations('CookingTimer');
-  const startTimer = useCookingTimerStore((state) => state.startTimer);
+  const addTimer = useCookingTimerStore((state) => state.addTimer);
+  const setOpen = useTimerUiStore((state) => state.setOpen);
   const tokens = useMemo(() => parseStepWithTimeTokens(text), [text]);
 
   const hasAnyTimeToken = tokens.some((token) => token.isTime);
@@ -33,7 +35,8 @@ export const InteractiveStepText = ({ text }: InteractiveStepTextProps) => {
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              startTimer(token.seconds || 60, token.label);
+              addTimer(token.seconds || 60, token.label);
+              setOpen(true);
             }}
             className="inline-flex items-center gap-1 mx-1 px-2 py-0.5 rounded-lg bg-primary/15 text-primary hover:bg-primary hover:text-primary-foreground font-semibold text-xs sm:text-sm transition-all cursor-pointer shadow-2xs active:scale-95"
             title={t('startForAria', { text: token.text })}

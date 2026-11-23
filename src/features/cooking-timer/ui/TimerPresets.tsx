@@ -1,6 +1,7 @@
 'use client';
 
 import { memo } from 'react';
+import { selectActiveTimer } from '../model/timerSelectors';
 import { useCookingTimerStore } from '../model/timerStore';
 
 const PRESETS = [
@@ -12,13 +13,13 @@ const PRESETS = [
 
 export const TimerPresets = memo(() => {
   const handleClick = (sec: number, label: string) => {
-    // Императивное чтение текущего состояния без подписки на секунды в рендере
-    const { remainingSeconds, isRunning, startTimer, addSeconds } = useCookingTimerStore.getState();
+    const store = useCookingTimerStore.getState();
+    const active = selectActiveTimer(store);
 
-    if (remainingSeconds === 0 && !isRunning) {
-      startTimer(sec, label);
+    if (!active || (active.remainingSeconds === 0 && !active.isRunning)) {
+      store.addTimer(sec, label);
     } else {
-      addSeconds(sec);
+      store.addSeconds(active.id, sec);
     }
   };
 

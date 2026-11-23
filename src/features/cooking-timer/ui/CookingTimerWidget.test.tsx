@@ -1,14 +1,16 @@
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { selectActiveRemainingSeconds, selectIsActiveRunning } from '../model/timerSelectors';
 import { useCookingTimerStore } from '../model/timerStore';
+import { useTimerUiStore } from '../model/timerUiStore';
 import { CookingTimerWidget } from './CookingTimerWidget';
 
 describe('CookingTimerWidget', () => {
   beforeEach(() => {
-    useCookingTimerStore.getState().resetTimer();
+    useCookingTimerStore.getState().clearAllTimers();
     useCookingTimerStore.getState().dismissAlarm();
-    useCookingTimerStore.getState().setOpen(false);
+    useTimerUiStore.getState().setOpen(false);
   });
 
   it('renders trigger button and toggles open state', async () => {
@@ -55,7 +57,7 @@ describe('CookingTimerWidget', () => {
     const setTimeBtn = screen.getByRole('button', { name: /^set time$/i });
     await user.click(setTimeBtn);
 
-    expect(useCookingTimerStore.getState().remainingSeconds).toBe(450);
+    expect(selectActiveRemainingSeconds(useCookingTimerStore.getState())).toBe(450);
     expect(screen.getAllByText('07:30').length).toBeGreaterThanOrEqual(1);
   });
 
@@ -106,8 +108,8 @@ describe('CookingTimerWidget', () => {
     const plus5mBtn = screen.getByRole('button', { name: '+5m' });
     await user.click(plus5mBtn);
 
-    expect(useCookingTimerStore.getState().isRunning).toBe(true);
-    expect(useCookingTimerStore.getState().remainingSeconds).toBe(300);
+    expect(selectIsActiveRunning(useCookingTimerStore.getState())).toBe(true);
+    expect(selectActiveRemainingSeconds(useCookingTimerStore.getState())).toBe(300);
   });
 
   it('allows pausing, resuming and resetting timer', async () => {
@@ -119,20 +121,20 @@ describe('CookingTimerWidget', () => {
 
     const plus1mBtn = screen.getByRole('button', { name: '+1m' });
     await user.click(plus1mBtn);
-    expect(useCookingTimerStore.getState().isRunning).toBe(true);
+    expect(selectIsActiveRunning(useCookingTimerStore.getState())).toBe(true);
 
     const pauseBtn = screen.getByRole('button', { name: /pause/i });
     await user.click(pauseBtn);
-    expect(useCookingTimerStore.getState().isRunning).toBe(false);
+    expect(selectIsActiveRunning(useCookingTimerStore.getState())).toBe(false);
 
     const resumeBtn = screen.getByRole('button', { name: /resume/i });
     await user.click(resumeBtn);
-    expect(useCookingTimerStore.getState().isRunning).toBe(true);
+    expect(selectIsActiveRunning(useCookingTimerStore.getState())).toBe(true);
 
     const resetBtn = screen.getByRole('button', { name: /reset timer/i });
     await user.click(resetBtn);
-    expect(useCookingTimerStore.getState().remainingSeconds).toBe(0);
-    expect(useCookingTimerStore.getState().isRunning).toBe(false);
+    expect(selectActiveRemainingSeconds(useCookingTimerStore.getState())).toBe(0);
+    expect(selectIsActiveRunning(useCookingTimerStore.getState())).toBe(false);
   });
 
   it('displays closest timer and count badge on floating button when multiple timers exist', async () => {
@@ -140,8 +142,8 @@ describe('CookingTimerWidget', () => {
     render(<CookingTimerWidget />);
 
     act(() => {
-      useCookingTimerStore.getState().addTimer(600, 'Long timer', false);
-      useCookingTimerStore.getState().addTimer(180, 'Short timer', false);
+      useCookingTimerStore.getState().addTimer(600, 'Long timer');
+      useCookingTimerStore.getState().addTimer(180, 'Short timer');
     });
 
     const badge = screen.getByTestId('timer-count-badge');
@@ -167,8 +169,9 @@ describe('CookingTimerWidget', () => {
     let id1 = '';
     let id2 = '';
     act(() => {
-      id1 = useCookingTimerStore.getState().addTimer(300, 'Pasta', true);
-      id2 = useCookingTimerStore.getState().addTimer(600, 'Sauce', true);
+      id1 = useCookingTimerStore.getState().addTimer(300, 'Pasta');
+      id2 = useCookingTimerStore.getState().addTimer(600, 'Sauce');
+      useTimerUiStore.getState().setOpen(true);
     });
 
     const card1 = screen.getByTestId(`timer-card-${id1}`);
@@ -176,14 +179,18 @@ describe('CookingTimerWidget', () => {
     expect(card1).toBeInTheDocument();
     expect(card2).toBeInTheDocument();
 
-    // Pause first timer from its card
-    const pauseBtns = screen.getAllByRole('button', { name: /pause/i });
-    await user.click(pauseBtns[0]);
+    // Pause first timer from its specific card
+    const pauseBtn1 = within(card1).getByRole('button', { name: /pause/i });
+    await user.click(pauseBtn1);
 
-    // Delete one timer
-    const deleteBtns = screen.getAllByRole('button', { name: /delete timer/i });
-    await user.click(deleteBtns[0]);
+    const timer1 = useCookingTimerStore.getState().timers.find((t) => t.id === id1);
+    expect(timer1?.isRunning).toBe(false);
+
+    // Delete second timer from its card
+    const deleteBtn2 = within(card2).getByRole('button', { name: /delete timer/i });
+    await user.click(deleteBtn2);
 
     expect(useCookingTimerStore.getState().timers.length).toBe(1);
+    expect(useCookingTimerStore.getState().timers[0].id).toBe(id1);
   });
 });

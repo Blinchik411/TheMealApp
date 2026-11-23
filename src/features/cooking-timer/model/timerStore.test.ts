@@ -1,12 +1,20 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  selectActiveLabel,
+  selectActiveRemainingSeconds,
+  selectActiveTotalSeconds,
+  selectIsActiveAlarming,
+  selectIsActiveRunning,
+} from './timerSelectors';
 import { formatTimerTime, useCookingTimerStore } from './timerStore';
+import { useTimerUiStore } from './timerUiStore';
 
 describe('timerStore', () => {
   beforeEach(() => {
     vi.useFakeTimers();
-    useCookingTimerStore.getState().resetTimer();
+    useCookingTimerStore.getState().clearAllTimers();
     useCookingTimerStore.getState().dismissAlarm();
-    useCookingTimerStore.getState().setOpen(false);
+    useTimerUiStore.getState().setOpen(false);
   });
 
   afterEach(() => {
@@ -23,82 +31,86 @@ describe('timerStore', () => {
 
   it('starts timer and counts down with time progression', () => {
     const store = useCookingTimerStore.getState();
-    store.startTimer(10, 'Bake');
+    store.addTimer(10, 'Bake');
 
-    expect(useCookingTimerStore.getState().isRunning).toBe(true);
-    expect(useCookingTimerStore.getState().totalSeconds).toBe(10);
-    expect(useCookingTimerStore.getState().remainingSeconds).toBe(10);
-    expect(useCookingTimerStore.getState().isOpen).toBe(true);
+    const state1 = useCookingTimerStore.getState();
+    expect(selectIsActiveRunning(state1)).toBe(true);
+    expect(selectActiveTotalSeconds(state1)).toBe(10);
+    expect(selectActiveRemainingSeconds(state1)).toBe(10);
+    expect(selectActiveLabel(state1)).toBe('Bake');
 
     vi.advanceTimersByTime(3000);
-    expect(useCookingTimerStore.getState().remainingSeconds).toBe(7);
+    expect(selectActiveRemainingSeconds(useCookingTimerStore.getState())).toBe(7);
 
     vi.advanceTimersByTime(7000);
-    expect(useCookingTimerStore.getState().remainingSeconds).toBe(0);
-    expect(useCookingTimerStore.getState().isRunning).toBe(false);
-    expect(useCookingTimerStore.getState().isAlarming).toBe(true);
+    const finishedState = useCookingTimerStore.getState();
+    expect(selectActiveRemainingSeconds(finishedState)).toBe(0);
+    expect(selectIsActiveRunning(finishedState)).toBe(false);
+    expect(selectIsActiveAlarming(finishedState)).toBe(true);
   });
 
   it('sets custom time without starting immediately', () => {
     const store = useCookingTimerStore.getState();
-    store.setTime(450, 'Custom Boil');
+    store.setTimeForActive(450, 'Custom Boil');
 
-    expect(useCookingTimerStore.getState().isRunning).toBe(false);
-    expect(useCookingTimerStore.getState().totalSeconds).toBe(450);
-    expect(useCookingTimerStore.getState().remainingSeconds).toBe(450);
-    expect(useCookingTimerStore.getState().label).toBe('Custom Boil');
+    const state = useCookingTimerStore.getState();
+    expect(selectIsActiveRunning(state)).toBe(false);
+    expect(selectActiveTotalSeconds(state)).toBe(450);
+    expect(selectActiveRemainingSeconds(state)).toBe(450);
+    expect(selectActiveLabel(state)).toBe('Custom Boil');
   });
 
-  it('has empty label initially and after reset', () => {
-    expect(useCookingTimerStore.getState().label).toBe('');
+  it('has empty label initially and after clearAllTimers', () => {
+    expect(selectActiveLabel(useCookingTimerStore.getState())).toBe('');
 
-    useCookingTimerStore.getState().startTimer(60, 'Custom');
-    expect(useCookingTimerStore.getState().label).toBe('Custom');
+    useCookingTimerStore.getState().addTimer(60, 'Custom');
+    expect(selectActiveLabel(useCookingTimerStore.getState())).toBe('Custom');
 
-    useCookingTimerStore.getState().resetTimer();
-    expect(useCookingTimerStore.getState().label).toBe('');
+    useCookingTimerStore.getState().clearAllTimers();
+    expect(selectActiveLabel(useCookingTimerStore.getState())).toBe('');
   });
 
-  it('pauses and resumes timer', () => {
+  it('pauses and resumes active timer', () => {
     const store = useCookingTimerStore.getState();
-    store.startTimer(10, 'Simmer');
+    store.addTimer(10, 'Simmer');
 
     vi.advanceTimersByTime(4000);
-    expect(useCookingTimerStore.getState().remainingSeconds).toBe(6);
+    expect(selectActiveRemainingSeconds(useCookingTimerStore.getState())).toBe(6);
 
-    useCookingTimerStore.getState().pauseTimer();
-    expect(useCookingTimerStore.getState().isRunning).toBe(false);
+    useCookingTimerStore.getState().pauseActiveTimer();
+    expect(selectIsActiveRunning(useCookingTimerStore.getState())).toBe(false);
 
     vi.advanceTimersByTime(3000);
     // While paused, remaining seconds shouldn't change
-    expect(useCookingTimerStore.getState().remainingSeconds).toBe(6);
+    expect(selectActiveRemainingSeconds(useCookingTimerStore.getState())).toBe(6);
 
-    useCookingTimerStore.getState().resumeTimer();
-    expect(useCookingTimerStore.getState().isRunning).toBe(true);
+    useCookingTimerStore.getState().resumeActiveTimer();
+    expect(selectIsActiveRunning(useCookingTimerStore.getState())).toBe(true);
 
     vi.advanceTimersByTime(2000);
-    expect(useCookingTimerStore.getState().remainingSeconds).toBe(4);
+    expect(selectActiveRemainingSeconds(useCookingTimerStore.getState())).toBe(4);
   });
 
-  it('adds seconds to timer', () => {
+  it('adds seconds to active timer', () => {
     const store = useCookingTimerStore.getState();
-    store.startTimer(10);
+    store.addTimer(10);
 
-    store.addSeconds(60);
-    expect(useCookingTimerStore.getState().remainingSeconds).toBe(70);
-    expect(useCookingTimerStore.getState().totalSeconds).toBe(70);
+    store.addSecondsToActive(60);
+    const state = useCookingTimerStore.getState();
+    expect(selectActiveRemainingSeconds(state)).toBe(70);
+    expect(selectActiveTotalSeconds(state)).toBe(70);
   });
 
   it('dismisses alarm', () => {
     const store = useCookingTimerStore.getState();
-    store.startTimer(1);
+    store.addTimer(1);
 
     vi.advanceTimersByTime(1500);
-    expect(useCookingTimerStore.getState().isAlarming).toBe(true);
+    expect(selectIsActiveAlarming(useCookingTimerStore.getState())).toBe(true);
 
     useCookingTimerStore.getState().dismissAlarm();
-    expect(useCookingTimerStore.getState().isAlarming).toBe(false);
-    expect(useCookingTimerStore.getState().remainingSeconds).toBe(0);
+    expect(selectIsActiveAlarming(useCookingTimerStore.getState())).toBe(false);
+    expect(selectActiveRemainingSeconds(useCookingTimerStore.getState())).toBe(0);
   });
 
   describe('Multi-Timer Parallel Support', () => {

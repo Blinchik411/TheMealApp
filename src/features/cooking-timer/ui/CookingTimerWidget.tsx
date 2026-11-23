@@ -1,16 +1,21 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useCallback } from 'react';
-import { useCookingTimerStore } from '../model/timerStore';
+import { useCallback, useEffect } from 'react';
+import { initTimerEffects } from '../model/timerAudioListener';
+import { useTimerUiStore } from '../model/timerUiStore';
 import { TimerDialog } from './TimerDialog';
 import { TimerFloatingButton } from './TimerFloatingButton';
 
 export const CookingTimerWidget = () => {
   const t = useTranslations('CookingTimer');
-  // Подписка ТОЛЬКО на isOpen. Изменение секунд при тике НЕ вызывает ререндер виджета!
-  const isOpen = useCookingTimerStore((state) => state.isOpen);
-  const setOpen = useCookingTimerStore((state) => state.setOpen);
+
+  const isOpen = useTimerUiStore((state) => state.isOpen);
+  const setOpen = useTimerUiStore((state) => state.setOpen);
+
+  useEffect(() => {
+    return initTimerEffects();
+  }, []);
 
   const handleClose = useCallback(() => {
     setOpen(false);
