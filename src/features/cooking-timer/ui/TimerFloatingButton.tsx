@@ -3,26 +3,19 @@
 import { BellRing, Pause, Timer } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { memo } from 'react';
-import { formatTimerTime, useCookingTimerStore } from '../model/timerStore';
-
-// Изолированный индикатор времени внутри плавающей кнопки
-const TimerFabTime = memo(() => {
-  const remainingSeconds = useCookingTimerStore((state) => state.remainingSeconds);
-  return (
-    <span className="font-mono font-bold text-sm tracking-tight">
-      {formatTimerTime(remainingSeconds)}
-    </span>
-  );
-});
-TimerFabTime.displayName = 'TimerFabTime';
+import { formatTimerTime, selectPrimaryTimer, useCookingTimerStore } from '../model/timerStore';
 
 export const TimerFloatingButton = memo(() => {
   const t = useTranslations('CookingTimer');
 
-  const isAlarming = useCookingTimerStore((state) => state.isAlarming);
-  const isRunning = useCookingTimerStore((state) => state.isRunning);
-  const hasTime = useCookingTimerStore((state) => state.remainingSeconds > 0);
+  const timers = useCookingTimerStore((state) => state.timers);
   const toggleOpen = useCookingTimerStore((state) => state.toggleOpen);
+
+  const primaryTimer = selectPrimaryTimer(timers);
+  const count = timers.length;
+  const isAlarming = timers.some((t) => t.isAlarming);
+  const isRunning = primaryTimer?.isRunning ?? false;
+  const hasTime = (primaryTimer?.remainingSeconds ?? 0) > 0;
 
   return (
     <button
@@ -43,19 +36,47 @@ export const TimerFloatingButton = memo(() => {
         <>
           <BellRing className="size-5 shrink-0" />
           <span className="font-bold text-xs uppercase tracking-wider">{t('alarm')}</span>
+          {count > 1 && (
+            <span
+              data-testid="timer-count-badge"
+              className="ml-1 inline-flex items-center justify-center rounded-full bg-white/25 px-1.5 py-0.5 text-xs font-bold leading-none"
+            >
+              {count}
+            </span>
+          )}
         </>
-      ) : isRunning ? (
+      ) : isRunning && primaryTimer ? (
         <>
           <span className="relative flex size-2.5 shrink-0">
             <span className="animate-ping absolute inline-flex size-full rounded-full bg-white opacity-75" />
             <span className="relative inline-flex rounded-full size-2.5 bg-white" />
           </span>
-          <TimerFabTime />
+          <span className="font-mono font-bold text-sm tracking-tight">
+            {formatTimerTime(primaryTimer.remainingSeconds)}
+          </span>
+          {count > 1 && (
+            <span
+              data-testid="timer-count-badge"
+              className="ml-1 inline-flex items-center justify-center rounded-full bg-primary-foreground/25 px-1.5 py-0.5 text-xs font-bold leading-none"
+            >
+              {count}
+            </span>
+          )}
         </>
-      ) : hasTime ? (
+      ) : hasTime && primaryTimer ? (
         <>
           <Pause className="size-4 shrink-0" />
-          <TimerFabTime />
+          <span className="font-mono font-bold text-sm tracking-tight">
+            {formatTimerTime(primaryTimer.remainingSeconds)}
+          </span>
+          {count > 1 && (
+            <span
+              data-testid="timer-count-badge"
+              className="ml-1 inline-flex items-center justify-center rounded-full bg-white/25 px-1.5 py-0.5 text-xs font-bold leading-none"
+            >
+              {count}
+            </span>
+          )}
         </>
       ) : (
         <Timer className="size-5 transition-transform group-hover:scale-110" />

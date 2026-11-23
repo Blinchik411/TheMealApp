@@ -116,7 +116,10 @@
     "overlayAria": "Закрыть оверлей таймера",
     "minutesAria": "Минуты",
     "secondsAria": "Секунды",
-    "startForAria": "Запустить кухонный таймер на {text}"
+    "startForAria": "Запустить кухонный таймер на {text}",
+    "addTimer": "Добавить таймер",
+    "activeTimers": "Активные таймеры",
+    "deleteTimer": "Удалить таймер"
   },
   "Auth": {
     "welcomeBack": "С возвращением",

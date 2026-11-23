@@ -58,6 +58,29 @@ export const formatTimerTime = (totalSeconds: number): string => {
   return `${pad(minutes)}:${pad(seconds)}`;
 };
 
+export const selectPrimaryTimer = (timers: ActiveTimer[]): ActiveTimer | null => {
+  if (timers.length === 0) return null;
+
+  const alarming = timers.find((t) => t.isAlarming);
+  if (alarming) return alarming;
+
+  const running = timers.filter((t) => t.isRunning);
+  if (running.length > 0) {
+    return running.reduce((earliest, current) =>
+      current.remainingSeconds < earliest.remainingSeconds ? current : earliest,
+    );
+  }
+
+  const withTime = timers.filter((t) => t.remainingSeconds > 0);
+  if (withTime.length > 0) {
+    return withTime.reduce((earliest, current) =>
+      current.remainingSeconds < earliest.remainingSeconds ? current : earliest,
+    );
+  }
+
+  return timers[0];
+};
+
 let masterInterval: ReturnType<typeof setInterval> | null = null;
 
 const stopMasterInterval = () => {

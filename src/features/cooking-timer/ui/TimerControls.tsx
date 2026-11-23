@@ -27,7 +27,7 @@ export const TimerControls = memo(({ hasStarted, onReset }: TimerControlsProps) 
       {isRunning ? (
         <button
           type="button"
-          onClick={pauseTimer}
+          onClick={() => pauseTimer()}
           className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-secondary hover:bg-secondary/80 text-secondary-foreground font-bold text-xs transition-all cursor-pointer active:scale-95"
         >
           <Pause className="size-4" />
@@ -36,7 +36,7 @@ export const TimerControls = memo(({ hasStarted, onReset }: TimerControlsProps) 
       ) : hasTime ? (
         <button
           type="button"
-          onClick={resumeTimer}
+          onClick={() => resumeTimer()}
           className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs transition-all cursor-pointer active:scale-95 shadow-xs"
         >
           <Play className="size-4" />

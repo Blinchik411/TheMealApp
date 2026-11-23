@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useCookingTimerStore } from '../model/timerStore';
@@ -133,5 +133,57 @@ describe('CookingTimerWidget', () => {
     await user.click(resetBtn);
     expect(useCookingTimerStore.getState().remainingSeconds).toBe(0);
     expect(useCookingTimerStore.getState().isRunning).toBe(false);
+  });
+
+  it('displays closest timer and count badge on floating button when multiple timers exist', async () => {
+    const user = userEvent.setup();
+    render(<CookingTimerWidget />);
+
+    act(() => {
+      useCookingTimerStore.getState().addTimer(600, 'Long timer', false);
+      useCookingTimerStore.getState().addTimer(180, 'Short timer', false);
+    });
+
+    const badge = screen.getByTestId('timer-count-badge');
+    expect(badge).toBeInTheDocument();
+    expect(badge).toHaveTextContent('2');
+
+    // Closest timer (180s = 03:00) should be displayed
+    expect(screen.getByText('03:00')).toBeInTheDocument();
+
+    const triggerBtn = screen.getByRole('button', { name: /toggle cooking timer/i });
+    await user.click(triggerBtn);
+
+    // Multi-timer dialog open
+    expect(screen.getByTestId('dialog-timers-count')).toHaveTextContent('2');
+    expect(screen.getByText('Long timer')).toBeInTheDocument();
+    expect(screen.getByText('Short timer')).toBeInTheDocument();
+  });
+
+  it('allows individual timer management (pause, delete) in multi-timer dialog', async () => {
+    const user = userEvent.setup();
+    render(<CookingTimerWidget />);
+
+    let id1 = '';
+    let id2 = '';
+    act(() => {
+      id1 = useCookingTimerStore.getState().addTimer(300, 'Pasta', true);
+      id2 = useCookingTimerStore.getState().addTimer(600, 'Sauce', true);
+    });
+
+    const card1 = screen.getByTestId(`timer-card-${id1}`);
+    const card2 = screen.getByTestId(`timer-card-${id2}`);
+    expect(card1).toBeInTheDocument();
+    expect(card2).toBeInTheDocument();
+
+    // Pause first timer from its card
+    const pauseBtns = screen.getAllByRole('button', { name: /pause/i });
+    await user.click(pauseBtns[0]);
+
+    // Delete one timer
+    const deleteBtns = screen.getAllByRole('button', { name: /delete timer/i });
+    await user.click(deleteBtns[0]);
+
+    expect(useCookingTimerStore.getState().timers.length).toBe(1);
   });
 });
