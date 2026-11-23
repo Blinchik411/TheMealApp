@@ -100,4 +100,92 @@ describe('timerStore', () => {
     expect(useCookingTimerStore.getState().isAlarming).toBe(false);
     expect(useCookingTimerStore.getState().remainingSeconds).toBe(0);
   });
+
+  describe('Multi-Timer Parallel Support', () => {
+    it('manages multiple timers ticking in parallel with unified master interval', () => {
+      const store = useCookingTimerStore.getState();
+
+      const timerId1 = store.addTimer(10, 'Pasta');
+      const timerId2 = store.addTimer(20, 'Sauce');
+
+      const state1 = useCookingTimerStore.getState();
+      expect(state1.timers).toHaveLength(2);
+      expect(state1.timers[0].label).toBe('Sauce');
+      expect(state1.timers[1].label).toBe('Pasta');
+
+      // Advance by 5 seconds
+      vi.advanceTimersByTime(5000);
+
+      const state2 = useCookingTimerStore.getState();
+      const pasta = state2.timers.find((t) => t.id === timerId1);
+      const sauce = state2.timers.find((t) => t.id === timerId2);
+
+      expect(pasta?.remainingSeconds).toBe(5);
+      expect(sauce?.remainingSeconds).toBe(15);
+      expect(pasta?.isRunning).toBe(true);
+      expect(sauce?.isRunning).toBe(true);
+
+      // Advance by another 5 seconds -> Pasta should finish (0s, alarming), Sauce should have 10s left
+      vi.advanceTimersByTime(5000);
+
+      const state3 = useCookingTimerStore.getState();
+      const pastaFinished = state3.timers.find((t) => t.id === timerId1);
+      const sauceRunning = state3.timers.find((t) => t.id === timerId2);
+
+      expect(pastaFinished?.remainingSeconds).toBe(0);
+      expect(pastaFinished?.isRunning).toBe(false);
+      expect(pastaFinished?.isAlarming).toBe(true);
+
+      expect(sauceRunning?.remainingSeconds).toBe(10);
+      expect(sauceRunning?.isRunning).toBe(true);
+      expect(sauceRunning?.isAlarming).toBe(false);
+    });
+
+    it('pauses and resumes a specific timer while leaving other running', () => {
+      const store = useCookingTimerStore.getState();
+
+      const timerId1 = store.addTimer(30, 'Soup');
+      const timerId2 = store.addTimer(30, 'Bread');
+
+      vi.advanceTimersByTime(10000);
+
+      // Pause Soup only
+      store.pauseTimer(timerId1);
+
+      expect(useCookingTimerStore.getState().timers.find((t) => t.id === timerId1)?.isRunning).toBe(
+        false,
+      );
+      expect(useCookingTimerStore.getState().timers.find((t) => t.id === timerId2)?.isRunning).toBe(
+        true,
+      );
+
+      vi.advanceTimersByTime(5000);
+
+      // Soup should stay at 20s, Bread should tick down to 15s
+      const stateAfter = useCookingTimerStore.getState();
+      expect(stateAfter.timers.find((t) => t.id === timerId1)?.remainingSeconds).toBe(20);
+      expect(stateAfter.timers.find((t) => t.id === timerId2)?.remainingSeconds).toBe(15);
+
+      // Resume Soup
+      store.resumeTimer(timerId1);
+      expect(useCookingTimerStore.getState().timers.find((t) => t.id === timerId1)?.isRunning).toBe(
+        true,
+      );
+    });
+
+    it('removes a timer by id cleanly', () => {
+      const store = useCookingTimerStore.getState();
+
+      const id1 = store.addTimer(10, 'One');
+      const id2 = store.addTimer(20, 'Two');
+
+      expect(useCookingTimerStore.getState().timers).toHaveLength(2);
+
+      store.removeTimer(id1);
+
+      const current = useCookingTimerStore.getState();
+      expect(current.timers).toHaveLength(1);
+      expect(current.timers[0].id).toBe(id2);
+    });
+  });
 });
