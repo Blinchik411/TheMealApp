@@ -4,6 +4,12 @@ import { useFocusTrap } from '@/shared/lib';
 import { BellRing, Pause, Play, Plus, Timer, Trash2, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { type SubmitEvent, useCallback, useEffect, useRef, useState } from 'react';
+import {
+  selectActiveLabel,
+  selectActiveRemainingSeconds,
+  selectIsActiveAlarming,
+  selectIsActiveRunning,
+} from '../model/timerSelectors';
 import { formatTimerTime, useCookingTimerStore } from '../model/timerStore';
 import { TimerControls } from './TimerControls';
 import { TimerDisplay } from './TimerDisplay';
@@ -17,18 +23,19 @@ export const TimerDialog = ({ onClose }: TimerDialogProps) => {
   const t = useTranslations('CookingTimer');
 
   const timers = useCookingTimerStore((state) => state.timers);
-  const isAlarming = useCookingTimerStore((state) => state.isAlarming);
-  const isRunning = useCookingTimerStore((state) => state.isRunning);
-  const label = useCookingTimerStore((state) => state.label);
+  const isAlarming = useCookingTimerStore(selectIsActiveAlarming);
+  const isRunning = useCookingTimerStore(selectIsActiveRunning);
+  const label = useCookingTimerStore(selectActiveLabel);
 
   const addTimer = useCookingTimerStore((state) => state.addTimer);
   const removeTimer = useCookingTimerStore((state) => state.removeTimer);
+  const clearAllTimers = useCookingTimerStore((state) => state.clearAllTimers);
   const pauseTimer = useCookingTimerStore((state) => state.pauseTimer);
   const resumeTimer = useCookingTimerStore((state) => state.resumeTimer);
   const addSeconds = useCookingTimerStore((state) => state.addSeconds);
-  const setTime = useCookingTimerStore((state) => state.setTime);
-  const resetTimer = useCookingTimerStore((state) => state.resetTimer);
   const dismissAlarm = useCookingTimerStore((state) => state.dismissAlarm);
+  const setTimeForActive = useCookingTimerStore((state) => state.setTimeForActive);
+  const resetActiveTimer = useCookingTimerStore((state) => state.resetActiveTimer);
 
   const [isEditingTime, setIsEditingTime] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
@@ -57,7 +64,7 @@ export const TimerDialog = ({ onClose }: TimerDialogProps) => {
 
   const handleStartEditing = useCallback(() => {
     setIsEditingTime(true);
-    const currentSeconds = useCookingTimerStore.getState().remainingSeconds;
+    const currentSeconds = selectActiveRemainingSeconds(useCookingTimerStore.getState());
     const m = Math.floor(currentSeconds / 60);
     const s = currentSeconds % 60;
     setMinutesInput(m.toString().padStart(2, '0'));
@@ -76,24 +83,24 @@ export const TimerDialog = ({ onClose }: TimerDialogProps) => {
       const total = mins * 60 + secs;
 
       if (total > 0) {
-        setTime(total);
+        setTimeForActive(total);
         setHasStarted(false);
       } else {
-        resetTimer();
+        resetActiveTimer();
         setHasStarted(false);
       }
       setIsEditingTime(false);
     },
-    [minutesInput, secondsInput, setTime, resetTimer],
+    [minutesInput, secondsInput, setTimeForActive, resetActiveTimer],
   );
 
   const handleReset = useCallback(() => {
-    resetTimer();
+    resetActiveTimer();
     setHasStarted(false);
-  }, [resetTimer]);
+  }, [resetActiveTimer]);
 
   const handleAddQuickTimer = (seconds: number, presetLabel: string) => {
-    addTimer(seconds, presetLabel, false);
+    addTimer(seconds, presetLabel);
     setIsAddingNew(false);
   };
 
@@ -196,7 +203,7 @@ export const TimerDialog = ({ onClose }: TimerDialogProps) => {
                       <>
                         <button
                           type="button"
-                          onClick={() => addSeconds(60, timer.id)}
+                          onClick={() => addSeconds(timer.id, 60)}
                           className="px-2 py-1.5 rounded-xl border border-border bg-background hover:bg-muted text-xs font-semibold text-foreground transition-all cursor-pointer"
                         >
                           +1m
@@ -234,7 +241,7 @@ export const TimerDialog = ({ onClose }: TimerDialogProps) => {
               <span className="text-xs font-semibold text-muted-foreground">{t('addTimer')}</span>
               <button
                 type="button"
-                onClick={() => resetTimer()}
+                onClick={clearAllTimers}
                 className="text-xs text-muted-foreground hover:text-destructive transition-colors flex items-center gap-1 cursor-pointer"
               >
                 <Trash2 className="size-3" />

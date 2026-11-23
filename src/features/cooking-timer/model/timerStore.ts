@@ -1,47 +1,32 @@
 'use client';
 
 import { create } from 'zustand';
-import { playTimerAlarm } from '../lib/timerAudio';
-
-export interface ActiveTimer {
-  id: string;
-  label: string;
-  totalSeconds: number;
-  remainingSeconds: number;
-  targetEndTime: number;
-  isRunning: boolean;
-  isAlarming: boolean;
-  createdAt: number;
-}
+import { selectActiveTimer } from './timerSelectors';
+import { ensureTicker, stopTicker } from './timerTickerService';
+import type { ActiveTimer } from './types';
 
 export interface CookingTimerState {
-  // Multi-timer collections
   timers: ActiveTimer[];
   activeTimerId: string | null;
 
-  // Global / backward-compatible view of active timer
-  totalSeconds: number;
-  remainingSeconds: number;
-  isRunning: boolean;
-  isAlarming: boolean;
-  isOpen: boolean;
-  label: string;
-
   // Multi-timer actions
-  addTimer: (seconds: number, label?: string, openDialog?: boolean) => string;
+  addTimer: (seconds: number, label?: string) => string;
   removeTimer: (id: string) => void;
+  clearAllTimers: () => void;
   setActiveTimerId: (id: string | null) => void;
 
-  // General controls (support optional id for target timer or fallback to active)
-  startTimer: (seconds: number, label?: string) => void;
-  setTime: (seconds: number, label?: string) => void;
-  pauseTimer: (id?: string) => void;
-  resumeTimer: (id?: string) => void;
-  resetTimer: (id?: string) => void;
-  addSeconds: (seconds: number, id?: string) => void;
+  // Specific timer controls (strictly typed, required id)
+  pauseTimer: (id: string) => void;
+  resumeTimer: (id: string) => void;
+  addSeconds: (id: string, seconds: number) => void;
   dismissAlarm: (id?: string) => void;
-  setOpen: (isOpen: boolean) => void;
-  toggleOpen: () => void;
+
+  // Active / single timer actions
+  pauseActiveTimer: () => void;
+  resumeActiveTimer: () => void;
+  resetActiveTimer: () => void;
+  addSecondsToActive: (seconds: number) => void;
+  setTimeForActive: (seconds: number, label?: string) => void;
 }
 
 export const formatTimerTime = (totalSeconds: number): string => {
@@ -58,50 +43,16 @@ export const formatTimerTime = (totalSeconds: number): string => {
   return `${pad(minutes)}:${pad(seconds)}`;
 };
 
-export const selectPrimaryTimer = (timers: ActiveTimer[]): ActiveTimer | null => {
-  if (timers.length === 0) return null;
-
-  const alarming = timers.find((t) => t.isAlarming);
-  if (alarming) return alarming;
-
-  const running = timers.filter((t) => t.isRunning);
-  if (running.length > 0) {
-    return running.reduce((earliest, current) =>
-      current.remainingSeconds < earliest.remainingSeconds ? current : earliest,
-    );
-  }
-
-  const withTime = timers.filter((t) => t.remainingSeconds > 0);
-  if (withTime.length > 0) {
-    return withTime.reduce((earliest, current) =>
-      current.remainingSeconds < earliest.remainingSeconds ? current : earliest,
-    );
-  }
-
-  return timers[0];
-};
-
-let masterInterval: ReturnType<typeof setInterval> | null = null;
-
-const stopMasterInterval = () => {
-  if (masterInterval) {
-    clearInterval(masterInterval);
-    masterInterval = null;
-  }
-};
-
-const tickTimers = () => {
-  const state = useCookingTimerStore.getState();
-  const { timers } = state;
+const tickTimers = (): void => {
+  const { timers } = useCookingTimerStore.getState();
   const hasRunning = timers.some((t) => t.isRunning);
 
   if (!hasRunning) {
-    stopMasterInterval();
+    stopTicker();
     return;
   }
 
   const now = Date.now();
-  let alarmedAny = false;
   let changed = false;
 
   const updatedTimers = timers.map((timer) => {
@@ -109,9 +60,6 @@ const tickTimers = () => {
 
     const remaining = Math.max(0, Math.ceil((timer.targetEndTime - now) / 1000));
     if (remaining <= 0) {
-      if (!timer.isAlarming) {
-        alarmedAny = true;
-      }
       changed = true;
       return {
         ...timer,
@@ -132,40 +80,16 @@ const tickTimers = () => {
     return timer;
   });
 
-  if (alarmedAny) {
-    playTimerAlarm();
+  if (changed) {
+    useCookingTimerStore.setState({ timers: updatedTimers });
   }
-
-  if (changed || alarmedAny) {
-    const active = updatedTimers.find((t) => t.id === state.activeTimerId) || updatedTimers[0];
-    useCookingTimerStore.setState({
-      timers: updatedTimers,
-      remainingSeconds: active ? active.remainingSeconds : 0,
-      totalSeconds: active ? active.totalSeconds : 0,
-      isRunning: active ? active.isRunning : false,
-      isAlarming: updatedTimers.some((t) => t.isAlarming),
-      label: active ? active.label : '',
-      isOpen: alarmedAny ? true : state.isOpen,
-    });
-  }
-};
-
-const ensureMasterInterval = () => {
-  if (masterInterval) return;
-  masterInterval = setInterval(tickTimers, 500);
 };
 
 export const useCookingTimerStore = create<CookingTimerState>()((set, get) => ({
   timers: [],
   activeTimerId: null,
-  totalSeconds: 0,
-  remainingSeconds: 0,
-  isRunning: false,
-  isAlarming: false,
-  isOpen: false,
-  label: '',
 
-  addTimer: (seconds: number, label?: string, openDialog = true) => {
+  addTimer: (seconds: number, label?: string): string => {
     if (seconds <= 0) return '';
 
     const id = `timer-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
@@ -183,125 +107,47 @@ export const useCookingTimerStore = create<CookingTimerState>()((set, get) => ({
       createdAt: Date.now(),
     };
 
-    const nextTimers = [newTimer, ...get().timers];
-
     set((state) => ({
-      timers: nextTimers,
+      timers: [newTimer, ...state.timers],
       activeTimerId: id,
-      totalSeconds: seconds,
-      remainingSeconds: seconds,
-      isRunning: true,
-      isAlarming: false,
-      label: timerLabel,
-      isOpen: openDialog ? true : state.isOpen,
     }));
 
-    ensureMasterInterval();
+    ensureTicker(tickTimers);
     return id;
   },
 
-  removeTimer: (id: string) => {
+  removeTimer: (id: string): void => {
     const updated = get().timers.filter((t) => t.id !== id);
-    const nextActive = updated[0]?.id || null;
-    const active = updated[0];
+    const nextActiveId =
+      get().activeTimerId === id ? (updated[0]?.id ?? null) : get().activeTimerId;
 
     set({
       timers: updated,
-      activeTimerId: nextActive,
-      totalSeconds: active ? active.totalSeconds : 0,
-      remainingSeconds: active ? active.remainingSeconds : 0,
-      isRunning: active ? active.isRunning : false,
-      isAlarming: updated.some((t) => t.isAlarming),
-      label: active ? active.label : '',
+      activeTimerId: nextActiveId,
     });
 
     if (!updated.some((t) => t.isRunning)) {
-      stopMasterInterval();
+      stopTicker();
     }
   },
 
-  setActiveTimerId: (id: string | null) => {
-    const active = get().timers.find((t) => t.id === id);
-    if (!active) {
-      set({ activeTimerId: null });
-      return;
-    }
+  clearAllTimers: (): void => {
+    stopTicker();
     set({
-      activeTimerId: id,
-      totalSeconds: active.totalSeconds,
-      remainingSeconds: active.remainingSeconds,
-      isRunning: active.isRunning,
-      label: active.label,
+      timers: [],
+      activeTimerId: null,
     });
   },
 
-  startTimer: (seconds: number, label?: string) => {
-    get().addTimer(seconds, label, true);
-  },
-
-  setTime: (seconds: number, label?: string) => {
-    const safeSeconds = Math.max(0, Math.floor(seconds));
-    const activeId = get().activeTimerId;
-    const timerLabel = label || '';
-
-    if (activeId && get().timers.some((t) => t.id === activeId)) {
-      const updated = get().timers.map((t) =>
-        t.id === activeId
-          ? {
-              ...t,
-              totalSeconds: safeSeconds,
-              remainingSeconds: safeSeconds,
-              targetEndTime: Date.now() + safeSeconds * 1000,
-              isRunning: false,
-              isAlarming: false,
-              label: timerLabel || t.label,
-            }
-          : t,
-      );
-      set({
-        timers: updated,
-        totalSeconds: safeSeconds,
-        remainingSeconds: safeSeconds,
-        isRunning: false,
-        isAlarming: false,
-        label: timerLabel,
-      });
-    } else {
-      const id = `timer-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-      const newTimer: ActiveTimer = {
-        id,
-        label: timerLabel,
-        totalSeconds: safeSeconds,
-        remainingSeconds: safeSeconds,
-        targetEndTime: Date.now() + safeSeconds * 1000,
-        isRunning: false,
-        isAlarming: false,
-        createdAt: Date.now(),
-      };
-      set({
-        timers: [newTimer],
-        activeTimerId: id,
-        totalSeconds: safeSeconds,
-        remainingSeconds: safeSeconds,
-        isRunning: false,
-        isAlarming: false,
-        label: timerLabel,
-      });
+  setActiveTimerId: (id: string | null): void => {
+    if (!id || get().timers.some((t) => t.id === id)) {
+      set({ activeTimerId: id });
     }
   },
 
-  pauseTimer: (id?: string) => {
-    const targetId =
-      typeof id === 'string' && id.trim()
-        ? id.trim()
-        : get().activeTimerId || get().timers.find((t) => t.isRunning)?.id;
-    if (!targetId) {
-      set({ isRunning: false });
-      return;
-    }
-
+  pauseTimer: (id: string): void => {
     const updated = get().timers.map((t) => {
-      if (t.id === targetId) {
+      if (t.id === id) {
         const left = Math.max(0, Math.ceil((t.targetEndTime - Date.now()) / 1000));
         return {
           ...t,
@@ -312,28 +158,16 @@ export const useCookingTimerStore = create<CookingTimerState>()((set, get) => ({
       return t;
     });
 
-    const active = updated.find((t) => t.id === get().activeTimerId) || updated[0];
-    set({
-      timers: updated,
-      isRunning: active ? active.isRunning : false,
-      remainingSeconds: active ? active.remainingSeconds : 0,
-    });
+    set({ timers: updated });
 
     if (!updated.some((t) => t.isRunning)) {
-      stopMasterInterval();
+      stopTicker();
     }
   },
 
-  resumeTimer: (id?: string) => {
-    const targetId =
-      typeof id === 'string' && id.trim()
-        ? id.trim()
-        : get().activeTimerId ||
-          get().timers.find((t) => !t.isRunning && t.remainingSeconds > 0)?.id;
-    if (!targetId) return;
-
+  resumeTimer: (id: string): void => {
     const updated = get().timers.map((t) => {
-      if (t.id === targetId && t.remainingSeconds > 0) {
+      if (t.id === id && t.remainingSeconds > 0) {
         return {
           ...t,
           isRunning: true,
@@ -344,76 +178,32 @@ export const useCookingTimerStore = create<CookingTimerState>()((set, get) => ({
       return t;
     });
 
-    const active = updated.find((t) => t.id === get().activeTimerId) || updated[0];
-    set({
-      timers: updated,
-      isRunning: active ? active.isRunning : false,
-      isAlarming: updated.some((t) => t.isAlarming),
-    });
-
-    ensureMasterInterval();
+    set({ timers: updated });
+    ensureTicker(tickTimers);
   },
 
-  resetTimer: (id?: string) => {
-    if (typeof id === 'string' && id.trim()) {
-      get().removeTimer(id.trim());
-      return;
-    }
-
-    stopMasterInterval();
-    set({
-      timers: [],
-      activeTimerId: null,
-      totalSeconds: 0,
-      remainingSeconds: 0,
-      isRunning: false,
-      isAlarming: false,
-      label: '',
-    });
-  },
-
-  addSeconds: (secondsToAdd: number, id?: string) => {
-    const targetId =
-      typeof id === 'string' && id.trim() ? id.trim() : get().activeTimerId || get().timers[0]?.id;
-    if (!targetId) {
-      const { remainingSeconds, totalSeconds } = get();
-      const newRem = remainingSeconds + secondsToAdd;
-      set({
-        remainingSeconds: newRem,
-        totalSeconds: Math.max(totalSeconds + secondsToAdd, newRem),
-        isAlarming: false,
-      });
-      return;
-    }
-
+  addSeconds: (id: string, seconds: number): void => {
     const updated = get().timers.map((t) => {
-      if (t.id === targetId) {
-        const newRem = t.remainingSeconds + secondsToAdd;
-        const newTot = Math.max(t.totalSeconds + secondsToAdd, newRem);
+      if (t.id === id) {
+        const newRem = t.remainingSeconds + seconds;
+        const newTotal = Math.max(t.totalSeconds + seconds, newRem);
         return {
           ...t,
           remainingSeconds: newRem,
-          totalSeconds: newTot,
-          targetEndTime: t.targetEndTime + secondsToAdd * 1000,
+          totalSeconds: newTotal,
+          targetEndTime: t.targetEndTime + seconds * 1000,
           isAlarming: false,
         };
       }
       return t;
     });
 
-    const active = updated.find((t) => t.id === get().activeTimerId) || updated[0];
-    set({
-      timers: updated,
-      remainingSeconds: active ? active.remainingSeconds : 0,
-      totalSeconds: active ? active.totalSeconds : 0,
-      isAlarming: updated.some((t) => t.isAlarming),
-    });
+    set({ timers: updated });
   },
 
-  dismissAlarm: (id?: string) => {
-    const timerId = typeof id === 'string' && id.trim() ? id.trim() : null;
+  dismissAlarm: (id?: string): void => {
     const updated = get().timers.map((t) => {
-      if (!timerId || t.id === timerId) {
+      if (!id || t.id === id) {
         return {
           ...t,
           isAlarming: false,
@@ -422,13 +212,74 @@ export const useCookingTimerStore = create<CookingTimerState>()((set, get) => ({
       return t;
     });
 
-    set({
-      timers: updated,
-      isAlarming: updated.some((t) => t.isAlarming),
-    });
+    set({ timers: updated });
   },
 
-  setOpen: (isOpen: boolean) => set({ isOpen }),
+  pauseActiveTimer: (): void => {
+    const active = selectActiveTimer(get());
+    if (active) {
+      get().pauseTimer(active.id);
+    }
+  },
 
-  toggleOpen: () => set((state) => ({ isOpen: !state.isOpen })),
+  resumeActiveTimer: (): void => {
+    const active = selectActiveTimer(get());
+    if (active) {
+      get().resumeTimer(active.id);
+    }
+  },
+
+  resetActiveTimer: (): void => {
+    const active = selectActiveTimer(get());
+    if (active) {
+      get().removeTimer(active.id);
+    }
+  },
+
+  addSecondsToActive: (seconds: number): void => {
+    const active = selectActiveTimer(get());
+    if (active) {
+      get().addSeconds(active.id, seconds);
+    } else {
+      get().addTimer(seconds, `${Math.ceil(seconds / 60)} min timer`);
+    }
+  },
+
+  setTimeForActive: (seconds: number, label?: string): void => {
+    const safeSeconds = Math.max(0, Math.floor(seconds));
+    const active = selectActiveTimer(get());
+
+    if (active) {
+      const updated = get().timers.map((t) =>
+        t.id === active.id
+          ? {
+              ...t,
+              totalSeconds: safeSeconds,
+              remainingSeconds: safeSeconds,
+              targetEndTime: Date.now() + safeSeconds * 1000,
+              isRunning: false,
+              isAlarming: false,
+              label: label || t.label,
+            }
+          : t,
+      );
+      set({ timers: updated });
+    } else {
+      const id = `timer-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+      const newTimer: ActiveTimer = {
+        id,
+        label: label || '',
+        totalSeconds: safeSeconds,
+        remainingSeconds: safeSeconds,
+        targetEndTime: Date.now() + safeSeconds * 1000,
+        isRunning: false,
+        isAlarming: false,
+        createdAt: Date.now(),
+      };
+      set({
+        timers: [newTimer],
+        activeTimerId: id,
+      });
+    }
+  },
 }));

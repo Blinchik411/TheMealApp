@@ -1,12 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { selectActiveRemainingSeconds, selectIsActiveRunning } from '../model/timerSelectors';
 import { useCookingTimerStore } from '../model/timerStore';
+import { useTimerUiStore } from '../model/timerUiStore';
 import { InteractiveStepText } from './InteractiveStepText';
 
 describe('InteractiveStepText', () => {
   beforeEach(() => {
-    useCookingTimerStore.getState().resetTimer();
+    useCookingTimerStore.getState().clearAllTimers();
+    useTimerUiStore.getState().setOpen(false);
   });
 
   it('renders plain text when no time intervals are present', () => {
@@ -27,9 +30,9 @@ describe('InteractiveStepText', () => {
 
     await user.click(timerBtn);
 
-    expect(useCookingTimerStore.getState().isRunning).toBe(true);
-    expect(useCookingTimerStore.getState().remainingSeconds).toBe(900);
-    expect(useCookingTimerStore.getState().isOpen).toBe(true);
+    expect(selectIsActiveRunning(useCookingTimerStore.getState())).toBe(true);
+    expect(selectActiveRemainingSeconds(useCookingTimerStore.getState())).toBe(900);
+    expect(useTimerUiStore.getState().isOpen).toBe(true);
   });
 
   it('detects and renders timer button for Russian phrases and starts timer on click', async () => {
@@ -42,8 +45,8 @@ describe('InteractiveStepText', () => {
 
     await user.click(timerBtn);
 
-    expect(useCookingTimerStore.getState().isRunning).toBe(true);
-    expect(useCookingTimerStore.getState().remainingSeconds).toBe(1200);
-    expect(useCookingTimerStore.getState().isOpen).toBe(true);
+    expect(selectIsActiveRunning(useCookingTimerStore.getState())).toBe(true);
+    expect(selectActiveRemainingSeconds(useCookingTimerStore.getState())).toBe(1200);
+    expect(useTimerUiStore.getState().isOpen).toBe(true);
   });
 });

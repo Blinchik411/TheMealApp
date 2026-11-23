@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import type { RefObject, SubmitEvent } from 'react';
+import { selectActiveRemainingSeconds } from '../model/timerSelectors';
 import { formatTimerTime, useCookingTimerStore } from '../model/timerStore';
 
 export interface TimerDisplayProps {
@@ -28,8 +29,8 @@ export const TimerDisplay = ({
   onChangeSeconds,
 }: TimerDisplayProps) => {
   const t = useTranslations('CookingTimer');
-  // Точечная подписка на секунды — только этот компонент ререндерится при тике таймера!
-  const remainingSeconds = useCookingTimerStore((state) => state.remainingSeconds);
+  // Точечная подписка на секунды активного таймера через чистый селектор
+  const remainingSeconds = useCookingTimerStore(selectActiveRemainingSeconds);
 
   if (isEditingTime) {
     return (

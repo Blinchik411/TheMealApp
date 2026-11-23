@@ -3,17 +3,18 @@
 import { BellRing, Pause, Timer } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { memo } from 'react';
-import { formatTimerTime, selectPrimaryTimer, useCookingTimerStore } from '../model/timerStore';
+import { selectIsAnyAlarming, selectPrimaryTimer } from '../model/timerSelectors';
+import { formatTimerTime, useCookingTimerStore } from '../model/timerStore';
+import { useTimerUiStore } from '../model/timerUiStore';
 
 export const TimerFloatingButton = memo(() => {
   const t = useTranslations('CookingTimer');
 
-  const timers = useCookingTimerStore((state) => state.timers);
-  const toggleOpen = useCookingTimerStore((state) => state.toggleOpen);
+  const toggleOpen = useTimerUiStore((state) => state.toggleOpen);
+  const primaryTimer = useCookingTimerStore(selectPrimaryTimer);
+  const isAlarming = useCookingTimerStore(selectIsAnyAlarming);
+  const count = useCookingTimerStore((state) => state.timers.length);
 
-  const primaryTimer = selectPrimaryTimer(timers);
-  const count = timers.length;
-  const isAlarming = timers.some((t) => t.isAlarming);
   const isRunning = primaryTimer?.isRunning ?? false;
   const hasTime = (primaryTimer?.remainingSeconds ?? 0) > 0;
 
