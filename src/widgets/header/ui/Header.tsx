@@ -4,12 +4,13 @@ import { useUserStore } from '@/entities/user';
 import { AuthModal } from '@/features/auth';
 import { useFavoritesSync } from '@/features/favorite-meal';
 import { LanguageSwitcher } from '@/features/language-switcher';
+import { ThemeSwitcher } from '@/features/theme-switcher';
 import { Link } from '@/shared/config/i18n';
 import { Heart, LogIn, LogOut, User as UserIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
-export const Header = () => {
+export function Header() {
   const t = useTranslations('Header');
   const { syncWithCloud } = useFavoritesSync();
 
@@ -38,7 +39,7 @@ export const Header = () => {
             TheMealApp
           </Link>
 
-          <nav className="flex items-center gap-3">
+          <nav className="flex items-center gap-2 sm:gap-3">
             <Link
               href="/favorites"
               className="group flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
@@ -49,7 +50,9 @@ export const Header = () => {
 
             <LanguageSwitcher />
 
-            <div className="h-4 w-px bg-border mx-1" />
+            <ThemeSwitcher />
+
+            <div className="h-4 w-px bg-border mx-0.5 sm:mx-1" />
 
             {user ? (
               <div className="flex items-center gap-2">
@@ -88,4 +91,4 @@ export const Header = () => {
       />
     </>
   );
-};
+}

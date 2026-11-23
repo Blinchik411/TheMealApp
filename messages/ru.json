@@ -146,5 +146,11 @@
     "previous": "← Назад",
     "next": "Вперед →",
     "pageOf": "Страница {current} из {total}"
+  },
+  "Theme": {
+    "toggleTheme": "Переключить тему",
+    "light": "Светлая",
+    "dark": "Тёмная",
+    "system": "Системная"
   }
 }

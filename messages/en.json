@@ -146,5 +146,11 @@
     "previous": "← Previous",
     "next": "Next →",
     "pageOf": "Page {current} of {total}"
+  },
+  "Theme": {
+    "toggleTheme": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
   }
 }

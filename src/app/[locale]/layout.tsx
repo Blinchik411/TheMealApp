@@ -1,3 +1,4 @@
+import { ThemeProvider } from '@/app/providers';
 import { type Locale, routing } from '@/shared/config/i18n';
 import { Footer } from '@/widgets/footer';
 import { Header } from '@/widgets/header';
@@ -89,11 +90,18 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
     <html lang={locale} className={inter.variable} suppressHydrationWarning>
       <body className="min-h-screen bg-background text-foreground antialiased font-sans flex flex-col">
         <NextIntlClientProvider messages={messages}>
-          <Header />
-          <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            {children}
-          </main>
-          <Footer />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Header />
+            <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+              {children}
+            </main>
+            <Footer />
+          </ThemeProvider>
         </NextIntlClientProvider>
       </body>
     </html>
