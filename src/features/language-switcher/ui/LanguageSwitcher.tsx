@@ -1,7 +1,6 @@
 'use client';
 
 import { type Locale, usePathname, useRouter } from '@/shared/config/i18n';
-import { Languages } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { useTransition } from 'react';
 
@@ -26,7 +25,6 @@ export const LanguageSwitcher = () => {
       className="inline-flex items-center gap-1 rounded-xl bg-muted/60 p-1 border border-border/50 text-xs font-semibold"
       aria-label="Language selection"
     >
-      <Languages className="size-3.5 text-muted-foreground ml-1.5 mr-0.5 hidden sm:inline" />
       <button
         type="button"
         disabled={isPending}
