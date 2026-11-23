@@ -6,7 +6,7 @@ export interface TimeToken {
 }
 
 const TIME_REGEX =
-  /\b(?:(\d+(?:[.,]\d+)?)\s*(?:-|to)\s*)?(\d+(?:[.,]\d+)?)\s*(hours?|hrs?|hr|minutes?|mins?|min|seconds?|secs?|sec)\b/gi;
+  /(?<![\p{L}\p{N}])(?:(\d+(?:[.,]\d+)?)\s*(?:[-–—]|to|до)\s*)?(\d+(?:[.,]\d+)?)\s*(hours?|hrs?|hr|минут(?:[аыуе]|ами|ах)?|минут|мин\.?|minutes?|mins?|min|секунд(?:[аыуе]|ами|ах)?|секунд|сек\.?|seconds?|secs?|sec|час(?:ов|[аеу]|ом|ами)?)(?![\p{L}\p{N}])/giu;
 
 export const parseStepWithTimeTokens = (stepText: string): TimeToken[] => {
   if (!stepText) return [];
@@ -34,11 +34,11 @@ export const parseStepWithTimeTokens = (stepText: string): TimeToken[] => {
     const rawNum = upperBoundStr || lowerBoundStr;
     const numValue = Number.parseFloat(rawNum.replace(',', '.'));
 
-    let multiplier = 60; // minutes
-    if (unitStr.startsWith('h')) {
-      multiplier = 3600; // hours
-    } else if (unitStr.startsWith('s')) {
-      multiplier = 1; // seconds
+    let multiplier = 60; // minutes (мин / минут / min / minutes)
+    if (unitStr.startsWith('h') || unitStr.startsWith('ч')) {
+      multiplier = 3600; // hours (час / часа / часов / hours / hr)
+    } else if (unitStr.startsWith('s') || unitStr.startsWith('с')) {
+      multiplier = 1; // seconds (сек / секунд / seconds / sec)
     }
 
     const seconds = Math.round(numValue * multiplier);

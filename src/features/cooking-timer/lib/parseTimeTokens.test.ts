@@ -64,4 +64,108 @@ describe('parseStepWithTimeTokens', () => {
       label: '45 seconds',
     });
   });
+
+  describe('Russian language time tokens support', () => {
+    it('detects Russian minutes correctly in various cases', () => {
+      const text = 'Варите картофель 20 минут до мягкости.';
+      const tokens = parseStepWithTimeTokens(text);
+
+      expect(tokens).toHaveLength(3);
+      expect(tokens[1]).toEqual({
+        text: '20 минут',
+        isTime: true,
+        seconds: 1200,
+        label: '20 минут',
+      });
+    });
+
+    it('detects Russian ranges with hyphen and "до"', () => {
+      const text1 = 'Обжаривайте лук 10-15 мин на среднем огне.';
+      const tokens1 = parseStepWithTimeTokens(text1);
+      expect(tokens1[1]).toEqual({
+        text: '10-15 мин',
+        isTime: true,
+        seconds: 900,
+        label: '10-15 мин',
+      });
+
+      const text2 = 'Выпекать от 30 до 40 минут.';
+      const tokens2 = parseStepWithTimeTokens(text2);
+      expect(tokens2[1]).toEqual({
+        text: '30 до 40 минут',
+        isTime: true,
+        seconds: 2400,
+        label: '30 до 40 минут',
+      });
+    });
+
+    it('detects Russian hours correctly in various grammatical cases', () => {
+      const text1 = 'Оставить мариноваться на 1 час.';
+      const tokens1 = parseStepWithTimeTokens(text1);
+      expect(tokens1[1]).toEqual({
+        text: '1 час',
+        isTime: true,
+        seconds: 3600,
+        label: '1 час',
+      });
+
+      const text2 = 'Тушить мясо 2 часа на медленном огне.';
+      const tokens2 = parseStepWithTimeTokens(text2);
+      expect(tokens2[1]).toEqual({
+        text: '2 часа',
+        isTime: true,
+        seconds: 7200,
+        label: '2 часа',
+      });
+
+      const text3 = 'Томить бульон 5 часов.';
+      const tokens3 = parseStepWithTimeTokens(text3);
+      expect(tokens3[1]).toEqual({
+        text: '5 часов',
+        isTime: true,
+        seconds: 18000,
+        label: '5 часов',
+      });
+    });
+
+    it('detects Russian decimal fractions of hours', () => {
+      const text = 'Выпекать 1,5 часа до готовности.';
+      const tokens = parseStepWithTimeTokens(text);
+
+      expect(tokens[1]).toEqual({
+        text: '1,5 часа',
+        isTime: true,
+        seconds: 5400,
+        label: '1,5 часа',
+      });
+    });
+
+    it('detects Russian seconds correctly', () => {
+      const text = 'Взбивайте желтки 30 секунд.';
+      const tokens = parseStepWithTimeTokens(text);
+
+      expect(tokens[1]).toEqual({
+        text: '30 секунд',
+        isTime: true,
+        seconds: 30,
+        label: '30 секунд',
+      });
+    });
+
+    it('does not falsely match "ч. л." (чайная ложка) as hours', () => {
+      const text = 'Добавьте 2 ч. л. соли и варите 10 минут.';
+      const tokens = parseStepWithTimeTokens(text);
+
+      // Should ONLY match "10 минут", not "2 ч. л."
+      expect(tokens).toHaveLength(3);
+      expect(tokens[0]).toEqual({ text: 'Добавьте 2 ч. л. соли и варите ', isTime: false });
+      expect(tokens[1]).toEqual({
+        text: '10 минут',
+        isTime: true,
+        seconds: 600,
+        label: '10 минут',
+      });
+      expect(tokens[2]).toEqual({ text: '.', isTime: false });
+    });
+  });
 });
