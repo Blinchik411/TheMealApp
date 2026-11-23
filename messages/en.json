@@ -116,7 +116,10 @@
     "overlayAria": "Close timer overlay",
     "minutesAria": "Minutes",
     "secondsAria": "Seconds",
-    "startForAria": "Start kitchen timer for {text}"
+    "startForAria": "Start kitchen timer for {text}",
+    "addTimer": "Add timer",
+    "activeTimers": "Active timers",
+    "deleteTimer": "Delete timer"
   },
   "Auth": {
     "welcomeBack": "Welcome back",
