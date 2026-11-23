@@ -33,7 +33,7 @@ export const CopyIngredientsButton = memo(
         ...ingredients.map((item) => `• ${item.name}: ${item.measure?.trim() || t('toTaste')}`),
       ];
       try {
-        if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+        if (navigator.clipboard?.writeText) {
           await navigator.clipboard.writeText(lines.join('\n'));
           setIsIngredientsCopied(true);
           if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current);
@@ -84,8 +84,8 @@ export const ShareMealButton = memo(({ mealTitle }: ShareMealButtonProps) => {
   }, []);
 
   const handleShare = async () => {
-    const url = typeof window !== 'undefined' ? window.location.href : '';
-    if (typeof navigator !== 'undefined' && navigator.share) {
+    const url = window.location.href;
+    if (navigator.share) {
       try {
         await navigator.share({
           title: mealTitle,
@@ -99,7 +99,7 @@ export const ShareMealButton = memo(({ mealTitle }: ShareMealButtonProps) => {
     }
 
     try {
-      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+      if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(url);
         setIsLinkCopied(true);
         if (shareTimeoutRef.current) clearTimeout(shareTimeoutRef.current);
@@ -137,9 +137,7 @@ export const PrintMealButton = memo(() => {
   const t = useTranslations('MealDetails');
 
   const handlePrint = () => {
-    if (typeof window !== 'undefined' && typeof window.print === 'function') {
-      window.print();
-    }
+    window.print();
   };
 
   return (

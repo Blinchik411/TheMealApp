@@ -3,7 +3,7 @@
  * into a safe embed URL for iframes.
  */
 export function getYouTubeEmbedUrl(url?: string | null): string | null {
-  if (!url || typeof url !== 'string') return null;
+  if (!url) return null;
 
   const trimmed = url.trim();
   if (!trimmed) return null;

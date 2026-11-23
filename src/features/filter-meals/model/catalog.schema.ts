@@ -1,24 +1,17 @@
 import { z } from 'zod';
 
+const stringParam = (maxLength: number) =>
+  z
+    .preprocess(
+      (val) => (Array.isArray(val) ? val[0] : val),
+      z.string().trim().max(maxLength).optional(),
+    )
+    .transform((val) => (val && val.length > 0 ? val : undefined));
+
 export const catalogFilterSchema = z.object({
-  search: z
-    .string()
-    .trim()
-    .max(100)
-    .optional()
-    .transform((val) => (val && val.length > 0 ? val : undefined)),
-  category: z
-    .string()
-    .trim()
-    .max(50)
-    .optional()
-    .transform((val) => (val && val.length > 0 ? val : undefined)),
-  area: z
-    .string()
-    .trim()
-    .max(50)
-    .optional()
-    .transform((val) => (val && val.length > 0 ? val : undefined)),
+  search: stringParam(100),
+  category: stringParam(50),
+  area: stringParam(50),
   page: z.coerce.number().int().positive().default(1).catch(1),
 });
 

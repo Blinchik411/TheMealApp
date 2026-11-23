@@ -15,7 +15,7 @@ export const LanguageSwitcher = () => {
     if (nextLocale === currentLocale) return;
 
     startTransition(() => {
-      const search = typeof window !== 'undefined' ? window.location.search : '';
+      const search = window.location.search;
       const target = search ? `${pathname}${search}` : pathname;
       router.replace(target, { locale: nextLocale });
     });

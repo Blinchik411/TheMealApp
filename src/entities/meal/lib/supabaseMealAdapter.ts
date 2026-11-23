@@ -1,4 +1,4 @@
-import type { Tables } from '@/shared/api';
+import type { LocalizedText, Tables } from '@/shared/api';
 import type {
   IngredientItem,
   Language,
@@ -12,52 +12,44 @@ export const DEFAULT_MEAL_IMAGE = '/placeholder-meal.svg';
 
 export type SupabaseMealRow = Tables<'meals'>;
 
+function isLocalizedText(val: unknown): val is LocalizedText {
+  return typeof val === 'object' && val !== null && 'en' in val && 'ru' in val;
+}
+
+function resolveLocalized(
+  val: LocalizedText | string | null | undefined,
+  lang: Language,
+  fallback = '',
+): string {
+  if (!val) return fallback;
+  if (isLocalizedText(val)) {
+    return val[lang] || val.en || val.ru || fallback;
+  }
+  return String(val);
+}
+
 export function mapSupabaseMealToMeal(row: SupabaseMealRow, lang: Language = 'en'): Meal {
   // Localized or fallback fields
-  const title =
-    typeof row.name === 'object' && row.name !== null
-      ? row.name[lang] || row.name.en || row.name.ru || 'Untitled'
-      : String(row.name || 'Untitled');
-
-  const category =
-    typeof row.category === 'object' && row.category !== null
-      ? row.category[lang] || row.category.en || row.category.ru || 'General'
-      : String(row.category || 'General');
-
-  const cuisine =
-    typeof row.area === 'object' && row.area !== null
-      ? row.area[lang] || row.area.en || row.area.ru || 'International'
-      : String(row.area || 'International');
-
-  const instructionsText =
-    typeof row.instructions === 'object' && row.instructions !== null
-      ? row.instructions[lang] || row.instructions.en || row.instructions.ru || ''
-      : String(row.instructions || '');
+  const title = resolveLocalized(row.name, lang, 'Untitled');
+  const category = resolveLocalized(row.category, lang, 'General');
+  const cuisine = resolveLocalized(row.area, lang, 'International');
+  const instructionsText = resolveLocalized(row.instructions, lang, '');
 
   // Normalized ingredients
   const ingredients: IngredientItem[] = (row.ingredients || []).map((item, idx) => {
-    const isNameObj = typeof item.ingredient === 'object' && item.ingredient !== null;
-    const isMeasureObj = typeof item.measure === 'object' && item.measure !== null;
+    const isNameObj = isLocalizedText(item.ingredient);
+    const isMeasureObj = isLocalizedText(item.measure);
 
-    const ingName = isNameObj
-      ? (item.ingredient as { en: string; ru: string })[lang] ||
-        (item.ingredient as { en: string; ru: string }).en ||
-        (item.ingredient as { en: string; ru: string }).ru
-      : String(item.ingredient || '');
-
-    const ingMeasure = isMeasureObj
-      ? (item.measure as { en: string; ru: string })[lang] ||
-        (item.measure as { en: string; ru: string }).en ||
-        (item.measure as { en: string; ru: string }).ru
-      : String(item.measure || '');
+    const ingName = resolveLocalized(item.ingredient, lang, '');
+    const ingMeasure = resolveLocalized(item.measure, lang, '');
 
     return {
       id: `${row.id}-ing-${idx + 1}`,
       name: ingName,
       measure: ingMeasure,
       imageUrl: item.imageUrl,
-      nameObj: isNameObj ? (item.ingredient as { en: string; ru: string }) : undefined,
-      measureObj: isMeasureObj ? (item.measure as { en: string; ru: string }) : undefined,
+      nameObj: isNameObj ? item.ingredient : undefined,
+      measureObj: isMeasureObj ? item.measure : undefined,
     };
   });
 
@@ -65,7 +57,7 @@ export function mapSupabaseMealToMeal(row: SupabaseMealRow, lang: Language = 'en
   let tags: string[] = [];
   if (Array.isArray(row.tags)) {
     tags = row.tags;
-  } else if (typeof row.tags === 'object' && row.tags !== null) {
+  } else if (isLocalizedText(row.tags)) {
     tags = row.tags[lang] || row.tags.ru || row.tags.en || [];
   }
 
@@ -73,17 +65,16 @@ export function mapSupabaseMealToMeal(row: SupabaseMealRow, lang: Language = 'en
     id: row.id,
     slug: row.slug || row.id,
     title,
-    name: typeof row.name === 'object' ? row.name : { en: title, ru: title },
+    name: isLocalizedText(row.name) ? row.name : { en: title, ru: title },
     image: row.image_url?.trim() ? row.image_url.trim() : DEFAULT_MEAL_IMAGE,
     category,
-    categoryObj: typeof row.category === 'object' ? row.category : { en: category, ru: category },
+    categoryObj: isLocalizedText(row.category) ? row.category : { en: category, ru: category },
     cuisine,
-    areaObj: typeof row.area === 'object' ? row.area : { en: cuisine, ru: cuisine },
+    areaObj: isLocalizedText(row.area) ? row.area : { en: cuisine, ru: cuisine },
     instructions: instructionsText,
-    instructionsObj:
-      typeof row.instructions === 'object'
-        ? row.instructions
-        : { en: instructionsText, ru: instructionsText },
+    instructionsObj: isLocalizedText(row.instructions)
+      ? row.instructions
+      : { en: instructionsText, ru: instructionsText },
     servings: row.servings || 4,
     prepTimeMinutes: row.prep_time_minutes || 10,
     cookTimeMinutes: row.cook_time_minutes || 20,

@@ -37,9 +37,7 @@ export function Footer({ className = '' }: FooterProps) {
   const currentYear = new Date().getFullYear();
 
   const handleScrollToTop = () => {
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const navigationLinks = [

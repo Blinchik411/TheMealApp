@@ -17,12 +17,7 @@ export default async function Page({ params, searchParams }: PageProps) {
 
   const rawParams = await searchParams;
 
-  const filters = catalogFilterSchema.parse({
-    search: typeof rawParams.search === 'string' ? rawParams.search : undefined,
-    category: typeof rawParams.category === 'string' ? rawParams.category : undefined,
-    area: typeof rawParams.area === 'string' ? rawParams.area : undefined,
-    page: typeof rawParams.page === 'string' ? rawParams.page : undefined,
-  });
+  const filters = catalogFilterSchema.parse(rawParams);
 
   const { meals, categories, areas, error } = await getFilteredCatalog(filters, locale as Language);
 
