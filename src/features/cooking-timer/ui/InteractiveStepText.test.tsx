@@ -31,4 +31,19 @@ describe('InteractiveStepText', () => {
     expect(useCookingTimerStore.getState().remainingSeconds).toBe(900);
     expect(useCookingTimerStore.getState().isOpen).toBe(true);
   });
+
+  it('detects and renders timer button for Russian phrases and starts timer on click', async () => {
+    const user = userEvent.setup();
+    const text = 'Томите суп 20 минут на медленном огне.';
+    render(<InteractiveStepText text={text} />);
+
+    const timerBtn = screen.getByRole('button', { name: /20 минут/i });
+    expect(timerBtn).toBeInTheDocument();
+
+    await user.click(timerBtn);
+
+    expect(useCookingTimerStore.getState().isRunning).toBe(true);
+    expect(useCookingTimerStore.getState().remainingSeconds).toBe(1200);
+    expect(useCookingTimerStore.getState().isOpen).toBe(true);
+  });
 });
