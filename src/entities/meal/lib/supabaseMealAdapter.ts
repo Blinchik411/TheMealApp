@@ -37,19 +37,18 @@ export function mapSupabaseMealToMeal(row: SupabaseMealRow, lang: Language = 'en
 
   // Normalized ingredients
   const ingredients: IngredientItem[] = (row.ingredients || []).map((item, idx) => {
-    const isNameObj = isLocalizedText(item.ingredient);
-    const isMeasureObj = isLocalizedText(item.measure);
-
     const ingName = resolveLocalized(item.ingredient, lang, '');
     const ingMeasure = resolveLocalized(item.measure, lang, '');
+    const nameObj = isLocalizedText(item.ingredient) ? item.ingredient : undefined;
+    const measureObj = isLocalizedText(item.measure) ? item.measure : undefined;
 
     return {
       id: `${row.id}-ing-${idx + 1}`,
       name: ingName,
       measure: ingMeasure,
       imageUrl: item.imageUrl,
-      nameObj: isNameObj ? item.ingredient : undefined,
-      measureObj: isMeasureObj ? item.measure : undefined,
+      nameObj,
+      measureObj,
     };
   });
 
