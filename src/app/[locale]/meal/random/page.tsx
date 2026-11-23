@@ -15,7 +15,8 @@ export default async function RandomMealPage({ params }: PageProps) {
   const meal = await mealApi.getRandomMeal(locale as Language);
 
   if (meal) {
-    redirect({ href: `/meal/${meal.id}`, locale });
+    const mealTarget = meal.slug || meal.id;
+    redirect({ href: `/meal/${mealTarget}`, locale });
   }
 
   redirect({ href: '/', locale });

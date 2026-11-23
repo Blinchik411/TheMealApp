@@ -41,6 +41,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     const titleSuffix = isRu ? 'Рецепт' : 'Recipe';
     const title = `${meal.title} — ${titleSuffix}`;
+    const targetSlug = meal.slug || id;
     const description =
       meal.instructions?.slice(0, 160) ??
       (isRu ? `Как приготовить ${meal.title}` : `How to prepare ${meal.title}`);
@@ -50,10 +51,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title,
       description,
       alternates: {
-        canonical: isRu ? `/ru/meal/${id}` : `/meal/${id}`,
+        canonical: isRu ? `/ru/meal/${targetSlug}` : `/meal/${targetSlug}`,
         languages: {
-          'en-US': `/meal/${id}`,
-          'ru-RU': `/ru/meal/${id}`,
+          'en-US': `/meal/${targetSlug}`,
+          'ru-RU': `/ru/meal/${targetSlug}`,
         },
       },
       openGraph: {

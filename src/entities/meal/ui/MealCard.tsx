@@ -21,7 +21,8 @@ export const MealCard = ({
   imageAspectRatio = 'aspect-square',
 }: MealCardProps) => {
   const t = useTranslations('MealCard');
-  const linkTo = from ? `/meal/${meal.id}?from=${from}` : `/meal/${meal.id}`;
+  const mealTarget = meal.slug || meal.id;
+  const linkTo = from ? `/meal/${mealTarget}?from=${from}` : `/meal/${mealTarget}`;
 
   return (
     <div className="group flex flex-col h-full bg-card text-card-foreground rounded-2xl overflow-hidden border border-border shadow-xs hover:shadow-md transition-all duration-300 hover:-translate-y-1">
