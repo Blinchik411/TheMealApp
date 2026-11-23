@@ -39,6 +39,41 @@ describe('parseStepWithTimeTokens', () => {
     });
   });
 
+  it('detects phrases with "more" like "1-2 more minutes"', () => {
+    const text = 'Cook for 1-2 more minutes until cheese is melted.';
+    const tokens = parseStepWithTimeTokens(text);
+
+    expect(tokens).toHaveLength(3);
+    expect(tokens[0]).toEqual({ text: 'Cook for ', isTime: false });
+    expect(tokens[1]).toEqual({
+      text: '1-2 more minutes',
+      isTime: true,
+      seconds: 120,
+      label: '1-2 more minutes',
+    });
+    expect(tokens[2]).toEqual({ text: ' until cheese is melted.', isTime: false });
+  });
+
+  it('detects "2 more minutes" and "1 more hour"', () => {
+    const text1 = 'Simmer for 2 more minutes.';
+    const tokens1 = parseStepWithTimeTokens(text1);
+    expect(tokens1[1]).toEqual({
+      text: '2 more minutes',
+      isTime: true,
+      seconds: 120,
+      label: '2 more minutes',
+    });
+
+    const text2 = 'Bake for 1 more hour.';
+    const tokens2 = parseStepWithTimeTokens(text2);
+    expect(tokens2[1]).toEqual({
+      text: '1 more hour',
+      isTime: true,
+      seconds: 3600,
+      label: '1 more hour',
+    });
+  });
+
   it('detects hours correctly', () => {
     const text = 'Marinate chicken for 1.5 hours in the fridge.';
     const tokens = parseStepWithTimeTokens(text);

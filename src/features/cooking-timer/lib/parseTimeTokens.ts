@@ -6,7 +6,7 @@ export interface TimeToken {
 }
 
 const TIME_REGEX =
-  /(?<![\p{L}\p{N}])(?:(\d+(?:[.,]\d+)?)\s*(?:[-–—]|to|до)\s*)?(\d+(?:[.,]\d+)?)\s*(hours?|hrs?|hr|минут(?:[аыуе]|ами|ах)?|минут|мин\.?|minutes?|mins?|min|секунд(?:[аыуе]|ами|ах)?|секунд|сек\.?|seconds?|secs?|sec|час(?:ов|[аеу]|ом|ами)?)(?![\p{L}\p{N}])/giu;
+  /(?<![\p{L}\p{N}])(?:(\d+(?:[.,]\d+)?)\s*(?:[-–—]|to|до)\s*)?(\d+(?:[.,]\d+)?)\s*(?:(?:more|extra)\s+)?(hours?|hrs?|hr|минут(?:[аыуе]|ами|ах)?|минут|мин\.?|minutes?|mins?|min|секунд(?:[аыуе]|ами|ах)?|секунд|сек\.?|seconds?|secs?|sec|час(?:ов|[аеу]|ом|ами)?)(?![\p{L}\p{N}])/giu;
 
 export const parseStepWithTimeTokens = (stepText: string): TimeToken[] => {
   if (!stepText) return [];
